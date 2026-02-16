@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport Vânzări 2024-2025 | Zitamine</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            /* Zitamine Purple */
+            --secondary: #10b981;
+            /* Success Green */
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #f43f5e;
+            /* Rose for alerts/cancels */
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-update {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid #374151;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Cards Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #374151;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .card .subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .val-positive {
+            color: var(--secondary);
+        }
+
+        .val-negative {
+            color: var(--accent);
+        }
+
+        /* Charts Section */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            height: 400px;
+            position: relative;
+        }
+
+        /* Tables Section */
+        .tables-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #374151;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prog-bar-bg {
+            background: #374151;
+            height: 6px;
+            border-radius: 3px;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .prog-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Loader */
+        #loader {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Nice Button Style */
+        .btn-nice {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 6px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-nice:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-nice:active {
+            transform: translateY(0);
+        }
+
+        /* Filter Styles */
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #1f2937 0%, #263040 100%);
+            border: 1px solid #374151;
+            color: #d1d5db;
+            padding: 7px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-filter:hover {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            color: white;
+            border-color: #6b7280;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-filter.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .nice-select {
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1f2937 0%, #263040 100%);
+            color: white;
+            border: 1px solid #374151;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .nice-select:hover {
+            border-color: #6b7280;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .nice-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        select option {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 8px;
+        }
+
+        /* Toggle Buttons (Volum / Venit) */
+        .btn-toggle {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #9ca3af;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-toggle:first-child {
+            border-radius: 20px 0 0 20px;
+            border-right: none;
+        }
+
+        .btn-toggle:last-child {
+            border-radius: 0 20px 20px 0;
+        }
+
+        .btn-toggle:hover {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .btn-toggle.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+        }
+
+        /* Refresh Button */
+        .btn-refresh {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 10px 22px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-refresh:active {
+            transform: translateY(0);
+        }
+
+        .btn-refresh.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .btn-refresh .refresh-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-refresh.loading .refresh-icon {
+            animation: spinRefresh 1s linear infinite;
+        }
+
+        @keyframes spinRefresh {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .refresh-status {
+            font-size: 12px;
+            margin-left: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .refresh-status.success {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .refresh-status.error {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+
+<body>
+    <!-- ZITAMINE PREMIUM PASSWORD PROTECTION -->
+    <style>
+        :root {
+            --lock-primary: #6366f1;
+            --lock-bg-dark: #0f0f1a;
+            --lock-text: #ffffff;
+        }
+
+        #zitamine-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 80% 50% at 50% 50%, #1e1e2e, #0f0f1a);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483647 !important;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            backdrop-filter: blur(10px);
+        }
+
+        #zitamine-lock-card {
+            background: rgba(23, 23, 35, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: lockFadeInUp 0.6s ease-out;
+        }
+
+        @keyframes lockFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #zitamine-lock-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.5));
+        }
+
+        #zitamine-lock-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #zitamine-lock-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        #z-password {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #z-password:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        #z-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #z-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        #z-error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+
+    <div id="zitamine-lock-screen">
+        <div id="zitamine-lock-card">
+            <div id="zitamine-lock-icon">💊</div>
+            <h2 id="zitamine-lock-title">Zitamine Protected Area</h2>
+            <p id="zitamine-lock-desc">Acest material este confidențial și destinat exclusiv echipei interne Zitamine.
+            </p>
+
+            <input type="password" id="z-password" placeholder="Introduceți parola de acces..." autocomplete="off">
+            <button id="z-button" onclick="checkZitaminePassword()">Validare Acces 🔓</button>
+            <p id="z-error">Parola introdusă este incorectă.</p>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_HASH_P = "DavidSinclair1!2@3#4$";
+        function checkZitaminePassword() {
+            const input = document.getElementById('z-password').value;
+            if (input === TARGET_HASH_P) {
+                const screen = document.getElementById('zitamine-lock-screen');
+                screen.style.transition = "opacity 0.5s ease";
+                screen.style.opacity = "0";
+                setTimeout(() => { screen.style.display = 'none'; }, 500);
+                sessionStorage.setItem('zitamine_access', 'granted');
+            } else {
+                const err = document.getElementById('z-error');
+                err.style.display = 'block';
+                err.style.animation = 'none';
+                err.offsetHeight; /* trigger reflow */
+                err.style.animation = 'shake 0.4s ease-in-out';
+            }
+        }
+
+        // Check on load
+        if (sessionStorage.getItem('zitamine_access') === 'granted') {
+            document.getElementById('zitamine-lock-screen').style.display = 'none';
+        }
+
+        // Enter key support
+        document.getElementById('z-password').addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkZitaminePassword();
+            }
+        });
+    </script>
+    <!-- END ZITAMINE PREMIUM PASSWORD PROTECTION -->
+
+    <div class="container">
+        <header style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+                <h1 style="margin:0;">Raport Vânzări</h1>
+                <div class="last-update" id="reportDate">Se încarcă...</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="btn-refresh" id="btnRefresh" onclick="refreshSalesData()">
+                    <span class="refresh-icon">🔄</span> Actualizează
+                </button>
+                <span class="refresh-status" id="refreshStatus"></span>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchView('monthly')">Lunar</button>
+            <button class="tab-btn" onclick="switchView('quarterly')">Trimestrial</button>
+            <button class="tab-btn" onclick="switchView('annual')">Anual</button>
+            <button class="tab-btn" onclick="switchView('weekly')">Săptămânal 📅</button>
+            <button class="tab-btn" onclick="switchView('products')">Produse (Detaliat)</button>
+            <button class="tab-btn" onclick="switchView('objectives_products')">Obiective per Produs 🎯</button>
+            <button class="tab-btn" onclick="switchView('objectives_total')">Obiective Total 📊</button>
+        </div>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <p>Se prelucrează datele...</p>
+        </div>
+
+        <div id="dashboard" class="hidden">
+            <!-- KPIs -->
+            <div class="metrics-grid">
+                <div class="card">
+                    <h3>VÂNZĂRI PRODUSE</h3>
+                    <p class="value" id="totalNetSales">-</p>
+                    <p class="subtext">Fără transport/taxe</p>
+                </div>
+                <div class="card">
+                    <h3>TOTAL ÎNCASĂRI</h3>
+                    <p class="value" id="totalGrossSales">-</p>
+                    <p class="subtext">Include transport & taxe</p>
+                </div>
+                <div class="card">
+                    <h3>Comenzi Valide</h3>
+                    <p class="value" id="totalOrders">-</p>
+                    <p class="subtext">Comenzi onorate</p>
+                </div>
+                <div class="card">
+                    <h3>ANULATE / RETURURI</h3>
+                    <p class="value val-negative" id="totalCanceled">-</p>
+                    <p class="subtext">Comenzi anulate sau returnate</p>
+                </div>
+                <div class="card">
+                    <h3>Valoare Medie / Comandă</h3>
+                    <p class="value" id="avgOrderValue">-</p>
+                    <p class="subtext">AOV (Net)</p>
+                </div>
+            </div>
+
+            <!-- Date filter for main views (Lunar/Trimestrial/Anual) -->
+            <div id="dateFilters"
+                style="display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+                <span style="font-size:13px; color:#9ca3af; font-weight:600;">Perioadă:</span>
+                <select id="mainFilterStart" onchange="updateView()" class="nice-select"></select>
+                <span style="color:#6b7280;">➞</span>
+                <select id="mainFilterEnd" onchange="updateView()" class="nice-select"></select>
+                <button id="btnCompareToggle" class="btn-toggle" onclick="toggleCompareMode()"
+                    style="margin-left:16px; padding:5px 14px; font-size:12px;">🔄 Compară cu...</button>
+                <div id="compareFilters" style="display:none; align-items:center; gap:8px;">
+                    <span style="color:#f59e0b; font-size:12px; font-weight:600;">vs</span>
+                    <select id="compareFilterStart" onchange="updateView()" class="nice-select"></select>
+                    <span style="color:#6b7280;">➞</span>
+                    <select id="compareFilterEnd" onchange="updateView()" class="nice-select"></select>
+                </div>
+            </div>
+
+            <div id="chartsSection">
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <canvas id="mainTrendChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="mixChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Breakdown for Monthly View -->
+            <div id="monthlyWeeklySection" class="hidden">
+                <div class="table-container" style="margin-top:20px; margin-bottom:20px;">
+                    <h3 style="margin-top:0; margin-bottom:15px;">📅 Breakdown Săptămânal</h3>
+                    <div style="overflow-x:auto;">
+                        <table id="monthlyWeeklyTable">
+                            <thead>
+                                <tr>
+                                    <th>Săptămâna</th>
+                                    <th>Perioada (Zile incluse)</th>
+                                    <th style="text-align:right">Vânzări Totale</th>
+                                    <th style="text-align:right">Comenzi</th>
+                                    <th style="text-align:right">AOV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthlyWeeklyBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tablesSection" class="tables-row">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3 style="margin:0">Top 10 Produse</h3>
+                        <div>
+                            <button id="btnSortQty" class="btn-toggle active"
+                                onclick="toggleTopSort('qty')">Volum</button>
+                            <button id="btnSortRev" class="btn-toggle" onclick="toggleTopSort('rev')">Venit</button>
+                        </div>
+                    </div>
+                    <table id="topProductsTable">
+                        <thead>
+                            <tr>
+                                <th>Produs</th>
+                                <th style="text-align:right">Cantitate</th>
+                                <th style="text-align:right">Venit (Est.)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-container">
+                    <h3>Top Coduri Reducere</h3>
+                    <table id="topDiscountsTable">
+                        <thead>
+                            <tr>
+                                <th>Cod</th>
+                                <th style="text-align:right">Utilizări</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Breakdown Section (Hidden by default) -->
+            <div id="productsSection" class="hidden">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div
+                        style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:20px;">
+
+                        <!-- Left Side: Title & Filters -->
+                        <div style="flex:1;">
+                            <h3 style="margin-top:0; margin-bottom:15px;">Toate Produsele (Cumulat) - <span
+                                    id="productCount">0</span> produse</h3>
+
+                            <div class="filter-group">
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2026-01', '2026-12', this)">2026</button>
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2025-01', '2025-12', this)">2025</button>
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2024-01', '2024-12', this)">2024</button>
+                                <div style="width:100%; height:1px; background:#374151; margin:2px 0;"></div>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-01', '2025-03', this)">Q1
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-04', '2025-06', this)">Q2
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-07', '2025-09', this)">Q3
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-10', '2025-12', this)">Q4
+                                    '25</button>
+                                <div style="width:100%; height:1px; background:#374151; margin:2px 0;"></div>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-01', '2024-03', this)">Q1
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-04', '2024-06', this)">Q2
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-07', '2024-09', this)">Q3
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-10', '2024-12', this)">Q4
+                                    '24</button>
+                                <button class="btn-filter active"
+                                    onclick="setQuickFilter('all', 'all', this)">Tot</button>
+                            </div>
+
+                            <!-- Manual Selects -->
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span style="font-size:13px; color:#aaa; margin-right:5px;">Perioada:</span>
+                                <select id="filterStartMonth" onchange="applyProductDateFilter()"
+                                    class="nice-select"></select>
+                                <span style="color:#aaa;">➞</span>
+                                <select id="filterEndMonth" onchange="applyProductDateFilter()"
+                                    class="nice-select"></select>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Search -->
+                        <div style="margin-top:5px;">
+                            <input type="text" id="productSearch" placeholder="🔍 Caută produs..."
+                                style="padding:10px 15px; border-radius:30px; border:1px solid #4b5563; background:#1f2937; color:white; width:280px; outline:none; transition:width 0.3s; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                        </div>
+                    </div>
+
+                    <div style="overflow-x:auto; margin-top:20px;">
+                        <table id="allProductsTable">
+                            <thead>
+                                <tr>
+                                    <th style="cursor:pointer" onclick="sortTable(0)">Produs ↕</th>
+                                    <th style="cursor:pointer; text-align:right" onclick="sortTable(1)">Cantitate ↕</th>
+                                    <th style="cursor:pointer; text-align:right" onclick="sortTable(2)">Venituri (Est.)
+                                        ↕</th>
+                                    <th style="text-align:center">Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allProductsBody"></tbody>
+                        </table>
+                        <div id="paginationControls"
+                            style="margin-top:15px; display:flex; justify-content:center; gap:10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEKLY REPORT SECTION -->
+            <div id="weeklySection" class="hidden">
+                <div class="card" style="margin-bottom:20px;">
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; margin-bottom:20px;">
+                        <h3 style="margin:0;">📅 Raport Săptămânal</h3>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="color:#9ca3af; font-size:13px; font-weight:600;">Săptămâna:</span>
+                            <select id="weekSelector" onchange="renderWeeklyView()" class="nice-select"
+                                style="min-width:280px;"></select>
+                        </div>
+                    </div>
+
+                    <!-- Weekly KPIs -->
+                    <div class="metrics-grid" id="weeklyKpis">
+                        <div class="card">
+                            <h3>VÂNZĂRI NETE</h3>
+                            <p class="value" id="wkNetSales">-</p>
+                            <p class="subtext">Săptămâna selectată</p>
+                        </div>
+                        <div class="card">
+                            <h3>COMENZI VALIDE</h3>
+                            <p class="value" id="wkOrders">-</p>
+                            <p class="subtext">Comenzi onorate</p>
+                        </div>
+                        <div class="card">
+                            <h3>CU REDUCERE</h3>
+                            <p class="value" id="wkDiscounted">-</p>
+                            <p class="subtext">Comenzi cu cod reducere</p>
+                        </div>
+                        <div class="card">
+                            <h3>ANULATE / RETURURI</h3>
+                            <p class="value val-negative" id="wkCanceled">-</p>
+                            <p class="subtext">Comenzi anulate/returnate</p>
+                        </div>
+                        <div class="card">
+                            <h3>AOV</h3>
+                            <p class="value" id="wkAov">-</p>
+                            <p class="subtext">Valoare medie/comandă</p>
+                        </div>
+                    </div>
+
+                    <!-- Daily breakdown table -->
+                    <h4 style="margin-top:25px; margin-bottom:10px; color:#d1d5db;">📊 Breakdown Zilnic</h4>
+                    <div style="overflow-x:auto;">
+                        <table id="weeklyDailyTable">
+                            <thead>
+                                <tr>
+                                    <th>Zi</th>
+                                    <th>Data</th>
+                                    <th style="text-align:right">Vânzări Totale</th>
+                                    <th style="text-align:right">Comenzi</th>
+                                    <th style="text-align:right">Cu Reducere</th>
+                                    <th style="text-align:right">Anulate</th>
+                                    <th style="text-align:right">AOV</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weeklyDailyBody"></tbody>
+                            <tfoot id="weeklyDailyFoot"></tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Weekly Top Products & Discounts -->
+                <div class="tables-row">
+                    <div class="table-container">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h3 style="margin:0">Top 10 Produse (Săptămâna)</h3>
+                            <div>
+                                <button id="btnWgSortQty" class="btn-toggle"
+                                    onclick="toggleWeeklyTopSort('qty')">Volum</button>
+                                <button id="btnWgSortRev" class="btn-toggle active"
+                                    onclick="toggleWeeklyTopSort('rev')">Venit</button>
+                            </div>
+                        </div>
+                        <table id="weeklyTopProducts">
+                            <thead>
+                                <tr>
+                                    <th>Produs</th>
+                                    <th style="text-align:right">Cantitate</th>
+                                    <th style="text-align:right">Venit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weeklyTopProductsBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-container">
+                        <h3>Top Coduri Reducere (Săptămâna)</h3>
+                        <table id="weeklyTopDiscounts">
+                            <thead>
+                                <tr>
+                                    <th>Cod</th>
+                                    <th style="text-align:right">Utilizări</th>
+                                </tr>
+                            </thead>
+                            <tbody id="weeklyTopDiscountsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Week Comparison -->
+                <div class="card" style="margin-top:20px;">
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; margin-bottom:20px;">
+                        <h3 style="margin:0;">🔄 Comparație Săptămânală</h3>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="color:#9ca3af; font-size:13px;">Compară cu:</span>
+                            <select id="weekCompareSelector" onchange="renderWeekComparison()" class="nice-select"
+                                style="min-width:280px;"></select>
+                        </div>
+                    </div>
+                    <div id="weekComparisonContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Objectives Analysis Section -->
+
+
+    <!-- OBJECTIVES TOTAL SECTION -->
+    <div id="objectivesTotalSection" class="hidden">
+        <div class="card" style="margin-bottom:20px;">
+            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center;">
+                <h3>Obiective Total &mdash; V&acirc;nz&#259;ri per Categorie (2025-2026)</h3>
+                <div
+                    style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:8px; padding:8px 14px; font-size:12px; color:#a78bfa; line-height:1.5; margin-top:4px;">
+                    &#8505;&#65039; Un produs poate apar&#539;ine mai multor categorii &mdash; totalul
+                    dep&#259;&#537;e&#537;te v&acirc;nz&#259;rile reale deoarece produsele se contorizeaz&#259; &icirc;n
+                    fiecare categorie din care fac parte.
+                </div>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="color:#9ca3af; font-size:13px; font-weight:600;">Trimestru:</span>
+                    <div style="display:flex; gap:4px;">
+                        <button id="btnQAll" class="btn-filter active btn-q-filter"
+                            style="padding:4px 10px; font-size:11px;" onclick="setObjTotalQuarter(0)">Tot</button>
+                        <button id="btnQ1" class="btn-filter btn-q-filter" style="padding:4px 10px; font-size:11px;"
+                            onclick="setObjTotalQuarter(1)">Q1</button>
+                        <button id="btnQ2" class="btn-filter btn-q-filter" style="padding:4px 10px; font-size:11px;"
+                            onclick="setObjTotalQuarter(2)">Q2</button>
+                        <button id="btnQ3" class="btn-filter btn-q-filter" style="padding:4px 10px; font-size:11px;"
+                            onclick="setObjTotalQuarter(3)">Q3</button>
+                        <button id="btnQ4" class="btn-filter btn-q-filter" style="padding:4px 10px; font-size:11px;"
+                            onclick="setObjTotalQuarter(4)">Q4</button>
+                    </div>
+
+                    <div style="width:1px; height:20px; background:#374151; margin:0 8px;"></div>
+
+                    <span style="color:#9ca3af; font-size:13px; font-weight:600;">An:</span>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="objTotalChk2025" checked onchange="renderObjectivesTotalView()"
+                            style="accent-color:#8b5cf6;"> 2025
+                    </label>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="objTotalChk2026" checked onchange="renderObjectivesTotalView()"
+                            style="accent-color:#8b5cf6;"> 2026
+                    </label>
+
+                    <div style="margin-left:8px; border-left:1px solid #374151; padding-left:12px;">
+                        <select id="objTotalMonthSelector" onchange="renderObjectivesTotalView()" class="nice-select"
+                            style="max-width:170px;">
+                            <option value="all">Toată perioada</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top:20px;">
+                <table id="objectivesTotalTable">
+                    <thead>
+                        <tr>
+                            <th>Obiectiv</th>
+                            <th style="text-align:right">Cantitate</th>
+                            <th style="text-align:right">% Cantitate</th>
+                            <th style="text-align:right">Venit (RON)</th>
+                            <th style="text-align:right">% Venit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="objectivesTotalTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTIVES PRODUCTS SECTION -->
+    <div id="objectivesProductSection" class="hidden">
+        <div class="card" style="margin-bottom:20px;">
+            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center;">
+                <h3>Analiză Obiective per Produs (2025-2026)</h3>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="color:#9ca3af; font-size:13px; font-weight:600;">An:</span>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="chk2025" checked onchange="renderObjectivesProductView()"
+                            style="accent-color:#8b5cf6;"> 2025
+                    </label>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="chk2026" checked onchange="renderObjectivesProductView()"
+                            style="accent-color:#8b5cf6;"> 2026
+                    </label>
+
+                    <div style="margin-left:8px; border-left:1px solid #374151; padding-left:12px;">
+                        <select id="objProdMonthSelector" onchange="renderObjectivesProductView()" class="nice-select"
+                            style="max-width:170px;">
+                            <option value="all">Toată perioada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-left:auto;">
+                    <input type="text" id="objProdSearch" placeholder="🔍 Caută produs..."
+                        onkeyup="renderObjectivesProductView()"
+                        style="padding:9px 15px; border-radius:25px; border:1px solid #374151; background:linear-gradient(135deg,#1f2937,#263040); color:white; width:260px; outline:none; font-size:13px; transition:all 0.25s; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                </div>
+            </div>
+
+            <!-- Excluded Items Container -->
+            <div id="excludedItemsContainer"
+                style="margin-top:15px; padding:10px; border:1px dashed #4b5563; border-radius:8px; background:rgba(31, 41, 55, 0.5); display:none;">
+            </div>
+
+            <div class="table-container" style="margin-top:20px;">
+                <table id="objectivesProductTable">
+                    <thead>
+                        <tr>
+                            <th>Produs</th>
+                            <th>Categorii</th>
+                            <th style="text-align:right">Cantitate</th>
+                            <th style="text-align:right">Venit (RON)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="objectivesProductTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Product Details -->
+    <div id="productModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+        <div
+            style="background:var(--bg-card); padding:30px; border-radius:12px; width:80%; max-width:900px; max-height:90vh; overflow-y:auto; border:1px solid #374151;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2 id="modalTitle" style="margin:0;">Detalii Produs</h2>
+                <button onclick="closeModal()"
+                    style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div class="chart-container" style="height:300px; margin-bottom:20px;">
+                <canvas id="productTrendChart"></canvas>
+            </div>
+            <table id="productMonthlyTable">
+                <thead>
+                    <tr>
+                        <th>Luna</th>
+                        <th>Cantitate</th>
+                        <th>Venit</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Load Data Script -->
+    <!-- We expect a file named 'sales_data_2024_2025.js' that defines window.salesData -->
+    <script src="sales_data_2024_2025.js?v=4"></script>
+
+    <script>
+        let currentView = 'monthly';
+        let currentTopSort = 'qty'; // 'qty' or 'rev'
+        let chartInstance = null;
+        let mixChartInstance = null;
+        let compareMode = false;
+
+        // Safe array extractor for PowerShell serialized data
+        // Handles: plain array, {value: [...]}, {"0": {...}, "1": {...}}
+        function safeArray(data) {
+            if (!data) return [];
+            if (Array.isArray(data)) return data;
+            if (data.value && Array.isArray(data.value)) return data.value;
+            // Object with numeric keys
+            const vals = Object.values(data);
+            // If first value is an array, it's wrapped
+            if (vals.length === 1 && Array.isArray(vals[0])) return vals[0];
+            return vals;
+        }
+
+        // Formatting Helpers
+        const formatCurrency = (val) => new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON', maximumFractionDigits: 0 }).format(val);
+        const formatNumber = (val) => new Intl.NumberFormat('ro-RO').format(val);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof window.salesData !== 'undefined') {
+                initDashboard();
+            } else {
+                document.getElementById('reportDate').innerText = "Eroare: Fișierul de date 'sales_data_2024_2025.js' lipsește.";
+                document.getElementById('loader').innerHTML = "<p style='color:red'>Nu s-au putut încărca datele. Verificați dacă scriptul a rulat.</p>";
+            }
+        });
+
+        let allProductsCache = []; // Stores aggregated product data, filtered
+        let productModalChart = null;
+
+        function initDashboard() {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('reportDate').innerText = "Generat la: " + window.salesData.generated_at;
+
+            // Populate Filter Dropdowns (Products section)
+            const months = Object.keys(window.salesData['monthly']).sort();
+            const startSel = document.getElementById('filterStartMonth');
+            const endSel = document.getElementById('filterEndMonth');
+
+            months.forEach(m => {
+                startSel.add(new Option(m, m));
+                endSel.add(new Option(m, m));
+            });
+
+            if (months.length > 0) {
+                startSel.value = months[0];
+                endSel.value = months[months.length - 1];
+            }
+
+            // Main Date Filters are populated dynamically in updateView()
+
+            // Setup Search Listener
+            document.getElementById('productSearch').addEventListener('keyup', (e) => {
+                renderProductTable(1, e.target.value);
+            });
+
+            // Objectives Product View now uses checkboxes (chk2025, chk2026) and month selector
+            // No additional init needed - renderObjectivesProductView populates the month dropdown
+
+            updateView();
+        }
+
+        // --- Product Filter Logic ---
+        function setQuickFilter(start, end, btn) {
+            // Update Active Button
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            const monthKeys = Object.keys(window.salesData['monthly']).sort();
+            if (monthKeys.length === 0) return;
+
+            const startSel = document.getElementById('filterStartMonth');
+            const endSel = document.getElementById('filterEndMonth');
+
+            if (start === 'all') {
+                startSel.value = monthKeys[0];
+                endSel.value = monthKeys[monthKeys.length - 1];
+            } else {
+                // Check if dates exist in data, otherwise fallback
+                startSel.value = monthKeys.includes(start) ? start : monthKeys[0];
+                endSel.value = monthKeys.includes(end) ? end : monthKeys[monthKeys.length - 1];
+            }
+
+            applyProductDateFilter();
+        }
+
+        function applyProductDateFilter() {
+            // Remove active class from buttons if manual change differs from preset? 
+            // For now keep it simple.
+
+            buildAllProductsCache();
+            renderProductTable(1, document.getElementById('productSearch').value);
+        }
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Tab order: 0=Monthly, 1=Quarterly, 2=Annual, 3=Weekly, 4=Products, 5=ObjProducts, 6=ObjTotal
+            const btns = document.querySelectorAll('.tab-btn');
+            const tabMap = { 'monthly': 0, 'quarterly': 1, 'annual': 2, 'weekly': 3, 'products': 4, 'objectives_products': 5, 'objectives_total': 6 };
+            const idx = tabMap[view];
+            if (idx !== undefined && btns[idx]) btns[idx].classList.add('active');
+
+            updateView();
+        }
+
+        function updateView() {
+            // Hide all sections first
+            document.getElementById('chartsSection').classList.add('hidden');
+            document.getElementById('tablesSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('objectivesProductSection').classList.add('hidden');
+            document.getElementById('objectivesTotalSection').classList.add('hidden');
+            document.getElementById('weeklySection').classList.add('hidden');
+
+            // Show/hide Global Date Filters for main views only
+            const globalFilter = document.getElementById('dateFilters');
+            const isMainView = (currentView === 'monthly' || currentView === 'quarterly' || currentView === 'annual');
+            if (globalFilter) globalFilter.style.display = isMainView ? 'flex' : 'none';
+
+            // Also hide KPI cards for objectives/weekly views (weekly has its own KPIs)
+            const metricsGrid = document.querySelector('#dashboard > .metrics-grid');
+            if (metricsGrid) metricsGrid.style.display = (currentView === 'objectives_total' || currentView === 'objectives_products' || currentView === 'weekly') ? 'none' : '';
+
+            if (currentView === 'products') {
+                document.getElementById('productsSection').classList.remove('hidden');
+
+                // Show KPI cards for Products view too (they were hidden/shared)
+                // But we need to update them based on PRODUCT filters, not main filters
+                const metricsGrid = document.querySelector('.metrics-grid');
+                if (metricsGrid) metricsGrid.style.display = '';
+
+                const pStart = document.getElementById('filterStartMonth').value;
+                const pEnd = document.getElementById('filterEndMonth').value;
+
+                // Calculate KPIs for selected range
+                const allKeys = Object.keys(window.salesData['monthly']).sort();
+                const validKeys = allKeys.filter(k => k >= pStart && k <= pEnd);
+
+                const metrics = validKeys.map(k => window.salesData['monthly'][k]);
+
+                // Aggregates
+                const totalNet = metrics.reduce((acc, curr) => acc + curr.net_sales, 0);
+                const totalShipping = metrics.reduce((acc, curr) => acc + curr.shipping, 0);
+                const totalTax = metrics.reduce((acc, curr) => acc + curr.taxes, 0);
+                const productSales = totalNet - totalShipping - totalTax;
+                const totalOrders = metrics.reduce((acc, curr) => acc + curr.valid_orders, 0);
+                const totalCanceled = metrics.reduce((acc, curr) => acc + curr.canceled_orders, 0);
+                const totalRefundedCount = metrics.reduce((acc, curr) => acc + (curr.refunded_count || 0), 0);
+                const totalBadOrders = totalCanceled + totalRefundedCount;
+                const avgAOV = totalOrders > 0 ? totalNet / totalOrders : 0;
+
+                // Update Cards
+                document.getElementById('totalNetSales').innerText = formatCurrency(productSales);
+                document.getElementById('totalGrossSales').innerText = formatCurrency(totalNet);
+                document.getElementById('totalOrders').innerText = formatNumber(totalOrders);
+                document.getElementById('totalCanceled').innerText = formatNumber(totalBadOrders);
+                document.getElementById('avgOrderValue').innerText = formatCurrency(avgAOV);
+
+                if (allProductsCache.length === 0) buildAllProductsCache();
+                renderProductTable(1);
+                return;
+            }
+
+            if (currentView === 'objectives_products') {
+                document.getElementById('objectivesProductSection').classList.remove('hidden');
+                renderObjectivesProductView();
+                return;
+            }
+
+            if (currentView === 'objectives_total') {
+                document.getElementById('objectivesTotalSection').classList.remove('hidden');
+                renderObjectivesTotalView();
+                return;
+            }
+
+            if (currentView === 'weekly') {
+                document.getElementById('weeklySection').classList.remove('hidden');
+                initWeeklyView();
+                return;
+            }
+
+            // Default Views (monthly, quarterly, annual)
+            document.getElementById('chartsSection').classList.remove('hidden');
+            document.getElementById('tablesSection').classList.remove('hidden');
+
+            const dataSet = window.salesData[currentView];
+            if (!dataSet) return;
+
+            // Dynamically populate date filter dropdowns based on current view
+            const mainStart = document.getElementById('mainFilterStart');
+            const mainEnd = document.getElementById('mainFilterEnd');
+            const allKeys = Object.keys(dataSet).sort();
+
+            if (mainStart && mainEnd) {
+                const prevStart = mainStart.value;
+                const prevEnd = mainEnd.value;
+                mainStart.innerHTML = '';
+                mainEnd.innerHTML = '';
+                allKeys.forEach(k => {
+                    mainStart.add(new Option(k, k));
+                    mainEnd.add(new Option(k, k));
+                });
+                // Restore or default
+                if (allKeys.includes(prevStart)) {
+                    mainStart.value = prevStart;
+                } else if (allKeys.length > 0) {
+                    mainStart.value = allKeys[0];
+                }
+                if (allKeys.includes(prevEnd)) {
+                    mainEnd.value = prevEnd;
+                } else if (allKeys.length > 0) {
+                    mainEnd.value = allKeys[allKeys.length - 1];
+                }
+            }
+
+            // Filter periods by selected range
+            const startVal = mainStart ? mainStart.value : '';
+            const endVal = mainEnd ? mainEnd.value : '';
+            let periods = allKeys;
+            if (startVal && endVal) {
+                periods = allKeys.filter(p => p >= startVal && p <= endVal);
+            }
+            const metrics = periods.map(p => dataSet[p]);
+
+            // 1. Calculate Aggregates for CURRENT VIEW total
+            const totalNet = metrics.reduce((acc, curr) => acc + curr.net_sales, 0); // This is Total Revenue (Net of refunds)
+            const totalShipping = metrics.reduce((acc, curr) => acc + curr.shipping, 0);
+            const totalTax = metrics.reduce((acc, curr) => acc + curr.taxes, 0);
+
+            // "Vanzari Produse" = Net Sales - Shipping - Taxes (Pure Product Revenue)
+            const productSales = totalNet - totalShipping - totalTax;
+
+            const totalOrders = metrics.reduce((acc, curr) => acc + curr.valid_orders, 0);
+            const totalCanceled = metrics.reduce((acc, curr) => acc + curr.canceled_orders, 0);
+            const totalRefundedCount = metrics.reduce((acc, curr) => acc + (curr.refunded_count || 0), 0);
+            const totalBadOrders = totalCanceled + totalRefundedCount;
+
+
+            const avgAOV = totalOrders > 0 ? totalNet / totalOrders : 0;
+
+            // Update Cards
+            document.getElementById('totalNetSales').innerText = formatCurrency(productSales);
+            document.getElementById('totalGrossSales').innerText = formatCurrency(totalNet);
+            document.getElementById('totalOrders').innerText = formatNumber(totalOrders);
+            document.getElementById('totalCanceled').innerText = formatNumber(totalBadOrders);
+            document.getElementById('avgOrderValue').innerText = formatCurrency(avgAOV);
+
+            // 2. Render Charts
+            // Check if small range -> drill down
+            let chartLabels = periods;
+            let chartMetrics = metrics;
+            let chartTitle = 'Evoluție Vânzări';
+
+            // Automatic daily breakdown for short periods (<= 3 months) in Monthly View
+            if (currentView === 'monthly' && periods.length <= 3 && !compareMode) {
+                let dailyLabels = [];
+                let dailyMetrics = [];
+                let hasData = false;
+
+                for (const p of periods) {
+                    const bd = getPeriodBreakdown(p, 'daily');
+                    if (bd.labels.length > 0) {
+                        dailyLabels = dailyLabels.concat(bd.labels);
+                        dailyMetrics = dailyMetrics.concat(bd.metrics);
+                        hasData = true;
+                    }
+                }
+
+                if (hasData) {
+                    chartLabels = dailyLabels;
+                    chartMetrics = dailyMetrics;
+                    if (periods.length === 1) chartTitle = `Evoluție Zilnică (${periods[0]})`;
+                    else chartTitle = `Evoluție Zilnică (${periods[0]} - ${periods[periods.length - 1]})`;
+                }
+            } else if (periods.length === 1 && currentView === 'quarterly') {
+                // For quarterly, show monthly breakdown
+                const breakdown = getPeriodBreakdown(periods[0], 'monthly');
+                if (breakdown.labels.length > 0) {
+                    chartLabels = breakdown.labels;
+                    chartMetrics = breakdown.metrics;
+                    chartTitle = `Evoluție Lunară (${periods[0]})`;
+                }
+            } else if (periods.length === 1 && currentView === 'annual') {
+                const breakdown = getPeriodBreakdown(periods[0], 'monthly');
+                if (breakdown.labels.length > 0) {
+                    chartLabels = breakdown.labels;
+                    chartMetrics = breakdown.metrics;
+                    chartTitle = `Evoluție Lunară (${periods[0]})`;
+                }
+            }
+
+            // Check for comparison
+            let compMetrics = null;
+            let compPeriods = [];
+            if (compareMode) {
+                const cmpStart = document.getElementById('compareFilterStart').value;
+                const cmpEnd = document.getElementById('compareFilterEnd').value;
+                if (cmpStart && cmpEnd) {
+                    compPeriods = allKeys.filter(p => p >= cmpStart && p <= cmpEnd);
+
+                    // Special Case: Daily Comparison if both are single months
+                    if (periods.length === 1 && compPeriods.length === 1 && currentView === 'monthly') {
+                        const compBreakdown = getPeriodBreakdown(compPeriods[0], 'daily');
+                        if (compBreakdown.metrics.length > 0) {
+                            compMetrics = compBreakdown.metrics;
+                            chartTitle = `Evoluție Zilnică: ${periods[0]} vs ${compPeriods[0]}`;
+                        }
+                    } else {
+                        // Standard logic: just compare aggregations
+                        compMetrics = compPeriods.map(p => dataSet[p]);
+                    }
+                }
+            }
+
+            renderTrendChart(chartLabels, chartMetrics, compMetrics, compPeriods, chartTitle);
+            renderMixChart(metrics);
+
+            // 3. Render Tables
+            renderAggregatedTopProducts(metrics);
+            renderAggregatedDiscounts(metrics);
+
+            // 4. Monthly Weekly Breakdown
+            if (currentView === 'monthly' && periods.length === 1 && !compareMode) {
+                renderMonthlyWeeklyBreakdown(periods[0]);
+            } else {
+                const sec = document.getElementById('monthlyWeeklySection');
+                if (sec) sec.style.display = 'none';
+            }
+        }
+
+        function getPeriodBreakdown(periodKey, type) {
+            const result = { labels: [], metrics: [] };
+            if (type === 'daily') {
+                const daily = window.salesData.daily || {};
+                // Filter keys starting with periodKey (e.g. "2026-02")
+                const days = Object.keys(daily).filter(k => k.startsWith(periodKey)).sort();
+                result.labels = days;
+                result.metrics = days.map(d => daily[d]);
+            } else if (type === 'monthly') {
+                // For quarterly/annual, periodKey might be "2026-Q1" or "2026"
+                // We need to find months that belong to this period
+                const monthly = window.salesData.monthly || {};
+                const months = Object.keys(monthly).filter(m => {
+                    // Start simple: check if month belongs to year
+                    if (periodKey.length === 4) return m.startsWith(periodKey); // "2026"
+                    // Check quarter
+                    if (periodKey.includes('-Q')) {
+                        const [y, q] = periodKey.split('-Q');
+                        const mNum = parseInt(m.split('-')[1]);
+                        const qNum = parseInt(q);
+                        return m.startsWith(y) && Math.ceil(mNum / 3) === qNum;
+                    }
+                    return false;
+                }).sort();
+                result.labels = months;
+                result.metrics = months.map(m => monthly[m]);
+            }
+            return result;
+        }
+
+        // --- Product Detail Logic ---
+
+        function buildAllProductsCache() {
+            // Filter by selected range
+            const startM = document.getElementById('filterStartMonth').value;
+            const endM = document.getElementById('filterEndMonth').value;
+
+            // We aggregate from 'monthly' data 
+            const dataSet = window.salesData['monthly'];
+            const productMap = {};
+
+            // Iterate over all months
+            Object.keys(dataSet).sort().forEach(month => {
+                // Check Range
+                if (month < startM || month > endM) return;
+
+                const period = dataSet[month];
+                if (!period.all_products) return;
+
+                safeArray(period.all_products).forEach(p => {
+                    const name = p['Lineitem name'];
+                    if (!productMap[name]) {
+                        productMap[name] = {
+                            name: name,
+                            qty: 0,
+                            rev: 0,
+                            returns: 0,
+                            history: {} // Map Month -> Stats
+                        };
+                    }
+                    productMap[name].qty += p['Lineitem quantity'];
+                    productMap[name].rev += p['Line_Revenue'];
+                    productMap[name].returns += (p['Returns_Count'] || 0);
+
+                    // Store monthly datum
+                    productMap[name].history[month] = {
+                        qty: p['Lineitem quantity'],
+                        rev: p['Line_Revenue'],
+                        returns: (p['Returns_Count'] || 0)
+                    };
+                });
+            });
+
+            allProductsCache = Object.values(productMap).sort((a, b) => b.qty - a.qty);
+        }
+
+        function renderProductTable(page = 1, query = '') {
+            const tbody = document.getElementById('allProductsBody');
+            tbody.innerHTML = '';
+
+            let filtered = allProductsCache;
+            if (query) {
+                const lowerQ = query.toLowerCase();
+                filtered = allProductsCache.filter(p => p.name.toLowerCase().includes(lowerQ));
+            }
+
+            document.getElementById('productCount').innerText = filtered.length;
+
+            // Pagination
+            const itemsPerPage = 20;
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filtered.slice(start, end);
+
+            pageItems.forEach(p => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td><span style="font-weight:600; color:var(--primary); cursor:pointer;" onclick="openProductModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span></td>
+                <td style="text-align:right">${p.qty}</td>
+                <td style="text-align:right">${formatCurrency(p.rev)}</td>
+                <td style="text-align:center"><button class="btn-nice" onclick="openProductModal('${p.name.replace(/'/g, "\\'")}')">Detalii 📊</button></td>
+            `;
+                tbody.appendChild(row);
+            });
+
+            // Pager
+            const pager = document.getElementById('paginationControls');
+            pager.innerHTML = `
+            <button ${page <= 1 ? 'disabled' : ''} onclick="renderProductTable(${page - 1}, '${query}')">« Anterior</button>
+            <span style="color:#aaa; align-self:center;">Pagina ${page} / ${totalPages || 1}</span>
+            <button ${page >= totalPages ? 'disabled' : ''} onclick="renderProductTable(${page + 1}, '${query}')">Următor »</button>
+        `;
+        }
+
+        function openProductModal(productName) {
+            const product = allProductsCache.find(p => p.name === productName);
+            if (!product) return;
+
+            document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('productModal').style.display = 'flex';
+
+            // Prepare Chart Data
+            // Sort months
+            const months = Object.keys(window.salesData['monthly']).sort();
+            const qtys = months.map(m => product.history[m] ? product.history[m].qty : 0);
+            const revs = months.map(m => product.history[m] ? product.history[m].rev : 0);
+
+            // Render Modal Chart
+            const ctx = document.getElementById('productTrendChart').getContext('2d');
+            if (productModalChart) productModalChart.destroy();
+
+            productModalChart = new Chart(ctx, {
+                type: 'bar', // Mixed chart
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Cantitate',
+                            data: qtys,
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Venituri (RON)',
+                            data: revs,
+                            backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { position: 'left', grid: { color: '#374151' } },
+                        y1: { position: 'right', grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // Populate Modal Table
+            const tbody = document.querySelector('#productMonthlyTable tbody');
+            tbody.innerHTML = '';
+            months.forEach(m => {
+                if (product.history[m]) {
+                    const stat = product.history[m];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${m}</td><td>${stat.qty}</td><td>${formatCurrency(stat.rev)}</td>`;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Logic for Sort Tables (Basic)
+        let sortDir = -1;
+        function sortTable(colIndex) {
+            sortDir *= -1;
+            // Re-sort cache
+            allProductsCache.sort((a, b) => {
+                let valA = colIndex === 0 ? a.name : (colIndex === 1 ? a.qty : (colIndex === 2 ? a.rev : a.returns));
+                let valB = colIndex === 0 ? b.name : (colIndex === 1 ? b.qty : (colIndex === 2 ? b.rev : b.returns));
+
+                if (valA < valB) return -1 * sortDir;
+                if (valA > valB) return 1 * sortDir;
+                return 0;
+            });
+            renderProductTable(1, document.getElementById('productSearch').value);
+        }
+
+        function renderTrendChart(labels, metrics, compMetrics = null, compLabels = [], customTitle = null) {
+            const ctx = document.getElementById('mainTrendChart').getContext('2d');
+            // Support both monthly/daily metrics structure
+            const salesData = metrics.map(m => m.net_sales);
+            const ordersData = metrics.map(m => m.valid_orders);
+
+            const datasets = [
+                {
+                    label: 'Vânzări Totale (RON)',
+                    data: salesData,
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    yAxisID: 'y',
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Nr. Comenzi',
+                    data: ordersData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    yAxisID: 'y1',
+                    tension: 0.4,
+                    borderDash: [5, 5],
+                    fill: false
+                }
+            ];
+
+            // Add Comparison Datasets if available
+            if (compMetrics && compMetrics.length > 0) {
+                // We need to map comparison data to the same x-axis length if possible, or just overlay
+                // For simplicity in this chart.js version, we'll strip the labels and just show the data points
+                // assuming the user selected roughly same duration.
+
+                const compSales = compMetrics.map(m => m.net_sales);
+                datasets.push({
+                    label: 'Comp: Vânzări',
+                    data: compSales,
+                    borderColor: '#f59e0b', // Amber/Orange
+                    borderWidth: 2,
+                    borderDash: [2, 2],
+                    pointRadius: 3, // Increased visibility
+                    yAxisID: 'y',
+                    tension: 0.4,
+                    fill: false
+                });
+            }
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#9ca3af' }
+                        },
+                        title: {
+                            display: true,
+                            text: customTitle || (compMetrics ? 'Evoluție Vânzări: Perioada Curentă vs Comparată' : 'Evoluție Vânzări'),
+                            color: '#f3f4f6',
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        if (label.includes('RON') || label.includes('Vânzări')) {
+                                            label += formatCurrency(context.parsed.y);
+                                        } else {
+                                            label += context.parsed.y;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMixChart(data) {
+            const ctx = document.getElementById('mixChart').getContext('2d');
+
+            // Aggregate totals for pie chart
+            const netSales = data.reduce((acc, curr) => acc + curr.net_sales, 0);
+            const canceledVal = data.reduce((acc, curr) => acc + (curr.gross_sales * (curr.canceled_orders / (curr.total_orders || 1))), 0); // Approx canceled value
+            const shipping = data.reduce((acc, curr) => acc + curr.shipping, 0);
+            const refunds = data.reduce((acc, curr) => acc + curr.total_refunds, 0);
+
+            if (mixChartInstance) mixChartInstance.destroy();
+
+            mixChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vânzări Totale', 'Transport', 'Retururi'], // Simplified
+                    datasets: [{
+                        data: [netSales, shipping, refunds],
+                        backgroundColor: ['#8b5cf6', '#3b82f6', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#9ca3af' } },
+                        title: { display: true, text: 'Distribuție Valorică', color: '#f3f4f6' }
+                    }
+                }
+            });
+        }
+
+
+
+        function toggleTopSort(type) {
+            currentTopSort = type;
+            document.getElementById('btnSortQty').classList.toggle('active', type === 'qty');
+            document.getElementById('btnSortRev').classList.toggle('active', type === 'rev');
+            updateView(); // Re-render with new sort
+        }
+
+        function renderAggregatedTopProducts(metrics) {
+            // NEW LOGIC: Aggregate from MONTHLY data primarily to ensure "Top 10" is accurate for the period
+            // (The 'metrics' argument contains pre-aggregated data which might only have top_products for that specific chunk, 
+            // but for a Year, the Top 10 might be different than the sum of Top 10s of months).
+
+            // 1. Determine Range
+            let startM = '0000-00';
+            let endM = '9999-99';
+
+            // Try to find active filters
+            const mainStart = document.getElementById('mainFilterStart');
+            const mainEnd = document.getElementById('mainFilterEnd');
+            if (mainStart && mainEnd && !document.getElementById('chartsSection').classList.contains('hidden')) {
+                startM = mainStart.value;
+                endM = mainEnd.value;
+            }
+
+            const productMap = {};
+            const monthlyData = window.salesData['monthly'];
+
+            Object.keys(monthlyData).sort().forEach(month => {
+                if (month < startM || month > endM) return;
+
+                const mData = monthlyData[month];
+                if (!mData.all_products) return;
+
+                // Safe extract (PS may serialize as object or {value:[...]})
+                safeArray(mData.all_products).forEach(p => {
+                    const name = p['Lineitem name'];
+                    if (!productMap[name]) {
+                        productMap[name] = { name: name, qty: 0, rev: 0 };
+                    }
+                    productMap[name].qty += p['Lineitem quantity'];
+                    productMap[name].rev += p['Line_Revenue'];
+                });
+            });
+
+            const sortedProducts = Object.values(productMap)
+                .sort((a, b) => currentTopSort === 'qty' ? b.qty - a.qty : b.rev - a.rev)
+                .slice(0, 10);
+
+            const tbody = document.querySelector('#topProductsTable tbody');
+            tbody.innerHTML = '';
+
+            // Find max for bar scaling
+            const maxVal = sortedProducts.length > 0 ? (currentTopSort === 'qty' ? sortedProducts[0].qty : sortedProducts[0].rev) : 1;
+
+            sortedProducts.forEach(p => {
+                const row = document.createElement('tr');
+                const val = currentTopSort === 'qty' ? p.qty : p.rev;
+                const percent = (val / maxVal) * 100;
+
+                row.innerHTML = `
+                <td>
+                    <div style="font-weight:600; font-size:13px;">${p.name}</div>
+                    <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${percent}%"></div></div>
+                </td>
+                <td style="width:100px; text-align:right">${p.qty}</td>
+                <td style="width:120px; text-align:right">${formatCurrency(p.rev)}</td>
+            `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderAggregatedDiscounts(metrics) {
+            const discMap = {};
+            metrics.forEach(period => {
+                if (!period.top_discounts) return;
+                Object.keys(period.top_discounts).forEach(code => {
+                    const count = period.top_discounts[code];
+                    discMap[code] = (discMap[code] || 0) + count;
+                });
+            });
+
+            const sortedDiscs = Object.keys(discMap)
+                .map(k => ({ code: k, count: discMap[k] }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+
+            const tbody = document.querySelector('#topDiscountsTable tbody');
+            tbody.innerHTML = '';
+
+            sortedDiscs.forEach(d => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td style="font-family:monospace; color:var(--secondary)">${d.code}</td><td style="text-align:right">${d.count}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+
+
+    </script>
+
+    <script>
+        // --- Objectives View Logic ---
+
+        // EXCLUSION STATE
+        let excludedProducts = new Set();
+
+        function excludeObjectiveProduct(name) {
+            excludedProducts.add(name);
+            renderObjectivesProductView();
+        }
+
+        function restoreObjectiveProduct(name) {
+            excludedProducts.delete(name);
+            renderObjectivesProductView();
+        }
+
+        // OBJECTIVES TOTAL QUARTERLY STATE
+        let objTotalQuarter = 0; // 0=All, 1-4=Q1-Q4
+
+        function setObjTotalQuarter(q) {
+            objTotalQuarter = q;
+            // Update UI buttons
+            document.querySelectorAll('.btn-q-filter').forEach(btn => btn.classList.remove('active'));
+            const btnId = q === 0 ? 'btnQAll' : 'btnQ' + q;
+            const btn = document.getElementById(btnId);
+            if (btn) btn.classList.add('active');
+
+            renderObjectivesTotalView();
+        }
+
+        const productMapping = {
+            "Longevitate": [
+                "Vitamina D3", "Omega 3", "Calciu vegetal", "Spirulină", "Astaxanthin", "Resveratrol", "Probiotice", "Curcumin", "Berberină", "Spermidină", "NADH", "Acid Alfa Lipoic", "Fisetin", "Coenzima Q10", "Quercetin", "Detox", "Niacinamide", "TMG", "Senior", "Perimenopauză", "Menopauză", "Fertilitate", "Pachet Suplimente Esențiale", "Seleniu", "Pachet Suplimente pentru Păr", "Colesterol", "Articulații", "Longevitate", "Peter Attia", "Inimă", "Protocol 6 Iuni", "Skincare", "NMN"
+            ],
+            "Imunitate": [
+                "Vitamina D3", "Omega 3", "Vitamina C", "B-Complex", "Spirulină", "Astaxanthin", "Probiotice", "Curcumin", "Fier", "Berberină", "Silimarină", "Quercetin", "Folat", "Imunitate", "Zinc", "Seleniu", "Microbiom", "Digestiv", "Alergii", "Dentar"
+            ],
+            "Sport": [
+                "Vitamina D3", "Omega 3", "Colagen", "Calciu", "Rhodiola", "Ginseng", "Magneziu", "Curcumin", "NADH", "Acid Alfa Lipoic", "Creatină", "Coenzima Q10", "Fitness", "Triatlon", "Alergători", "Energie", "Huberman"
+            ],
+            "Somn & Recuperare": [
+                "B-Complex", "Colagen", "Rhodiola", "Probiotice", "Magneziu", "Ashwagandha", "Griffonia", "Melatonină", "Silimarină", "Antistres", "Vitex", "Somn", "Folat"
+            ],
+            "Focus-Mood-Energy": [
+                "B-Complex", "Bacopa", "Rhodiola", "Ginseng", "Ashwagandha", "Griffonia", "Lion's Mane", "NADH", "Maca", "Concentrare", "Niacinamide", "Energie", "TMG", "Slăbire", "Lecitină", "NeuroMinder", "Oboseală", "Memorie"
+            ],
+            "Altele": [
+                "Gymnema", "Cărbune", "Antiacid", "Lecitină", "îngrășare", "Ginko", "Gaba", "Theanine", "Green Tea", "Taurine"
+            ]
+        };
+
+        function getObjectivesForProduct(productName) {
+            const objectives = [];
+            for (const [objective, keywords] of Object.entries(productMapping)) {
+                if (keywords.some(k => productName.toLowerCase().includes(k.toLowerCase()))) {
+                    objectives.push(objective);
+                }
+            }
+            if (objectives.length === 0) return ["Altele"];
+            return objectives;
+        }
+
+
+
+        // Sorting State
+        let objSortCol = 'rev'; // 'rev' or 'qty'
+        let objSortDir = 'desc'; // 'asc' or 'desc'
+
+        function toggleObjSort(col) {
+            if (objSortCol === col) {
+                objSortDir = objSortDir === 'desc' ? 'asc' : 'desc';
+            } else {
+                objSortCol = col;
+                objSortDir = 'desc';
+            }
+            renderObjectivesProductView();
+        }
+
+        function renderObjectivesProductView() {
+            const chk2025 = document.getElementById('chk2025');
+            const chk2026 = document.getElementById('chk2026');
+            const monthSelector = document.getElementById('objProdMonthSelector');
+
+            const is2025 = chk2025 ? chk2025.checked : false;
+            const is2026 = chk2026 ? chk2026.checked : false;
+
+            // Current selection
+            const currentMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            const searchInput = document.getElementById('objProdSearch');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+            if (!window.salesData || !window.salesData.monthly) return;
+
+            // 1. Identify valid months based on Year checkboxes
+            const allMonths = Object.keys(window.salesData.monthly).sort();
+            const validMonths = allMonths.filter(m => {
+                const year = m.substring(0, 4);
+                if (year === '2025' && is2025) return true;
+                if (year === '2026' && is2026) return true;
+                return false;
+            });
+
+            // 2. Update Dropdown Options
+            if (monthSelector) {
+                monthSelector.innerHTML = '';
+                const optAll = document.createElement('option');
+                optAll.value = 'all';
+                optAll.textContent = 'Toată perioada';
+                monthSelector.appendChild(optAll);
+                validMonths.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    monthSelector.appendChild(opt);
+                });
+                // Restore selection if valid
+                if (validMonths.includes(currentMonthSelection)) {
+                    monthSelector.value = currentMonthSelection;
+                } else {
+                    monthSelector.value = 'all';
+                }
+            }
+
+            // 3. Filter Data
+            const productStats = {}; // { Key: { name, categories: Set, qty, rev } }
+
+            // Re-read selection in case it was reset
+            const effectiveMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            validMonths.forEach(month => {
+                if (effectiveMonthSelection !== 'all' && month !== effectiveMonthSelection) return;
+
+                const monthData = window.salesData.monthly[month];
+                if (monthData && monthData.all_products) {
+                    safeArray(monthData.all_products).forEach(p => {
+                        const revenue = p['Line_Revenue'] || 0;
+                        const qty = p['Lineitem quantity'] || 0;
+                        const pName = p['Lineitem name'];
+
+                        // Exclusion check
+                        if (excludedProducts.has(pName)) return;
+
+                        // Get all categories for this product
+                        const objs = getObjectivesForProduct(pName);
+
+                        if (!productStats[pName]) {
+                            productStats[pName] = { name: pName, categories: new Set(), qty: 0, rev: 0 };
+                        }
+
+                        productStats[pName].qty += qty;
+                        productStats[pName].rev += revenue;
+                        objs.forEach(o => productStats[pName].categories.add(o));
+                    });
+                }
+            });
+
+            let rows = Object.values(productStats);
+            if (searchTerm) {
+                rows = rows.filter(r => r.name.toLowerCase().includes(searchTerm));
+            }
+
+            // Sort by configured column and direction
+            rows.sort((a, b) => {
+                let valA = (objSortCol === 'qty') ? a.qty : a.rev;
+                let valB = (objSortCol === 'qty') ? b.qty : b.rev;
+
+                if (objSortDir === 'asc') {
+                    return valA - valB;
+                } else {
+                    return valB - valA;
+                }
+            });
+
+            // --- Render Excluded List ---
+            const excludedDiv = document.getElementById('excludedItemsContainer');
+            if (excludedDiv) {
+                if (excludedProducts.size > 0) {
+                    excludedDiv.style.display = 'block';
+                    excludedDiv.innerHTML = '<div style="font-size:12px; font-weight:600; color:#9ca3af; margin-bottom:5px;">Produse Excluse:</div>';
+                    const list = document.createElement('div');
+                    list.style.display = 'flex';
+                    list.style.flexWrap = 'wrap';
+                    list.style.gap = '8px';
+
+                    excludedProducts.forEach(pName => {
+                        const tag = document.createElement('div');
+                        tag.style.background = '#374151';
+                        tag.style.color = '#d1d5db';
+                        tag.style.padding = '4px 10px';
+                        tag.style.borderRadius = '15px';
+                        tag.style.fontSize = '12px';
+                        tag.style.display = 'flex';
+                        tag.style.alignItems = 'center';
+                        tag.style.gap = '6px';
+                        tag.innerHTML = `<span>${pName}</span> <span onclick="restoreObjectiveProduct('${pName.replace(/'/g, "\\'")}')" style="cursor:pointer; color:#f43f5e; font-weight:bold;">&#8634;</span>`;
+                        list.appendChild(tag);
+                    });
+                    excludedDiv.appendChild(list);
+                } else {
+                    excludedDiv.style.display = 'none';
+                }
+            }
+
+            // Rebuild Table Header (ensure standard headers with active sort indicators)
+            const thead = document.querySelector('#objectivesProductTable thead');
+            if (thead) {
+                const sortIcon = objSortDir === 'asc' ? '▲' : '▼';
+                const qtyHeader = `Cantitate ${objSortCol === 'qty' ? sortIcon : ''}`;
+                const revHeader = `Venit ${objSortCol === 'rev' ? sortIcon : ''}`;
+
+                thead.innerHTML = `
+                        <tr>
+                            <th>Produs</th>
+                            <th>Categorii</th>
+                            <th style="text-align:right; cursor:pointer; user-select:none;" onclick="toggleObjSort('qty')">${qtyHeader}</th>
+                            <th style="text-align:right; cursor:pointer; user-select:none;" onclick="toggleObjSort('rev')">${revHeader}</th>
+                            <th style="width:40px;"></th>
+                        </tr>
+                `;
+            }
+
+            const tbody = document.getElementById('objectivesProductTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+
+                rows.forEach(p => {
+                    const tr = document.createElement('tr');
+
+                    // Render Categories
+                    const cats = Array.from(p.categories).sort();
+                    let catHtml = '';
+                    const colorMap = {
+                        "Longevitate": "#60a5fa",
+                        "Imunitate": "#4ade80",
+                        "Sport": "#facc15",
+                        "Somn & Recuperare": "#a78bfa",
+                        "Focus-Mood-Energy": "#f472b6",
+                        "Altele": "#9ca3af"
+                    };
+
+                    cats.forEach(c => {
+                        const badgeColor = colorMap[c] || "#ccc";
+                        catHtml += `<span style="background:${badgeColor}; color:#111827; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold; margin-right:4px; white-space:nowrap;">${c}</span>`;
+                    });
+
+                    tr.innerHTML = `
+                        <td><div style="font-weight:600;">${p.name}</div></td>
+                        <td>${catHtml}</td>
+                        <td style="text-align:right">${p.qty}</td>
+                        <td style="text-align:right; font-weight:bold;">${formatCurrency(p.rev)}</td>
+                        <td style="text-align:center;">
+                             <button onclick="excludeObjectiveProduct('${p.name.replace(/'/g, "\\'")}')" title="Exclude din analiză" style="background:none; border:none; cursor:pointer; font-size:16px; opacity:0.6; transition:opacity 0.2s;">🗑️</button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // --- Obiective Total View ---
+        function renderObjectivesTotalView() {
+            const chk2025 = document.getElementById('objTotalChk2025');
+            const chk2026 = document.getElementById('objTotalChk2026');
+            const monthSelector = document.getElementById('objTotalMonthSelector');
+
+            const is2025 = chk2025 ? chk2025.checked : false;
+            const is2026 = chk2026 ? chk2026.checked : false;
+            const currentMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            if (!window.salesData || !window.salesData.monthly) return;
+
+            // 1. Find valid months
+            const allMonths = Object.keys(window.salesData.monthly).sort();
+            const validMonths = allMonths.filter(m => {
+                const year = m.substring(0, 4);
+
+                // Quarter Filter
+                if (objTotalQuarter > 0) {
+                    const monthPart = parseInt(m.substring(5, 7));
+                    const qStart = (objTotalQuarter - 1) * 3 + 1;
+                    const qEnd = qStart + 2;
+                    if (monthPart < qStart || monthPart > qEnd) return false;
+                }
+
+                if (year === '2025' && is2025) return true;
+                if (year === '2026' && is2026) return true;
+                return false;
+            });
+
+            // 2. Update month dropdown
+            if (monthSelector) {
+                monthSelector.innerHTML = '';
+                const optAll = document.createElement('option');
+                optAll.value = 'all';
+                optAll.textContent = 'Toată perioada';
+                monthSelector.appendChild(optAll);
+                validMonths.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    monthSelector.appendChild(opt);
+                });
+                if (validMonths.includes(currentMonthSelection)) {
+                    monthSelector.value = currentMonthSelection;
+                } else {
+                    monthSelector.value = 'all';
+                }
+            }
+
+            const effectiveMonth = monthSelector ? monthSelector.value : 'all';
+
+            // 3. Aggregate by objective
+            const objectiveStats = {};
+            // Initialize all objectives from productMapping
+            for (const objName of Object.keys(productMapping)) {
+                objectiveStats[objName] = { name: objName, qty: 0, rev: 0 };
+            }
+
+            validMonths.forEach(month => {
+                if (effectiveMonth !== 'all' && month !== effectiveMonth) return;
+                const monthData = window.salesData.monthly[month];
+                if (monthData && monthData.all_products) {
+                    safeArray(monthData.all_products).forEach(p => {
+                        const revenue = p['Line_Revenue'] || 0;
+                        const qty = p['Lineitem quantity'] || 0;
+                        const pName = p['Lineitem name'];
+
+                        // Exclusion check (Added per user request)
+                        if (excludedProducts.has(pName)) return;
+
+                        const objs = getObjectivesForProduct(pName);
+                        objs.forEach(o => {
+                            if (!objectiveStats[o]) {
+                                objectiveStats[o] = { name: o, qty: 0, rev: 0 };
+                            }
+                            objectiveStats[o].qty += qty;
+                            objectiveStats[o].rev += revenue;
+                        });
+                    });
+                }
+            });
+
+            // 4. Calculate totals for percentages
+            const rows = Object.values(objectiveStats).sort((a, b) => b.rev - a.rev);
+            const totalQty = rows.reduce((sum, r) => sum + r.qty, 0);
+            const totalRev = rows.reduce((sum, r) => sum + r.rev, 0);
+
+            // 5. Render table
+            const colorMap = {
+                "Longevitate": "#60a5fa",
+                "Imunitate": "#4ade80",
+                "Sport": "#facc15",
+                "Somn & Recuperare": "#a78bfa",
+                "Focus-Mood-Energy": "#f472b6",
+                "Altele": "#9ca3af"
+            };
+
+            const tbody = document.getElementById('objectivesTotalTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+
+                rows.forEach(r => {
+                    const pctQty = totalQty > 0 ? ((r.qty / totalQty) * 100).toFixed(1) : '0.0';
+                    const pctRev = totalRev > 0 ? ((r.rev / totalRev) * 100).toFixed(1) : '0.0';
+                    const badgeColor = colorMap[r.name] || '#6b7280';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="width:4px; height:28px; border-radius:2px; background:${badgeColor};"></span>
+                                <span style="font-weight:600; font-size:14px;">${r.name}</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right; font-weight:600;">${formatNumber(r.qty)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                <div style="width:80px; height:6px; background:#374151; border-radius:3px; overflow:hidden;">
+                                    <div style="width:${pctQty}%; height:100%; background:${badgeColor}; border-radius:3px;"></div>
+                                </div>
+                                <span style="min-width:45px; color:#d1d5db;">${pctQty}%</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right; font-weight:700;">${formatCurrency(r.rev)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                <div style="width:80px; height:6px; background:#374151; border-radius:3px; overflow:hidden;">
+                                    <div style="width:${pctRev}%; height:100%; background:${badgeColor}; border-radius:3px;"></div>
+                                </div>
+                                <span style="min-width:45px; color:#d1d5db;">${pctRev}%</span>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Total row
+                const totalTr = document.createElement('tr');
+                totalTr.style.borderTop = '2px solid #4b5563';
+                totalTr.style.fontWeight = '700';
+                totalTr.innerHTML = `
+                    <td style="font-size:14px; color:var(--primary);">TOTAL</td>
+                    <td style="text-align:right;">${formatNumber(totalQty)}</td>
+                    <td style="text-align:right; color:#9ca3af;">100%</td>
+                    <td style="text-align:right;">${formatCurrency(totalRev)}</td>
+                    <td style="text-align:right; color:#9ca3af;">100%</td>
+                `;
+                tbody.appendChild(totalTr);
+            }
+        }
+
+        function closeObjectiveModal() {
+            document.getElementById('objectiveModal').style.display = 'none';
+        }
+
+        // === REFRESH / RELOAD SALES DATA ===
+        function refreshSalesData() {
+            const btn = document.getElementById('btnRefresh');
+            const status = document.getElementById('refreshStatus');
+
+            btn.classList.add('loading');
+            status.className = 'refresh-status';
+            status.style.display = 'none';
+
+            const isLocalServer = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+            if (isLocalServer) {
+                // ── LIVE UPDATE: Call Python server to fetch from Shopify ──
+                status.className = 'refresh-status';
+                status.style.display = 'inline-block';
+                status.textContent = '⏳ Se descarcă comenzile din Shopify...';
+                status.style.background = 'rgba(139, 92, 246, 0.15)';
+                status.style.color = '#a78bfa';
+
+                fetch('/api/update')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show how many orders were fetched
+                            const months = Object.entries(data.months || {});
+                            const summary = months.map(([k, v]) => `${k}: ${v.orders} comenzi, ${v.net_sales.toLocaleString('ro-RO')} RON`).join('\n');
+                            console.log('Update results:\n' + summary);
+
+                            // Now reload the JS data file
+                            reloadDataFile(btn, status, `✅ Actualizat la ${data.updated_at}`);
+                        } else {
+                            throw new Error(data.error || 'Update failed');
+                        }
+                    })
+                    .catch(err => {
+                        btn.classList.remove('loading');
+                        status.className = 'refresh-status error';
+                        status.textContent = '❌ Eroare: ' + err.message;
+                        status.style.display = 'inline-block';
+                        console.error('Shopify update error:', err);
+                    });
+            } else {
+                // ── OFFLINE: Just reload the JS file (file:// mode) ──
+                reloadDataFile(btn, status, '✅ Reîncărcat din fișier!');
+            }
+        }
+
+        function reloadDataFile(btn, status, successMsg) {
+            // Remove the old script tag
+            const oldScript = document.querySelector('script[src^="sales_data_2024_2025.js"]');
+            if (oldScript) oldScript.remove();
+
+            // Create a new script tag with cache-busting timestamp
+            const newScript = document.createElement('script');
+            newScript.src = 'sales_data_2024_2025.js?v=' + Date.now();
+
+            newScript.onload = function () {
+                try {
+                    if (typeof window.salesData !== 'undefined') {
+                        // Destroy existing charts to avoid Chart.js conflicts
+                        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+                        if (mixChartInstance) { mixChartInstance.destroy(); mixChartInstance = null; }
+                        if (productModalChart) { productModalChart.destroy(); productModalChart = null; }
+
+                        // Clear dropdowns before re-populating
+                        const startSel = document.getElementById('filterStartMonth');
+                        const endSel = document.getElementById('filterEndMonth');
+                        const mainStart = document.getElementById('mainFilterStart');
+                        const mainEnd = document.getElementById('mainFilterEnd');
+                        if (startSel) startSel.innerHTML = '';
+                        if (endSel) endSel.innerHTML = '';
+                        if (mainStart) mainStart.innerHTML = '';
+                        if (mainEnd) mainEnd.innerHTML = '';
+
+                        // Clear objective selectors too
+                        const objProdSel = document.getElementById('objProdMonthSelector');
+                        const objTotalSel = document.getElementById('objTotalMonthSelector');
+                        if (objProdSel) objProdSel.innerHTML = '<option value="all">Toată perioada</option>';
+                        if (objTotalSel) objTotalSel.innerHTML = '<option value="all">Toată perioada</option>';
+
+                        // Update report date
+                        const reportDate = document.getElementById('reportDate');
+                        if (reportDate && window.salesData.generated_at) {
+                            reportDate.textContent = 'Generat la: ' + window.salesData.generated_at;
+                        }
+
+                        // Re-initialize dashboard
+                        allProductsCache = [];
+                        initDashboard();
+
+                        btn.classList.remove('loading');
+                        status.className = 'refresh-status success';
+                        status.textContent = successMsg;
+                        status.style.display = 'inline-block';
+
+                        // Hide success message after 8 seconds
+                        setTimeout(() => {
+                            status.style.display = 'none';
+                        }, 8000);
+                    } else {
+                        throw new Error('salesData not found');
+                    }
+                } catch (err) {
+                    btn.classList.remove('loading');
+                    status.className = 'refresh-status error';
+                    status.textContent = '❌ Eroare la reîncărcare';
+                    status.style.display = 'inline-block';
+                    console.error('Refresh error:', err);
+                }
+            };
+
+            newScript.onerror = function () {
+                btn.classList.remove('loading');
+                status.className = 'refresh-status error';
+                status.textContent = '❌ Fișierul de date nu a fost găsit';
+                status.style.display = 'inline-block';
+            };
+
+            document.body.appendChild(newScript);
+        }
+
+
+        // ═══════════════════════════════════════════════
+        // WEEKLY REPORT FUNCTIONS
+        // ═══════════════════════════════════════════════
+
+        function getWeeksFromDailyData() {
+            const daily = window.salesData.daily || {};
+            const dayKeys = Object.keys(daily).sort();
+            if (dayKeys.length === 0) return [];
+
+            // Find range
+            const first = new Date(dayKeys[0] + 'T00:00:00');
+            const last = new Date(dayKeys[dayKeys.length - 1] + 'T00:00:00');
+
+            // Start from Monday of the first day's week
+            const startMonday = new Date(first);
+            const dayOfWeek = startMonday.getDay();
+            const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            startMonday.setDate(startMonday.getDate() + diff);
+
+            const weeks = [];
+            let current = new Date(startMonday);
+            let weekNum = 1;
+
+            while (current <= last) {
+                const monday = new Date(current);
+                const sunday = new Date(current);
+                sunday.setDate(sunday.getDate() + 6);
+
+                const days = [];
+                for (let i = 0; i < 7; i++) {
+                    const d = new Date(monday);
+                    d.setDate(d.getDate() + i);
+                    days.push(formatYMD(d));
+                }
+
+                const label = `S${weekNum}: ${formatDateRo(monday)} – ${formatDateRo(sunday)}`;
+                weeks.push({ label, days, monday: formatYMD(monday) });
+
+                current.setDate(current.getDate() + 7);
+                weekNum++;
+            }
+
+            return weeks;
+        }
+
+        function formatDateRo(date) {
+            const d = date.getDate();
+            const months = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${d} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function formatYMD(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        const DAY_NAMES = ['Duminică', 'Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă'];
+
+        function aggregateWeekData(days) {
+            const daily = window.salesData.daily || {};
+            const result = {
+                net_sales: 0, gross_sales: 0, valid_orders: 0, canceled_orders: 0,
+                discounted_orders: 0, refunded_count: 0, shipping: 0, taxes: 0,
+                discounts_value: 0, total_refunds: 0,
+                products: {}, discount_codes: {},
+                dailyBreakdown: []
+            };
+
+            for (const dayKey of days) {
+                const d = daily[dayKey];
+                const dayDate = new Date(dayKey + 'T00:00:00');
+                const dayName = DAY_NAMES[dayDate.getDay()];
+
+                if (d) {
+                    result.net_sales += d.net_sales || 0;
+                    result.gross_sales += d.gross_sales || 0;
+                    result.valid_orders += d.valid_orders || 0;
+                    result.canceled_orders += d.canceled_orders || 0;
+                    result.discounted_orders += d.discounted_orders || 0;
+                    result.refunded_count += d.refunded_count || 0;
+                    result.shipping += d.shipping || 0;
+                    result.taxes += d.taxes || 0;
+                    result.discounts_value += d.discounts_value || 0;
+                    result.total_refunds += d.total_refunds || 0;
+
+                    // Products
+                    for (const p of (d.products || [])) {
+                        if (!result.products[p.name]) result.products[p.name] = { name: p.name, qty: 0, rev: 0 };
+                        result.products[p.name].qty += p.qty;
+                        result.products[p.name].rev += p.rev;
+                    }
+
+                    // Discount codes
+                    for (const [code, count] of Object.entries(d.discount_codes || {})) {
+                        result.discount_codes[code] = (result.discount_codes[code] || 0) + count;
+                    }
+
+                    result.dailyBreakdown.push({
+                        dayName, date: dayKey,
+                        net_sales: d.net_sales || 0,
+                        gross_sales: d.gross_sales || 0,
+                        valid_orders: d.valid_orders || 0,
+                        discounted_orders: d.discounted_orders || 0,
+                        canceled_orders: d.canceled_orders || 0,
+                        aov: d.aov || 0
+                    });
+                } else {
+                    result.dailyBreakdown.push({
+                        dayName, date: dayKey,
+                        net_sales: 0, gross_sales: 0, valid_orders: 0, discounted_orders: 0, canceled_orders: 0, aov: 0
+                    });
+                }
+            }
+
+            result.aov = result.valid_orders > 0 ? result.net_sales / result.valid_orders : 0;
+            return result;
+        }
+
+        let cachedWeeks = [];
+
+        function initWeeklyView() {
+            cachedWeeks = getWeeksFromDailyData();
+            const sel = document.getElementById('weekSelector');
+            const compSel = document.getElementById('weekCompareSelector');
+
+            if (cachedWeeks.length === 0) {
+                sel.innerHTML = '<option>Nu există date zilnice — apasă Actualizează</option>';
+                compSel.innerHTML = '<option>-</option>';
+                return;
+            }
+
+            // Populate selectors
+            sel.innerHTML = '';
+            compSel.innerHTML = '<option value="">— Selectează săptămâna —</option>';
+
+            cachedWeeks.forEach((w, i) => {
+                sel.add(new Option(w.label, i));
+                compSel.add(new Option(w.label, i));
+            });
+
+            // Default to most recent week
+            sel.value = cachedWeeks.length - 1;
+
+            renderWeeklyView();
+        }
+
+        let currentWeeklyTopSort = 'rev';
+
+        function toggleWeeklyTopSort(type) {
+            currentWeeklyTopSort = type;
+            const btnQty = document.getElementById('btnWgSortQty');
+            const btnRev = document.getElementById('btnWgSortRev');
+            if (btnQty) btnQty.classList.toggle('active', type === 'qty');
+            if (btnRev) btnRev.classList.toggle('active', type === 'rev');
+            renderWeeklyView();
+        }
+
+        function renderWeeklyView() {
+            const sel = document.getElementById('weekSelector');
+            const weekIdx = parseInt(sel.value);
+            if (isNaN(weekIdx) || !cachedWeeks[weekIdx]) return;
+
+            const week = cachedWeeks[weekIdx];
+            const data = aggregateWeekData(week.days);
+
+            // Update KPIs
+            document.getElementById('wkNetSales').textContent = formatCurrency(data.gross_sales);
+            document.getElementById('wkOrders').textContent = formatNumber(data.valid_orders);
+            document.getElementById('wkDiscounted').textContent = formatNumber(data.discounted_orders);
+            document.getElementById('wkCanceled').textContent = formatNumber(data.canceled_orders + data.refunded_count);
+            document.getElementById('wkAov').textContent = formatCurrency(data.aov);
+
+            // Daily breakdown table
+            const tbody = document.getElementById('weeklyDailyBody');
+            const tfoot = document.getElementById('weeklyDailyFoot');
+            tbody.innerHTML = '';
+
+            for (const day of data.dailyBreakdown) {
+                const isFuture = new Date(day.date + 'T23:59:59') > new Date();
+                const opacity = isFuture ? 'opacity:0.4;' : '';
+                tbody.innerHTML += `<tr style="${opacity}">
+                    <td><strong>${day.dayName}</strong></td>
+                    <td>${day.date}</td>
+                    <td style="text-align:right">${formatCurrency(day.gross_sales)}</td>
+                    <td style="text-align:right">${day.valid_orders}</td>
+                    <td style="text-align:right">${day.discounted_orders}</td>
+                    <td style="text-align:right">${day.canceled_orders}</td>
+                    <td style="text-align:right">${formatCurrency(day.aov)}</td>
+                </tr>`;
+            }
+
+            // Totals row
+            tfoot.innerHTML = `<tr style="font-weight:700; border-top:2px solid #4b5563; background:rgba(139,92,246,0.08);">
+                <td colspan="2">TOTAL</td>
+                <td style="text-align:right">${formatCurrency(data.net_sales)}</td>
+                <td style="text-align:right">${data.valid_orders}</td>
+                <td style="text-align:right">${data.discounted_orders}</td>
+                <td style="text-align:right">${data.canceled_orders + data.refunded_count}</td>
+                <td style="text-align:right">${formatCurrency(data.aov)}</td>
+            </tr>`;
+
+            // Top products
+            const prodBody = document.getElementById('weeklyTopProductsBody');
+            const sortedProducts = Object.values(data.products)
+                .sort((a, b) => currentWeeklyTopSort === 'qty' ? b.qty - a.qty : b.rev - a.rev)
+                .slice(0, 10);
+            prodBody.innerHTML = sortedProducts.map(p =>
+                `<tr><td>${p.name}</td><td style="text-align:right; font-weight:${currentWeeklyTopSort === 'qty' ? 'bold' : 'normal'}">${p.qty}</td><td style="text-align:right; font-weight:${currentWeeklyTopSort === 'rev' ? 'bold' : 'normal'}">${formatCurrency(p.rev)}</td></tr>`
+            ).join('');
+            if (sortedProducts.length === 0) prodBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#6b7280;">Fără date</td></tr>';
+
+            // Top discounts
+            const discBody = document.getElementById('weeklyTopDiscountsBody');
+            const sortedDiscounts = Object.entries(data.discount_codes).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            discBody.innerHTML = sortedDiscounts.map(([code, count]) =>
+                `<tr><td><code style="color:#f59e0b">${code}</code></td><td style="text-align:right">${count}</td></tr>`
+            ).join('');
+            if (sortedDiscounts.length === 0) discBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#6b7280;">Fără coduri</td></tr>';
+
+            // Also render comparison if selected
+            renderWeekComparison();
+        }
+
+        function renderWeekComparison() {
+            const compSel = document.getElementById('weekCompareSelector');
+            const container = document.getElementById('weekComparisonContent');
+            const compIdx = parseInt(compSel.value);
+
+            if (isNaN(compIdx) || !cachedWeeks[compIdx]) {
+                container.innerHTML = '<p style="color:#6b7280; text-align:center; padding:20px;">Selectează o săptămână pentru comparație</p>';
+                return;
+            }
+
+            const mainSel = document.getElementById('weekSelector');
+            const mainIdx = parseInt(mainSel.value);
+            if (mainIdx === compIdx) {
+                container.innerHTML = '<p style="color:#f59e0b; text-align:center; padding:20px;">⚠️ Selectează o săptămână diferită pentru comparație</p>';
+                return;
+            }
+
+            const mainWeek = cachedWeeks[mainIdx];
+            const compWeek = cachedWeeks[compIdx];
+            const mainData = aggregateWeekData(mainWeek.days);
+            const compData = aggregateWeekData(compWeek.days);
+
+            function delta(a, b) {
+                if (b === 0) return a > 0 ? '+∞' : '0%';
+                const pct = ((a - b) / Math.abs(b)) * 100;
+                const sign = pct >= 0 ? '+' : '';
+                const color = pct >= 0 ? '#10b981' : '#ef4444';
+                const arrow = pct >= 0 ? '▲' : '▼';
+                return `<span style="color:${color}; font-weight:600;">${arrow} ${sign}${pct.toFixed(1)}%</span>`;
+            }
+
+            const metrics = [
+                { label: 'Vânzări Totale', a: mainData.net_sales, b: compData.net_sales, fmt: formatCurrency },
+                { label: 'Comenzi Valide', a: mainData.valid_orders, b: compData.valid_orders, fmt: formatNumber },
+                { label: 'Comenzi cu Reducere', a: mainData.discounted_orders, b: compData.discounted_orders, fmt: formatNumber },
+                { label: 'Anulate/Retururi', a: mainData.canceled_orders + mainData.refunded_count, b: compData.canceled_orders + compData.refunded_count, fmt: formatNumber },
+                { label: 'AOV', a: mainData.aov, b: compData.aov, fmt: formatCurrency },
+            ];
+
+            let html = `<table style="width:100%;">
+                <thead><tr>
+                    <th>Metric</th>
+                    <th style="text-align:right; color:#8b5cf6;">${mainWeek.label.split(':')[0]}</th>
+                    <th style="text-align:right; color:#f59e0b;">${compWeek.label.split(':')[0]}</th>
+                    <th style="text-align:right">Δ</th>
+                </tr></thead><tbody>`;
+
+            for (const m of metrics) {
+                html += `<tr>
+                    <td>${m.label}</td>
+                    <td style="text-align:right">${m.fmt(m.a)}</td>
+                    <td style="text-align:right">${m.fmt(m.b)}</td>
+                    <td style="text-align:right">${delta(m.a, m.b)}</td>
+                </tr>`;
+            }
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // ═══════════════════════════════════════════════
+        // COMPARISON MODE FOR LUNAR/TRIMESTRIAL/ANUAL
+        // ═══════════════════════════════════════════════
+
+        function toggleCompareMode() {
+            compareMode = !compareMode;
+            const btn = document.getElementById('btnCompareToggle');
+            const filters = document.getElementById('compareFilters');
+
+            if (compareMode) {
+                btn.classList.add('active');
+                btn.textContent = '✕ Închide comparația';
+                filters.style.display = 'flex';
+
+                // Populate compare dropdowns with same options
+                const mainStart = document.getElementById('mainFilterStart');
+                const cmpStart = document.getElementById('compareFilterStart');
+                const cmpEnd = document.getElementById('compareFilterEnd');
+                cmpStart.innerHTML = mainStart.innerHTML;
+                cmpEnd.innerHTML = document.getElementById('mainFilterEnd').innerHTML;
+
+                // Default to previous period range
+                const opts = Array.from(mainStart.options).map(o => o.value);
+                if (opts.length >= 2) {
+                    cmpStart.value = opts[0];
+                    cmpEnd.value = opts[Math.max(0, opts.length - 2)];
+                }
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '🔄 Compară cu...';
+                filters.style.display = 'none';
+            }
+
+            updateView();
+        }
+
+    </script>
+
+
+</body>
+
+</html>

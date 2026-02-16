@@ -1,0 +1,16 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+
+# Sensitive Scripts (Contains/Requires Tokens)
+**/fetch_shopify_data.py
+**/debug_tags.ps1
+
+# Checkpoints
+.git_backup

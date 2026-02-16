@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zitamine Data Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Tiempos+Headline:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --brand-primary: #ef921d;
+            --brand-navy: #002137;
+            --brand-navy-light: #0d3b5c;
+            --text-white: #ffffff;
+            --text-gray: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #00121f;
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background */
+        .bg-glow {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(239, 146, 29, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 33, 55, 0.4) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            padding: 40px 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            filter: drop-shadow(0 0 10px rgba(239, 146, 29, 0.3));
+        }
+
+        .header-title {
+            font-family: 'Tiempos Headline', serif;
+            font-size: 24px;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-section {
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Tiempos Headline', serif;
+            font-size: 56px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            font-size: 18px;
+            color: var(--text-gray);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding-bottom: 80px;
+        }
+
+        .project-card {
+            background: rgba(0, 33, 55, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 32px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 33, 55, 0.8);
+            border-color: rgba(239, 146, 29, 0.4);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .project-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(239, 146, 29, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--brand-primary);
+        }
+
+        .project-card h3 {
+            font-size: 24px;
+            color: var(--text-white);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .project-card p {
+            color: var(--text-gray);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .open-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--brand-primary);
+            font-weight: 600;
+            font-size: 15px;
+            transition: gap 0.2s ease;
+        }
+
+        .project-card:hover .open-btn {
+            gap: 12px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-live {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-beta {
+            background: rgba(239, 146, 29, 0.1);
+            color: #ef921d;
+            border: 1px solid rgba(239, 146, 29, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <header>
+        <div class="logo">
+            <!-- Linking to the logo in dashboard folder -->
+            <img src="DASHBOARD%20ZITAMINE/logo-zitamine.webp" alt="Zitamine Logo">
+        </div>
+        <div class="header-title">Data Portfolio</div>
+    </header>
+
+    <main>
+        <div class="hero-section">
+            <h1>Analytics &<br>Sales Reports</h1>
+            <p class="subtitle">Centralized hub for Zitamine's performance metrics, sales analysis, and customer
+                conversion insights.</p>
+        </div>
+
+        <div class="projects-grid">
+            <!-- 1. DASHBOARD -->
+            <a href="DASHBOARD%20ZITAMINE/Zitamine_Sales_Dashboard.html" class="project-card">
+                <div class="status-badge status-live">Live • v2.0</div>
+                <div class="project-icon">📊</div>
+                <h3>Sales Dashboard</h3>
+                <p>Interactive dashboard covering Sales Metrics, Customer Cohorts, Conversion Funnels (OTP to Sub), and
+                    Churn Analysis.</p>
+                <div class="open-btn">
+                    Deschide Dashboard
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <!-- 2. SALES REPORT (Detailed) -->
+            <a href="Raport_Vanzari_2024_2026/Raport_Vanzari_2024_2026.html" class="project-card">
+                <div class="status-badge status-live">Report</div>
+                <div class="project-icon">📑</div>
+                <h3>Raport Vânzări Detaliat</h3>
+                <p>Comprehensive HTML report with granular data on Objectives, Product Sales, and Month-over-Month
+                    comparisons (2024-2026).</p>
+                <div class="open-btn">
+                    Deschide Raport
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <!-- 3. CONVERSION ANALYSIS -->
+            <a href="ANALIZA%20CONVERSIE%20SESIUNI%20ZITAMINE/Analiza_Sesiuni_Conversie.html" class="project-card">
+                <div class="status-badge status-beta">Analysis</div>
+                <div class="project-icon">🔍</div>
+                <h3>Analiză Conversie & Sesiuni</h3>
+                <p>Deep dive into Microsoft Clarity sessions, identifying friction points in the checkout flow and user
+                    behavior patterns.</p>
+                <div class="open-btn">
+                    Deschide Analiza
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </main>
+</body>
+
+</html>

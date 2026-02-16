@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport Vânzări 2024-2025 | Zitamine</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            /* Zitamine Purple */
+            --secondary: #10b981;
+            /* Success Green */
+            --bg-dark: #111827;
+            --bg-card: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #f43f5e;
+            /* Rose for alerts/cancels */
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .last-update {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid #374151;
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            background: #374151;
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Cards Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #374151;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .card .subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .val-positive {
+            color: var(--secondary);
+        }
+
+        .val-negative {
+            color: var(--accent);
+        }
+
+        /* Charts Section */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            height: 400px;
+            position: relative;
+        }
+
+        /* Tables Section */
+        .tables-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #374151;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .prog-bar-bg {
+            background: #374151;
+            height: 6px;
+            border-radius: 3px;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .prog-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Loader */
+        #loader {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Nice Button Style */
+        .btn-nice {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 6px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-nice:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-nice:active {
+            transform: translateY(0);
+        }
+
+        /* Filter Styles */
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            background: linear-gradient(135deg, #1f2937 0%, #263040 100%);
+            border: 1px solid #374151;
+            color: #d1d5db;
+            padding: 7px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-filter:hover {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            color: white;
+            border-color: #6b7280;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-filter.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .nice-select {
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1f2937 0%, #263040 100%);
+            color: white;
+            border: 1px solid #374151;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .nice-select:hover {
+            border-color: #6b7280;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .nice-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        select option {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 8px;
+        }
+
+        /* Toggle Buttons (Volum / Venit) */
+        .btn-toggle {
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #9ca3af;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.03em;
+        }
+
+        .btn-toggle:first-child {
+            border-radius: 20px 0 0 20px;
+            border-right: none;
+        }
+
+        .btn-toggle:last-child {
+            border-radius: 0 20px 20px 0;
+        }
+
+        .btn-toggle:hover {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .btn-toggle.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+                /* Hide scrollbar but keep functionality */
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                mask-image: linear-gradient(to right, black 85%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+            }
+
+            .tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-btn {
+                flex: 0 0 auto;
+                /* Don't shrink */
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .charts-row,
+            .tables-row {
+                grid-template-columns: 1fr;
+                /* Stack vertically */
+                gap: 15px;
+            }
+
+            .chart-container {
+                height: 300px;
+                /* Slightly shorter on mobile */
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                /* 2 cols for metrics is often better than 1 big one */
+                gap: 10px;
+            }
+
+            /* If screen is very small, go to 1 col for metrics */
+            @media (max-width: 400px) {
+                .metrics-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card .value {
+                font-size: 22px;
+            }
+
+            /* Filters */
+            #dateFilters,
+            .filter-group {
+                gap: 10px;
+            }
+
+            .nice-select,
+            #productSearch,
+            select {
+                width: 100% !important;
+                max-width: none !important;
+            }
+
+            #productSearch {
+                margin-top: 10px;
+            }
+
+            /* Table Fonts */
+            th,
+            td {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            /* Hide less important columns in top tables if needed, or scroll */
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Raport Vânzări</h1>
+            <div class="last-update" id="reportDate">Se încarcă...</div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchView('monthly')">Lunar</button>
+            <button class="tab-btn" onclick="switchView('quarterly')">Trimestrial</button>
+            <button class="tab-btn" onclick="switchView('annual')">Anual</button>
+            <button class="tab-btn" onclick="switchView('products')">Produse (Detaliat)</button>
+            <button class="tab-btn" onclick="switchView('objectives_products')">Obiective per Produs 🎯</button>
+            <button class="tab-btn" onclick="switchView('objectives_total')">Obiective Total 📊</button>
+
+        </div>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <p>Se prelucrează datele...</p>
+        </div>
+
+        <div id="dashboard" class="hidden">
+            <!-- KPIs -->
+            <div class="metrics-grid">
+                <div class="card">
+                    <h3>VÂNZĂRI PRODUSE</h3>
+                    <p class="value" id="totalNetSales">-</p>
+                    <p class="subtext">Fără transport/taxe</p>
+                </div>
+                <div class="card">
+                    <h3>TOTAL ÎNCASĂRI</h3>
+                    <p class="value" id="totalGrossSales">-</p>
+                    <p class="subtext">Include transport & taxe</p>
+                </div>
+                <div class="card">
+                    <h3>Comenzi Valide</h3>
+                    <p class="value" id="totalOrders">-</p>
+                    <p class="subtext">Comenzi onorate</p>
+                </div>
+                <div class="card">
+                    <h3>ANULATE / RETURURI</h3>
+                    <p class="value val-negative" id="totalCanceled">-</p>
+                    <p class="subtext">Comenzi anulate sau returnate</p>
+                </div>
+                <div class="card">
+                    <h3>Valoare Medie / Comandă</h3>
+                    <p class="value" id="avgOrderValue">-</p>
+                    <p class="subtext">AOV (Net)</p>
+                </div>
+            </div>
+
+            <!-- Date filter for main views (Lunar/Trimestrial/Anual) -->
+            <div id="dateFilters"
+                style="display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+                <span style="font-size:13px; color:#9ca3af; font-weight:600;">Perioadă:</span>
+                <select id="mainFilterStart" onchange="updateView()" class="nice-select"></select>
+                <span style="color:#6b7280;">➞</span>
+                <select id="mainFilterEnd" onchange="updateView()" class="nice-select"></select>
+            </div>
+
+            <div id="chartsSection">
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <canvas id="mainTrendChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="mixChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tablesSection" class="tables-row">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3 style="margin:0">Top 10 Produse</h3>
+                        <div>
+                            <button id="btnSortQty" class="btn-toggle active"
+                                onclick="toggleTopSort('qty')">Volum</button>
+                            <button id="btnSortRev" class="btn-toggle" onclick="toggleTopSort('rev')">Venit</button>
+                        </div>
+                    </div>
+                    <table id="topProductsTable">
+                        <thead>
+                            <tr>
+                                <th>Produs</th>
+                                <th style="text-align:right">Cantitate</th>
+                                <th style="text-align:right">Venit (Est.)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="table-container">
+                    <h3>Top Coduri Reducere</h3>
+                    <table id="topDiscountsTable">
+                        <thead>
+                            <tr>
+                                <th>Cod</th>
+                                <th style="text-align:right">Utilizări</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Breakdown Section (Hidden by default) -->
+            <div id="productsSection" class="hidden">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div
+                        style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:20px;">
+
+                        <!-- Left Side: Title & Filters -->
+                        <div style="flex:1;">
+                            <h3 style="margin-top:0; margin-bottom:15px;">Toate Produsele (Cumulat) - <span
+                                    id="productCount">0</span> produse</h3>
+
+                            <div class="filter-group">
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2026-01', '2026-12', this)">2026</button>
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2025-01', '2025-12', this)">2025</button>
+                                <button class="btn-filter"
+                                    onclick="setQuickFilter('2024-01', '2024-12', this)">2024</button>
+                                <div style="width:100%; height:1px; background:#374151; margin:2px 0;"></div>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-01', '2025-03', this)">Q1
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-04', '2025-06', this)">Q2
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-07', '2025-09', this)">Q3
+                                    '25</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2025-10', '2025-12', this)">Q4
+                                    '25</button>
+                                <div style="width:100%; height:1px; background:#374151; margin:2px 0;"></div>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-01', '2024-03', this)">Q1
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-04', '2024-06', this)">Q2
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-07', '2024-09', this)">Q3
+                                    '24</button>
+                                <button class="btn-filter" onclick="setQuickFilter('2024-10', '2024-12', this)">Q4
+                                    '24</button>
+                                <button class="btn-filter active"
+                                    onclick="setQuickFilter('all', 'all', this)">Tot</button>
+                            </div>
+
+                            <!-- Manual Selects -->
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span style="font-size:13px; color:#aaa; margin-right:5px;">Perioada:</span>
+                                <select id="filterStartMonth" onchange="applyProductDateFilter()"
+                                    class="nice-select"></select>
+                                <span style="color:#aaa;">➞</span>
+                                <select id="filterEndMonth" onchange="applyProductDateFilter()"
+                                    class="nice-select"></select>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Search -->
+                        <div style="margin-top:5px;">
+                            <input type="text" id="productSearch" placeholder="🔍 Caută produs..."
+                                style="padding:10px 15px; border-radius:30px; border:1px solid #4b5563; background:#1f2937; color:white; width:280px; outline:none; transition:width 0.3s; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                        </div>
+                    </div>
+
+                    <div style="overflow-x:auto; margin-top:20px;">
+                        <table id="allProductsTable">
+                            <thead>
+                                <tr>
+                                    <th style="cursor:pointer" onclick="sortTable(0)">Produs ↕</th>
+                                    <th style="cursor:pointer; text-align:right" onclick="sortTable(1)">Cantitate ↕</th>
+                                    <th style="cursor:pointer; text-align:right" onclick="sortTable(2)">Venituri (Est.)
+                                        ↕</th>
+                                    <th style="text-align:center">Acțiuni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allProductsBody"></tbody>
+                        </table>
+                        <div id="paginationControls"
+                            style="margin-top:15px; display:flex; justify-content:center; gap:10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Objectives Analysis Section -->
+
+
+    <!-- OBJECTIVES TOTAL SECTION -->
+    <div id="objectivesTotalSection" class="hidden">
+        <div class="card" style="margin-bottom:20px;">
+            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center;">
+                <h3>Obiective Total &mdash; V&acirc;nz&#259;ri per Categorie (2025-2026)</h3>
+                <div
+                    style="background:rgba(139,92,246,0.08); border:1px solid rgba(139,92,246,0.2); border-radius:8px; padding:8px 14px; font-size:12px; color:#a78bfa; line-height:1.5; margin-top:4px;">
+                    &#8505;&#65039; Un produs poate apar&#539;ine mai multor categorii &mdash; totalul
+                    dep&#259;&#537;e&#537;te v&acirc;nz&#259;rile reale deoarece produsele se contorizeaz&#259; &icirc;n
+                    fiecare categorie din care fac parte.
+                </div>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="color:#9ca3af; font-size:13px; font-weight:600;">An:</span>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="objTotalChk2025" checked onchange="renderObjectivesTotalView()"
+                            style="accent-color:#8b5cf6;"> 2025
+                    </label>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="objTotalChk2026" checked onchange="renderObjectivesTotalView()"
+                            style="accent-color:#8b5cf6;"> 2026
+                    </label>
+
+                    <div style="margin-left:8px; border-left:1px solid #374151; padding-left:12px;">
+                        <select id="objTotalMonthSelector" onchange="renderObjectivesTotalView()" class="nice-select"
+                            style="max-width:170px;">
+                            <option value="all">Toată perioada</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top:20px;">
+                <table id="objectivesTotalTable">
+                    <thead>
+                        <tr>
+                            <th>Obiectiv</th>
+                            <th style="text-align:right">Cantitate</th>
+                            <th style="text-align:right">% Cantitate</th>
+                            <th style="text-align:right">Venit (RON)</th>
+                            <th style="text-align:right">% Venit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="objectivesTotalTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- OBJECTIVES PRODUCTS SECTION -->
+    <div id="objectivesProductSection" class="hidden">
+        <div class="card" style="margin-bottom:20px;">
+            <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center;">
+                <h3>Analiză Obiective per Produs (2025-2026)</h3>
+
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="color:#9ca3af; font-size:13px; font-weight:600;">An:</span>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="chk2025" checked onchange="renderObjectivesProductView()"
+                            style="accent-color:#8b5cf6;"> 2025
+                    </label>
+                    <label
+                        style="cursor:pointer; display:flex; align-items:center; gap:6px; background:linear-gradient(135deg,#1f2937,#263040); border:1px solid #374151; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; color:#d1d5db; transition:all 0.25s;">
+                        <input type="checkbox" id="chk2026" checked onchange="renderObjectivesProductView()"
+                            style="accent-color:#8b5cf6;"> 2026
+                    </label>
+
+                    <div style="margin-left:8px; border-left:1px solid #374151; padding-left:12px;">
+                        <select id="objProdMonthSelector" onchange="renderObjectivesProductView()" class="nice-select"
+                            style="max-width:170px;">
+                            <option value="all">Toată perioada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-left:auto;">
+                    <input type="text" id="objProdSearch" placeholder="🔍 Caută produs..."
+                        onkeyup="renderObjectivesProductView()"
+                        style="padding:9px 15px; border-radius:25px; border:1px solid #374151; background:linear-gradient(135deg,#1f2937,#263040); color:white; width:260px; outline:none; font-size:13px; transition:all 0.25s; box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                </div>
+            </div>
+
+            <div class="table-container" style="margin-top:20px;">
+                <table id="objectivesProductTable">
+                    <thead>
+                        <tr>
+                            <th>Produs</th>
+                            <th>Categorii</th>
+                            <th style="text-align:right">Cantitate</th>
+                            <th style="text-align:right">Venit (RON)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="objectivesProductTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Product Details -->
+    <div id="productModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+        <div
+            style="background:var(--bg-card); padding:30px; border-radius:12px; width:80%; max-width:900px; max-height:90vh; overflow-y:auto; border:1px solid #374151;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2 id="modalTitle" style="margin:0;">Detalii Produs</h2>
+                <button onclick="closeModal()"
+                    style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div class="chart-container" style="height:300px; margin-bottom:20px;">
+                <canvas id="productTrendChart"></canvas>
+            </div>
+            <table id="productMonthlyTable">
+                <thead>
+                    <tr>
+                        <th>Luna</th>
+                        <th>Cantitate</th>
+                        <th>Venit</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Load Data Script -->
+    <!-- We expect a file named 'sales_data_2024_2025.js' that defines window.salesData -->
+    <script src="../Rapoarte/Dashboard_Vanzari/sales_data_2024_2025.js?v=3"></script>
+
+    <script>
+        let currentView = 'monthly';
+        let currentTopSort = 'qty'; // 'qty' or 'rev'
+        let chartInstance = null;
+        let mixChartInstance = null;
+
+        // Formatting Helpers
+        const formatCurrency = (val) => new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON', maximumFractionDigits: 0 }).format(val);
+        const formatNumber = (val) => new Intl.NumberFormat('ro-RO').format(val);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof window.salesData !== 'undefined') {
+                initDashboard();
+            } else {
+                document.getElementById('reportDate').innerText = "Eroare: Fișierul de date 'sales_data_2024_2025.js' lipsește.";
+                document.getElementById('loader').innerHTML = "<p style='color:red'>Nu s-au putut încărca datele. Verificați dacă scriptul a rulat.</p>";
+            }
+        });
+
+        let allProductsCache = []; // Stores aggregated product data, filtered
+        let productModalChart = null;
+
+        function initDashboard() {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('reportDate').innerText = "Generat la: " + window.salesData.generated_at;
+
+            // Populate Filter Dropdowns (Products section)
+            const months = Object.keys(window.salesData['monthly']).sort();
+            const startSel = document.getElementById('filterStartMonth');
+            const endSel = document.getElementById('filterEndMonth');
+
+            months.forEach(m => {
+                startSel.add(new Option(m, m));
+                endSel.add(new Option(m, m));
+            });
+
+            if (months.length > 0) {
+                startSel.value = months[0];
+                endSel.value = months[months.length - 1];
+            }
+
+            // Main Date Filters are populated dynamically in updateView()
+
+            // Setup Search Listener
+            document.getElementById('productSearch').addEventListener('keyup', (e) => {
+                renderProductTable(1, e.target.value);
+            });
+
+            // Objectives Product View now uses checkboxes (chk2025, chk2026) and month selector
+            // No additional init needed - renderObjectivesProductView populates the month dropdown
+
+            updateView();
+        }
+
+        // --- Product Filter Logic ---
+        function setQuickFilter(start, end, btn) {
+            // Update Active Button
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+
+            const monthKeys = Object.keys(window.salesData['monthly']).sort();
+            if (monthKeys.length === 0) return;
+
+            const startSel = document.getElementById('filterStartMonth');
+            const endSel = document.getElementById('filterEndMonth');
+
+            if (start === 'all') {
+                startSel.value = monthKeys[0];
+                endSel.value = monthKeys[monthKeys.length - 1];
+            } else {
+                // Check if dates exist in data, otherwise fallback
+                startSel.value = monthKeys.includes(start) ? start : monthKeys[0];
+                endSel.value = monthKeys.includes(end) ? end : monthKeys[monthKeys.length - 1];
+            }
+
+            applyProductDateFilter();
+        }
+
+        function applyProductDateFilter() {
+            // Remove active class from buttons if manual change differs from preset? 
+            // For now keep it simple.
+
+            buildAllProductsCache();
+            renderProductTable(1, document.getElementById('productSearch').value);
+        }
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // Find button that matches click text or logic? simpler: use event target
+            // Actually, tabs logic in HTML passes 'monthly', 'quarterly', 'annual', 'products'
+
+            // Buttons: 0=Monthly, 1=Quarterly, 2=Annual, 3=Products(Detail), 4=Objectives(Sumar), 5=Objectives(Produces)
+            // But wait, in HTML:
+            // 0: Monthly
+            // 1: Quarterly
+            // 2: Annual
+            // 3: Products (Detaliat)
+            // 4: Obiective (Sumar)
+            // 5: Obiective (Produse)
+            // Ensure this matches the DOM order in .tabs container
+
+            const btns = document.querySelectorAll('.tab-btn');
+            if (view === 'monthly' && btns[0]) btns[0].classList.add('active');
+            if (view === 'quarterly' && btns[1]) btns[1].classList.add('active');
+            if (view === 'annual' && btns[2]) btns[2].classList.add('active');
+            if (view === 'products' && btns[3]) btns[3].classList.add('active');
+
+
+
+            if (view === 'objectives_products' && btns[4]) btns[4].classList.add('active');
+            if (view === 'objectives_total' && btns[5]) btns[5].classList.add('active');
+
+            updateView();
+        }
+
+        function updateView() {
+            // Hide all sections first
+            document.getElementById('chartsSection').classList.add('hidden');
+            document.getElementById('tablesSection').classList.add('hidden');
+            document.getElementById('productsSection').classList.add('hidden');
+            document.getElementById('objectivesProductSection').classList.add('hidden');
+            document.getElementById('objectivesTotalSection').classList.add('hidden');
+
+            // Show/hide Global Date Filters for main views only
+            const globalFilter = document.getElementById('dateFilters');
+            const isMainView = (currentView === 'monthly' || currentView === 'quarterly' || currentView === 'annual');
+            if (globalFilter) globalFilter.style.display = isMainView ? 'flex' : 'none';
+
+            // Also hide KPI cards for objectives views
+            const metricsGrid = document.querySelector('.metrics-grid');
+            if (metricsGrid) metricsGrid.style.display = (currentView === 'objectives_total' || currentView === 'objectives_products') ? 'none' : '';
+
+            if (currentView === 'products') {
+                document.getElementById('productsSection').classList.remove('hidden');
+                if (allProductsCache.length === 0) buildAllProductsCache();
+                renderProductTable(1);
+                return;
+            }
+
+            if (currentView === 'objectives_products') {
+                document.getElementById('objectivesProductSection').classList.remove('hidden');
+                renderObjectivesProductView();
+                return;
+            }
+
+            if (currentView === 'objectives_total') {
+                document.getElementById('objectivesTotalSection').classList.remove('hidden');
+                renderObjectivesTotalView();
+                return;
+            }
+
+            // Default Views (monthly, quarterly, annual)
+            document.getElementById('chartsSection').classList.remove('hidden');
+            document.getElementById('tablesSection').classList.remove('hidden');
+
+            const dataSet = window.salesData[currentView];
+            if (!dataSet) return;
+
+            // Dynamically populate date filter dropdowns based on current view
+            const mainStart = document.getElementById('mainFilterStart');
+            const mainEnd = document.getElementById('mainFilterEnd');
+            const allKeys = Object.keys(dataSet).sort();
+
+            if (mainStart && mainEnd) {
+                const prevStart = mainStart.value;
+                const prevEnd = mainEnd.value;
+                mainStart.innerHTML = '';
+                mainEnd.innerHTML = '';
+                allKeys.forEach(k => {
+                    mainStart.add(new Option(k, k));
+                    mainEnd.add(new Option(k, k));
+                });
+                // Restore or default
+                if (allKeys.includes(prevStart)) {
+                    mainStart.value = prevStart;
+                } else if (allKeys.length > 0) {
+                    mainStart.value = allKeys[0];
+                }
+                if (allKeys.includes(prevEnd)) {
+                    mainEnd.value = prevEnd;
+                } else if (allKeys.length > 0) {
+                    mainEnd.value = allKeys[allKeys.length - 1];
+                }
+            }
+
+            // Filter periods by selected range
+            const startVal = mainStart ? mainStart.value : '';
+            const endVal = mainEnd ? mainEnd.value : '';
+            let periods = allKeys;
+            if (startVal && endVal) {
+                periods = allKeys.filter(p => p >= startVal && p <= endVal);
+            }
+            const metrics = periods.map(p => dataSet[p]);
+
+            // 1. Calculate Aggregates for CURRENT VIEW total
+            const totalNet = metrics.reduce((acc, curr) => acc + curr.net_sales, 0); // This is Total Revenue (Net of refunds)
+            const totalShipping = metrics.reduce((acc, curr) => acc + curr.shipping, 0);
+            const totalTax = metrics.reduce((acc, curr) => acc + curr.taxes, 0);
+
+            // "Vanzari Produse" = Net Sales - Shipping - Taxes (Pure Product Revenue)
+            const productSales = totalNet - totalShipping - totalTax;
+
+            const totalOrders = metrics.reduce((acc, curr) => acc + curr.valid_orders, 0);
+            const totalCanceled = metrics.reduce((acc, curr) => acc + curr.canceled_orders, 0);
+            const totalRefundedCount = metrics.reduce((acc, curr) => acc + (curr.refunded_count || 0), 0);
+            const totalBadOrders = totalCanceled + totalRefundedCount;
+
+
+            const avgAOV = totalOrders > 0 ? totalNet / totalOrders : 0;
+
+            // Update Cards
+            document.getElementById('totalNetSales').innerText = formatCurrency(productSales);
+            document.getElementById('totalGrossSales').innerText = formatCurrency(totalNet);
+            document.getElementById('totalOrders').innerText = formatNumber(totalOrders);
+            document.getElementById('totalCanceled').innerText = formatNumber(totalBadOrders);
+            document.getElementById('avgOrderValue').innerText = formatCurrency(avgAOV);
+
+            // 2. Render Charts
+            renderTrendChart(periods, metrics);
+            renderMixChart(metrics);
+
+            // 3. Render Tables
+            renderAggregatedTopProducts(metrics);
+            renderAggregatedDiscounts(metrics);
+        }
+
+        // --- Product Detail Logic ---
+
+        function buildAllProductsCache() {
+            // Filter by selected range
+            const startM = document.getElementById('filterStartMonth').value;
+            const endM = document.getElementById('filterEndMonth').value;
+
+            // We aggregate from 'monthly' data 
+            const dataSet = window.salesData['monthly'];
+            const productMap = {};
+
+            // Iterate over all months
+            Object.keys(dataSet).sort().forEach(month => {
+                // Check Range
+                if (month < startM || month > endM) return;
+
+                const period = dataSet[month];
+                if (!period.all_products) return;
+
+                period.all_products.forEach(p => {
+                    const name = p['Lineitem name'];
+                    if (!productMap[name]) {
+                        productMap[name] = {
+                            name: name,
+                            qty: 0,
+                            rev: 0,
+                            returns: 0,
+                            history: {} // Map Month -> Stats
+                        };
+                    }
+                    productMap[name].qty += p['Lineitem quantity'];
+                    productMap[name].rev += p['Line_Revenue'];
+                    productMap[name].returns += (p['Returns_Count'] || 0);
+
+                    // Store monthly datum
+                    productMap[name].history[month] = {
+                        qty: p['Lineitem quantity'],
+                        rev: p['Line_Revenue'],
+                        returns: (p['Returns_Count'] || 0)
+                    };
+                });
+            });
+
+            allProductsCache = Object.values(productMap).sort((a, b) => b.qty - a.qty);
+        }
+
+        function renderProductTable(page = 1, query = '') {
+            const tbody = document.getElementById('allProductsBody');
+            tbody.innerHTML = '';
+
+            let filtered = allProductsCache;
+            if (query) {
+                const lowerQ = query.toLowerCase();
+                filtered = allProductsCache.filter(p => p.name.toLowerCase().includes(lowerQ));
+            }
+
+            document.getElementById('productCount').innerText = filtered.length;
+
+            // Pagination
+            const itemsPerPage = 20;
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filtered.slice(start, end);
+
+            pageItems.forEach(p => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td><span style="font-weight:600; color:var(--primary); cursor:pointer;" onclick="openProductModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span></td>
+                <td style="text-align:right">${p.qty}</td>
+                <td style="text-align:right">${formatCurrency(p.rev)}</td>
+                <td style="text-align:center"><button class="btn-nice" onclick="openProductModal('${p.name.replace(/'/g, "\\'")}')">Detalii 📊</button></td>
+            `;
+                tbody.appendChild(row);
+            });
+
+            // Pager
+            const pager = document.getElementById('paginationControls');
+            pager.innerHTML = `
+            <button ${page <= 1 ? 'disabled' : ''} onclick="renderProductTable(${page - 1}, '${query}')">« Anterior</button>
+            <span style="color:#aaa; align-self:center;">Pagina ${page} / ${totalPages || 1}</span>
+            <button ${page >= totalPages ? 'disabled' : ''} onclick="renderProductTable(${page + 1}, '${query}')">Următor »</button>
+        `;
+        }
+
+        function openProductModal(productName) {
+            const product = allProductsCache.find(p => p.name === productName);
+            if (!product) return;
+
+            document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('productModal').style.display = 'flex';
+
+            // Prepare Chart Data
+            // Sort months
+            const months = Object.keys(window.salesData['monthly']).sort();
+            const qtys = months.map(m => product.history[m] ? product.history[m].qty : 0);
+            const revs = months.map(m => product.history[m] ? product.history[m].rev : 0);
+
+            // Render Modal Chart
+            const ctx = document.getElementById('productTrendChart').getContext('2d');
+            if (productModalChart) productModalChart.destroy();
+
+            productModalChart = new Chart(ctx, {
+                type: 'bar', // Mixed chart
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Cantitate',
+                            data: qtys,
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Venituri (RON)',
+                            data: revs,
+                            backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { position: 'left', grid: { color: '#374151' } },
+                        y1: { position: 'right', grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // Populate Modal Table
+            const tbody = document.querySelector('#productMonthlyTable tbody');
+            tbody.innerHTML = '';
+            months.forEach(m => {
+                if (product.history[m]) {
+                    const stat = product.history[m];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${m}</td><td>${stat.qty}</td><td>${formatCurrency(stat.rev)}</td>`;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        // Logic for Sort Tables (Basic)
+        let sortDir = -1;
+        function sortTable(colIndex) {
+            sortDir *= -1;
+            // Re-sort cache
+            allProductsCache.sort((a, b) => {
+                let valA = colIndex === 0 ? a.name : (colIndex === 1 ? a.qty : (colIndex === 2 ? a.rev : a.returns));
+                let valB = colIndex === 0 ? b.name : (colIndex === 1 ? b.qty : (colIndex === 2 ? b.rev : b.returns));
+
+                if (valA < valB) return -1 * sortDir;
+                if (valA > valB) return 1 * sortDir;
+                return 0;
+            });
+            renderProductTable(1, document.getElementById('productSearch').value);
+        }
+
+        function renderTrendChart(labels, data) {
+            const ctx = document.getElementById('mainTrendChart').getContext('2d');
+
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Vânzări Nete (RON)',
+                            data: data.map(d => d.net_sales),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Nr. Comenzi',
+                            data: data.map(d => d.valid_orders),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0)',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { labels: { color: '#9ca3af' } },
+                        title: { display: true, text: 'Evoluție Vânzări', color: '#f3f4f6' }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderMixChart(data) {
+            const ctx = document.getElementById('mixChart').getContext('2d');
+
+            // Aggregate totals for pie chart
+            const netSales = data.reduce((acc, curr) => acc + curr.net_sales, 0);
+            const canceledVal = data.reduce((acc, curr) => acc + (curr.gross_sales * (curr.canceled_orders / (curr.total_orders || 1))), 0); // Approx canceled value
+            const shipping = data.reduce((acc, curr) => acc + curr.shipping, 0);
+            const refunds = data.reduce((acc, curr) => acc + curr.total_refunds, 0);
+
+            if (mixChartInstance) mixChartInstance.destroy();
+
+            mixChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vânzări Nete', 'Transport', 'Retururi'], // Simplified
+                    datasets: [{
+                        data: [netSales, shipping, refunds],
+                        backgroundColor: ['#8b5cf6', '#3b82f6', '#f43f5e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#9ca3af' } },
+                        title: { display: true, text: 'Distribuție Valorică', color: '#f3f4f6' }
+                    }
+                }
+            });
+        }
+
+
+
+        function toggleTopSort(type) {
+            currentTopSort = type;
+            document.getElementById('btnSortQty').classList.toggle('active', type === 'qty');
+            document.getElementById('btnSortRev').classList.toggle('active', type === 'rev');
+            updateView(); // Re-render with new sort
+        }
+
+        function renderAggregatedTopProducts(metrics) {
+            // Aggregate product stats from the metrics array
+            const productMap = {};
+
+            metrics.forEach(period => {
+                // If using 'all_products' which is more complete, but 'top_products' is pre-sliced.
+                // Better to assume 'top_products' might not be enough if we aggregate over many months 
+                // and the top 10 changes. Let's use 'all_products' if available, else 'top_products'.
+                const source = period.all_products || period.top_products || [];
+
+                source.forEach(p => {
+                    if (!productMap[p['Lineitem name']]) {
+                        productMap[p['Lineitem name']] = { qty: 0, rev: 0 };
+                    }
+                    productMap[p['Lineitem name']].qty += p['Lineitem quantity'];
+                    productMap[p['Lineitem name']].rev += p['Line_Revenue'];
+                });
+            });
+
+            const sortedProducts = Object.keys(productMap)
+                .map(key => ({ name: key, ...productMap[key] }))
+                .sort((a, b) => currentTopSort === 'qty' ? b.qty - a.qty : b.rev - a.rev)
+                .slice(0, 10);
+
+            const tbody = document.querySelector('#topProductsTable tbody');
+            tbody.innerHTML = '';
+
+            // Find max for bar scaling
+            const maxVal = sortedProducts.length > 0 ? (currentTopSort === 'qty' ? sortedProducts[0].qty : sortedProducts[0].rev) : 1;
+
+            sortedProducts.forEach(p => {
+                const row = document.createElement('tr');
+                const val = currentTopSort === 'qty' ? p.qty : p.rev;
+                const percent = (val / maxVal) * 100;
+
+                row.innerHTML = `
+                <td>
+                    <div style="font-weight:600; font-size:13px;">${p.name}</div>
+                    <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${percent}%"></div></div>
+                </td>
+                <td style="width:100px; text-align:right">${p.qty}</td>
+                <td style="width:120px; text-align:right">${formatCurrency(p.rev)}</td>
+            `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderAggregatedDiscounts(metrics) {
+            const discMap = {};
+            metrics.forEach(period => {
+                if (!period.top_discounts) return;
+                Object.keys(period.top_discounts).forEach(code => {
+                    const count = period.top_discounts[code];
+                    discMap[code] = (discMap[code] || 0) + count;
+                });
+            });
+
+            const sortedDiscs = Object.keys(discMap)
+                .map(k => ({ code: k, count: discMap[k] }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 10);
+
+            const tbody = document.querySelector('#topDiscountsTable tbody');
+            tbody.innerHTML = '';
+
+            sortedDiscs.forEach(d => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td style="font-family:monospace; color:var(--secondary)">${d.code}</td><td style="text-align:right">${d.count}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+
+
+    </script>
+
+    <script>
+        // --- Objectives View Logic ---
+        const productMapping = {
+            "Longevitate": [
+                "Vitamina D3", "Omega 3", "Calciu vegetal", "Spirulină", "Astaxanthin", "Resveratrol", "Probiotice", "Curcumin", "Berberină", "Spermidină", "NADH", "Acid Alfa Lipoic", "Fisetin", "Coenzima Q10", "Quercetin", "Detox", "Niacinamide", "TMG", "Senior", "Perimenopauză", "Menopauză", "Fertilitate", "Pachet Suplimente Esențiale", "Seleniu", "Pachet Suplimente pentru Păr", "Colesterol", "Articulații", "Longevitate", "Peter Attia", "Inimă", "Protocol 6 Iuni", "Skincare", "NMN"
+            ],
+            "Imunitate": [
+                "Vitamina D3", "Omega 3", "Vitamina C", "B-Complex", "Spirulină", "Astaxanthin", "Probiotice", "Curcumin", "Fier", "Berberină", "Silimarină", "Quercetin", "Folat", "Imunitate", "Zinc", "Seleniu", "Microbiom", "Digestiv", "Alergii", "Dentar"
+            ],
+            "Sport": [
+                "Vitamina D3", "Omega 3", "Colagen", "Calciu", "Rhodiola", "Ginseng", "Magneziu", "Curcumin", "NADH", "Acid Alfa Lipoic", "Creatină", "Coenzima Q10", "Fitness", "Triatlon", "Alergători", "Energie", "Huberman"
+            ],
+            "Somn & Recuperare": [
+                "B-Complex", "Colagen", "Rhodiola", "Probiotice", "Magneziu", "Ashwagandha", "Griffonia", "Melatonină", "Silimarină", "Antistres", "Vitex", "Somn", "Folat"
+            ],
+            "Focus-Mood-Energy": [
+                "B-Complex", "Bacopa", "Rhodiola", "Ginseng", "Ashwagandha", "Griffonia", "Lion's Mane", "NADH", "Maca", "Concentrare", "Niacinamide", "Energie", "TMG", "Slăbire", "Lecitină", "NeuroMinder", "Oboseală", "Memorie"
+            ],
+            "Altele": [
+                "Gymnema", "Cărbune", "Antiacid", "Lecitină", "îngrășare"
+            ]
+        };
+
+        function getObjectivesForProduct(productName) {
+            const objectives = [];
+            for (const [objective, keywords] of Object.entries(productMapping)) {
+                if (keywords.some(k => productName.toLowerCase().includes(k.toLowerCase()))) {
+                    objectives.push(objective);
+                }
+            }
+            if (objectives.length === 0) return ["Altele"];
+            return objectives;
+        }
+
+
+
+        // Sorting State
+        let objSortCol = 'rev'; // 'rev' or 'qty'
+        let objSortDir = 'desc'; // 'asc' or 'desc'
+
+        function toggleObjSort(col) {
+            if (objSortCol === col) {
+                objSortDir = objSortDir === 'desc' ? 'asc' : 'desc';
+            } else {
+                objSortCol = col;
+                objSortDir = 'desc';
+            }
+            renderObjectivesProductView();
+        }
+
+        function renderObjectivesProductView() {
+            const chk2025 = document.getElementById('chk2025');
+            const chk2026 = document.getElementById('chk2026');
+            const monthSelector = document.getElementById('objProdMonthSelector');
+
+            const is2025 = chk2025 ? chk2025.checked : false;
+            const is2026 = chk2026 ? chk2026.checked : false;
+
+            // Current selection
+            const currentMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            const searchInput = document.getElementById('objProdSearch');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+            if (!window.salesData || !window.salesData.monthly) return;
+
+            // 1. Identify valid months based on Year checkboxes
+            const allMonths = Object.keys(window.salesData.monthly).sort();
+            const validMonths = allMonths.filter(m => {
+                const year = m.substring(0, 4);
+                if (year === '2025' && is2025) return true;
+                if (year === '2026' && is2026) return true;
+                return false;
+            });
+
+            // 2. Update Dropdown Options
+            if (monthSelector) {
+                monthSelector.innerHTML = '';
+                const optAll = document.createElement('option');
+                optAll.value = 'all';
+                optAll.textContent = 'Toată perioada';
+                monthSelector.appendChild(optAll);
+                validMonths.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    monthSelector.appendChild(opt);
+                });
+                // Restore selection if valid
+                if (validMonths.includes(currentMonthSelection)) {
+                    monthSelector.value = currentMonthSelection;
+                } else {
+                    monthSelector.value = 'all';
+                }
+            }
+
+            // 3. Filter Data
+            const productStats = {}; // { Key: { name, categories: Set, qty, rev } }
+
+            // Re-read selection in case it was reset
+            const effectiveMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            validMonths.forEach(month => {
+                if (effectiveMonthSelection !== 'all' && month !== effectiveMonthSelection) return;
+
+                const monthData = window.salesData.monthly[month];
+                if (monthData && monthData.all_products) {
+                    monthData.all_products.forEach(p => {
+                        const revenue = p['Line_Revenue'] || 0;
+                        const qty = p['Lineitem quantity'] || 0;
+                        const pName = p['Lineitem name'];
+
+                        // Get all categories for this product
+                        const objs = getObjectivesForProduct(pName);
+
+                        if (!productStats[pName]) {
+                            productStats[pName] = { name: pName, categories: new Set(), qty: 0, rev: 0 };
+                        }
+
+                        productStats[pName].qty += qty;
+                        productStats[pName].rev += revenue;
+                        objs.forEach(o => productStats[pName].categories.add(o));
+                    });
+                }
+            });
+
+            let rows = Object.values(productStats);
+            if (searchTerm) {
+                rows = rows.filter(r => r.name.toLowerCase().includes(searchTerm));
+            }
+
+            // Sort by configured column and direction
+            rows.sort((a, b) => {
+                let valA = (objSortCol === 'qty') ? a.qty : a.rev;
+                let valB = (objSortCol === 'qty') ? b.qty : b.rev;
+
+                if (objSortDir === 'asc') {
+                    return valA - valB;
+                } else {
+                    return valB - valA;
+                }
+            });
+
+            // Rebuild Table Header (ensure standard headers with active sort indicators)
+            const thead = document.querySelector('#objectivesProductTable thead');
+            if (thead) {
+                const sortIcon = objSortDir === 'asc' ? '▲' : '▼';
+                const qtyHeader = `Cantitate ${objSortCol === 'qty' ? sortIcon : ''}`;
+                const revHeader = `Venit ${objSortCol === 'rev' ? sortIcon : ''}`;
+
+                thead.innerHTML = `
+                        <tr>
+                            <th>Produs</th>
+                            <th>Categorii</th>
+                            <th style="text-align:right; cursor:pointer; user-select:none;" onclick="toggleObjSort('qty')">${qtyHeader}</th>
+                            <th style="text-align:right; cursor:pointer; user-select:none;" onclick="toggleObjSort('rev')">${revHeader}</th>
+                        </tr>
+                `;
+            }
+
+            const tbody = document.getElementById('objectivesProductTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+
+                rows.forEach(p => {
+                    const tr = document.createElement('tr');
+
+                    // Render Categories
+                    const cats = Array.from(p.categories).sort();
+                    let catHtml = '';
+                    const colorMap = {
+                        "Longevitate": "#60a5fa",
+                        "Imunitate": "#4ade80",
+                        "Sport": "#facc15",
+                        "Somn & Recuperare": "#a78bfa",
+                        "Focus-Mood-Energy": "#f472b6",
+                        "Altele": "#9ca3af"
+                    };
+
+                    cats.forEach(c => {
+                        const badgeColor = colorMap[c] || "#ccc";
+                        catHtml += `<span style="background:${badgeColor}; color:#111827; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold; margin-right:4px; white-space:nowrap;">${c}</span>`;
+                    });
+
+                    tr.innerHTML = `
+                        <td><div style="font-weight:600;">${p.name}</div></td>
+                        <td>${catHtml}</td>
+                        <td style="text-align:right">${p.qty}</td>
+                        <td style="text-align:right; font-weight:bold;">${formatCurrency(p.rev)}</td>
+                    `;
+
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // --- Obiective Total View ---
+        function renderObjectivesTotalView() {
+            const chk2025 = document.getElementById('objTotalChk2025');
+            const chk2026 = document.getElementById('objTotalChk2026');
+            const monthSelector = document.getElementById('objTotalMonthSelector');
+
+            const is2025 = chk2025 ? chk2025.checked : false;
+            const is2026 = chk2026 ? chk2026.checked : false;
+            const currentMonthSelection = monthSelector ? monthSelector.value : 'all';
+
+            if (!window.salesData || !window.salesData.monthly) return;
+
+            // 1. Find valid months
+            const allMonths = Object.keys(window.salesData.monthly).sort();
+            const validMonths = allMonths.filter(m => {
+                const year = m.substring(0, 4);
+                if (year === '2025' && is2025) return true;
+                if (year === '2026' && is2026) return true;
+                return false;
+            });
+
+            // 2. Update month dropdown
+            if (monthSelector) {
+                monthSelector.innerHTML = '';
+                const optAll = document.createElement('option');
+                optAll.value = 'all';
+                optAll.textContent = 'Toată perioada';
+                monthSelector.appendChild(optAll);
+                validMonths.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    monthSelector.appendChild(opt);
+                });
+                if (validMonths.includes(currentMonthSelection)) {
+                    monthSelector.value = currentMonthSelection;
+                } else {
+                    monthSelector.value = 'all';
+                }
+            }
+
+            const effectiveMonth = monthSelector ? monthSelector.value : 'all';
+
+            // 3. Aggregate by objective
+            const objectiveStats = {};
+            // Initialize all objectives from productMapping
+            for (const objName of Object.keys(productMapping)) {
+                objectiveStats[objName] = { name: objName, qty: 0, rev: 0 };
+            }
+
+            validMonths.forEach(month => {
+                if (effectiveMonth !== 'all' && month !== effectiveMonth) return;
+                const monthData = window.salesData.monthly[month];
+                if (monthData && monthData.all_products) {
+                    monthData.all_products.forEach(p => {
+                        const revenue = p['Line_Revenue'] || 0;
+                        const qty = p['Lineitem quantity'] || 0;
+                        const pName = p['Lineitem name'];
+                        const objs = getObjectivesForProduct(pName);
+                        objs.forEach(o => {
+                            if (!objectiveStats[o]) {
+                                objectiveStats[o] = { name: o, qty: 0, rev: 0 };
+                            }
+                            objectiveStats[o].qty += qty;
+                            objectiveStats[o].rev += revenue;
+                        });
+                    });
+                }
+            });
+
+            // 4. Calculate totals for percentages
+            const rows = Object.values(objectiveStats).sort((a, b) => b.rev - a.rev);
+            const totalQty = rows.reduce((sum, r) => sum + r.qty, 0);
+            const totalRev = rows.reduce((sum, r) => sum + r.rev, 0);
+
+            // 5. Render table
+            const colorMap = {
+                "Longevitate": "#60a5fa",
+                "Imunitate": "#4ade80",
+                "Sport": "#facc15",
+                "Somn & Recuperare": "#a78bfa",
+                "Focus-Mood-Energy": "#f472b6",
+                "Altele": "#9ca3af"
+            };
+
+            const tbody = document.getElementById('objectivesTotalTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+
+                rows.forEach(r => {
+                    const pctQty = totalQty > 0 ? ((r.qty / totalQty) * 100).toFixed(1) : '0.0';
+                    const pctRev = totalRev > 0 ? ((r.rev / totalRev) * 100).toFixed(1) : '0.0';
+                    const badgeColor = colorMap[r.name] || '#6b7280';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="width:4px; height:28px; border-radius:2px; background:${badgeColor};"></span>
+                                <span style="font-weight:600; font-size:14px;">${r.name}</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right; font-weight:600;">${formatNumber(r.qty)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                <div style="width:80px; height:6px; background:#374151; border-radius:3px; overflow:hidden;">
+                                    <div style="width:${pctQty}%; height:100%; background:${badgeColor}; border-radius:3px;"></div>
+                                </div>
+                                <span style="min-width:45px; color:#d1d5db;">${pctQty}%</span>
+                            </div>
+                        </td>
+                        <td style="text-align:right; font-weight:700;">${formatCurrency(r.rev)}</td>
+                        <td style="text-align:right;">
+                            <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                <div style="width:80px; height:6px; background:#374151; border-radius:3px; overflow:hidden;">
+                                    <div style="width:${pctRev}%; height:100%; background:${badgeColor}; border-radius:3px;"></div>
+                                </div>
+                                <span style="min-width:45px; color:#d1d5db;">${pctRev}%</span>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Total row
+                const totalTr = document.createElement('tr');
+                totalTr.style.borderTop = '2px solid #4b5563';
+                totalTr.style.fontWeight = '700';
+                totalTr.innerHTML = `
+                    <td style="font-size:14px; color:var(--primary);">TOTAL</td>
+                    <td style="text-align:right;">${formatNumber(totalQty)}</td>
+                    <td style="text-align:right; color:#9ca3af;">100%</td>
+                    <td style="text-align:right;">${formatCurrency(totalRev)}</td>
+                    <td style="text-align:right; color:#9ca3af;">100%</td>
+                `;
+                tbody.appendChild(totalTr);
+            }
+        }
+
+        function closeObjectiveModal() {
+            document.getElementById('objectiveModal').style.display = 'none';
+        }
+
+    </script>
+
+</body>
+
+</html>
