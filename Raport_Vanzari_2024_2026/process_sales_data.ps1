@@ -2,7 +2,10 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $inputDir = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Rapoarte\Date_Brute"
-$outputFile = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte Varianta Finala\Raport_Vanzari_2024_2026\sales_data_2024_2025.js"
+$outputFile = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\Raport_Vanzari_2024_2026\sales_data_2024_2025.js"
+
+Write-Host "Fetching latest data from Shopify..."
+python "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\Raport_Vanzari_2024_2026\fetch_shopify_data.py"
 
 Write-Host "Searching for CSV files in $inputDir..."
 $csvFiles = Get-ChildItem -Path $inputDir -Filter "*.csv" -Recurse
@@ -150,6 +153,8 @@ foreach ($row in $allRecords) {
             OrderType    = $orderType  # OTP, SUB1, SUB3
             Tags         = $tags
             IsFirstOrder = $false # Calculated later
+            Shipping     = $shipping
+            Taxes        = $taxes
         }
         
         $processedOrders[$orderId] = $orderObj
@@ -170,13 +175,13 @@ foreach ($row in $allRecords) {
         $lineRev = $qty * $price 
         
         $processedItems += @{
-            Name    = $row.'Lineitem name'
-            Qty     = $qty
-            Revenue = $lineRev
-            Month   = $monthKey
-            Year    = $year
-            Quarter = $qtr
-            Day     = $dayKey
+            "Lineitem name"     = $row.'Lineitem name'
+            "Lineitem quantity" = $qty
+            "Line_Revenue"      = $lineRev
+            Month               = $monthKey
+            Year                = $year
+            Quarter             = $qtr
+            Day                 = $dayKey
         }
     }
 }
@@ -330,6 +335,13 @@ function Aggregate-Metrics($periodType) {
                 # Sets for unique counting
                 customers_active_set  = @{} 
                 customers_by_type_set = @{ OTP = @{}; SUB1 = @{}; SUB3 = @{}; SUB6 = @{} }
+                
+                # New Metrics for Report
+                shipping              = 0.0
+                taxes                 = 0.0
+                canceled_orders       = 0
+                refunded_count        = 0
+                all_products          = @()
             }
         }
         
@@ -339,6 +351,8 @@ function Aggregate-Metrics($periodType) {
         if (-not $ord.IsCanceled) {
             $g.valid_orders++
             $g.net_sales += $ord.NetSales
+            $g.shipping += $ord.Shipping
+            $g.taxes += $ord.Taxes
             
             # Type Breakdown (Sales)
             $t = $ord.OrderType
@@ -362,6 +376,13 @@ function Aggregate-Metrics($periodType) {
             else {
                 $g.sales_recurring += $ord.NetSales
             }
+            
+            if ($ord.Refunded -gt 0) {
+                $g.refunded_count++
+            }
+        }
+        else {
+            $g.canceled_orders++
         }
     }
     
@@ -428,6 +449,20 @@ function Aggregate-Metrics($periodType) {
         }
         
         $finalResults[$key] = $g
+    }
+    
+    # --- Populate all_products from $processedItems ---
+    foreach ($item in $processedItems) {
+        # Check if item key exists (Month/Year/etc) matches the grouping
+        if ($item.ContainsKey($periodType)) {
+            $k = $item[$periodType]
+            if ($finalResults.ContainsKey($k)) {
+                $finalResults[$k].all_products += $item
+            }
+        }
+        # Fallback: if periodType is "Month", item has "Month" key.
+        # But if periodType is "Year", item has "Year".
+        # Logic matches because we stored Month/Year/Quarter in item object.
     }
     
     return $finalResults
