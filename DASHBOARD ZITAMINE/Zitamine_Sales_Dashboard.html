@@ -167,8 +167,9 @@
             </h2>
             <div class="charts-grid">
                 <div class="chart-card large">
-                    <div class="chart-header">
-                        <h3>Vânzări Totale vs. Tipuri Clienți</h3>
+                    <div class="chart-header"
+                        data-tooltip="Graficul arată evoluția lunară a vânzărilor, împărțite în 'Noi' (prima comandă) și 'Recurente' (comenzi ulterioare).">
+                        <h3>Vânzări Totale vs. Tipuri Clienți ℹ️</h3>
                         <div class="chart-legend">
                             <span class="legend-item"><span class="legend-dot new"></span> Vânzări Noi</span>
                             <span class="legend-item"><span class="legend-dot recurring"></span> Vânzări
@@ -181,8 +182,9 @@
                 </div>
 
                 <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Evoluția AOV</h3>
+                    <div class="chart-header"
+                        data-tooltip="AOV (Average Order Value) = Valoarea medie a unei comenzi în fiecare lună. Arată cât cheltuie în medie un client per tranzacție.">
+                        <h3>Evoluția AOV ℹ️</h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="aovChart"></canvas>
@@ -190,8 +192,9 @@
                 </div>
 
                 <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Creșterea CLTV</h3>
+                    <div class="chart-header"
+                        data-tooltip="CLTV (Customer Lifetime Value) = Valoarea totală acumulată a unui client mediu de la începutul relației până în luna respectivă.">
+                        <h3>Creșterea CLTV ℹ️</h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="cltvChart"></canvas>
@@ -208,8 +211,9 @@
             </h2>
             <div class="charts-grid">
                 <div class="chart-card large">
-                    <div class="chart-header">
-                        <h3>Evoluția Vânzărilor (RON) pe Tip Abonament</h3>
+                    <div class="chart-header"
+                        data-tooltip="Analiza performanței pe tipuri de oferte: OTP (o singură dată), SUB1 (Abonament lunar), SUB3 (Abonament 3 luni).">
+                        <h3>Evoluția Vânzărilor (RON) pe Tip Abonament ℹ️</h3>
                         <div class="chart-legend">
                             <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
                                 OTP</span>
@@ -226,8 +230,9 @@
 
                 <!-- NEW CHART: Active Clients by Cohort -->
                 <div class="chart-card large">
-                    <div class="chart-header">
-                        <h3>Număr Clienți Activi pe Cohortă (Lunar)</h3>
+                    <div class="chart-header"
+                        data-tooltip="Numărul de clienți activi (care au plasat cel puțin o comandă) în fiecare lună, segmentați pe tipul de ofertă inițială.">
+                        <h3>Număr Clienți Activi pe Cohortă (Lunar) ℹ️</h3>
                         <div class="chart-legend">
                             <span class="legend-item"><span class="legend-dot"
                                     style="background: rgba(99, 102, 241, 0.5);"></span>
@@ -266,7 +271,8 @@
 
             <!-- Cohort KPIs -->
             <div class="kpi-grid" style="margin-top: 24px;">
-                <div class="kpi-card kpi-gradient-1">
+                <div class="kpi-card kpi-gradient-1"
+                    data-tooltip="Vânzări totale generate de clienții din cohorta OTP (One Time Purchase).">
                     <div class="kpi-icon">🛒</div>
                     <div class="kpi-content">
                         <span class="kpi-value" data-value="1151990">0</span>
@@ -278,7 +284,8 @@
                     </div>
                 </div>
 
-                <div class="kpi-card kpi-gradient-2">
+                <div class="kpi-card kpi-gradient-2"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament lunar (SUB1).">
                     <div class="kpi-icon">📅</div>
                     <div class="kpi-content">
                         <span class="kpi-value" data-value="988684">0</span>
@@ -290,7 +297,8 @@
                     </div>
                 </div>
 
-                <div class="kpi-card kpi-gradient-3">
+                <div class="kpi-card kpi-gradient-3"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament pe 3 luni (SUB3).">
                     <div class="kpi-icon">⭐</div>
                     <div class="kpi-content">
                         <span class="kpi-value" data-value="488335">0</span>
@@ -302,7 +310,8 @@
                     </div>
                 </div>
 
-                <div class="kpi-card kpi-gradient-4">
+                <div class="kpi-card kpi-gradient-4"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament pe 6 luni (SUB6).">
                     <div class="kpi-icon">💰</div>
                     <div class="kpi-content">
                         <span class="kpi-value" data-value="2750">0</span>
@@ -324,8 +333,9 @@
             </h2>
             <div class="charts-grid">
                 <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Clienți Noi vs. Recurenți (Lunar)</h3>
+                    <div class="chart-header"
+                        data-tooltip="Comparație între numărul de clienți noi (prima comandă) și cei recurenți (comenzi repetate) în fiecare lună.">
+                        <h3>Clienți Noi vs. Recurenți (Lunar) ℹ️</h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="customersChart"></canvas>
@@ -333,8 +343,9 @@
                 </div>
 
                 <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Distribuția Tipuri Abonament</h3>
+                    <div class="chart-header"
+                        data-tooltip="Distribuția procentuală a tipurilor de abonamente în baza de clienți activi.">
+                        <h3>Distribuția Tipuri Abonament ℹ️</h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="subscriptionChart"></canvas>
@@ -351,7 +362,8 @@
                     style="font-weight: 400; opacity: 0.7; font-size: 0.9em;">(Ian 2025 - Ian 2026)</span>
             </h2>
             <div class="conversion-grid">
-                <div class="conversion-card">
+                <div class="conversion-card"
+                    data-tooltip="Conversia clienților care au început cu o comandă simplă (OTP) și au trecut ulterior la un abonament.">
                     <div class="conversion-header">
                         <h3>OTP → Abonament</h3>
                         <span class="conversion-badge">186 conversii</span>
@@ -379,7 +391,8 @@
                     </div>
                 </div>
 
-                <div class="conversion-card">
+                <div class="conversion-card"
+                    data-tooltip="Upgrade-uri: Clienți care au trecut de la abonament lunar (SUB1) la cel trimestrial (SUB3) pentru o valoare mai mare pe termen lung.">
                     <div class="conversion-header">
                         <h3>SUB1 → SUB3 Upgrade</h3>
                         <span class="conversion-badge secondary">50 upgrade-uri</span>
@@ -407,7 +420,8 @@
                     </div>
                 </div>
 
-                <div class="conversion-card" style="border-left: 3px solid #ef4444;">
+                <div class="conversion-card" style="border-left: 3px solid #ef4444;"
+                    data-tooltip="Downgrade-uri: Clienți care au renunțat la abonament (trecând la OTP) sau au ales un plan inferior.">
                     <div class="conversion-header">
                         <h3>📉 Downgrade-uri</h3>
                         <span class="conversion-badge"
@@ -434,8 +448,9 @@
                 </div>
 
                 <div class="chart-card large">
-                    <div class="chart-header">
-                        <h3>Evoluția Conversiilor Lunare</h3>
+                    <div class="chart-header"
+                        data-tooltip="Evoluția lunară a numărului de conversii pozitive (Upsell și Cross-sell).">
+                        <h3>Evoluția Conversiilor Lunare ℹ️</h3>
                         <div class="chart-legend">
                             <span class="legend-item"><span class="legend-dot" style="background: #8b5cf6;"></span>
                                 OTP→SUB</span>
@@ -457,8 +472,9 @@
                 </h2>
                 <div class="charts-grid">
                     <div class="chart-card large">
-                        <div class="chart-header">
-                            <h3>Rata de Churn Lunară (%)</h3>
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare: Procentul de clienți activi care au devenit inactivi conform regulilor de 'drop-off' (3 luni OTP/SUB1, 6 luni SUB3).">
+                            <h3>Rata de Churn Lunară (%) ℹ️</h3>
                             <div class="chart-legend">
                                 <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
                                     Rata Churn</span>
@@ -489,8 +505,9 @@
 
             <!-- Monthly Conversion Table -->
             <div class="chart-card" style="margin-top: 24px;">
-                <div class="chart-header">
-                    <h3>📊 Conversii Lunare Detaliate</h3>
+                <div class="chart-header"
+                    data-tooltip="Tabel detaliat cu numărul exact de conversii și modificări de abonament pe fiecare lună.">
+                    <h3>📊 Conversii Lunare Detaliate ℹ️</h3>
                 </div>
                 <div style="overflow-x: auto;">
                     <table
