@@ -46,7 +46,7 @@ $globalTags = @{}
 
 # Process Data in memory
 $processedOrders = @{} # Key: Order Name (Id)
-$processedItems = @()
+$processedItems = [System.Collections.Generic.List[object]]::new()
 
 # Customer History Storage
 $customerHistory = @{} # Key: Email, Value: List of Order Objects
@@ -138,23 +138,45 @@ foreach ($row in $allRecords) {
         # See below loop.
 
         # Order Object
+        
+        # Gross Sales Logic (Total - Shipping - Taxes)
+        # This represents the revenue from products before returns are deducted, but after discounts?
+        # Actually, if we want "Gross Sales" typically it enters before discounts.
+        # But here, "Total" from Shopify usually includes Shipping + Taxes - Discounts.
+        # Let's calculate "Gross Sales" as NetSales + DiscountAmount?
+        # Or simply Total - Shipping - Taxes + DiscountAmount?
+        # Let's stick to what the user likely wants: The amount processed for products.
+        # NetSales = Total - Refunded.
+        # GrossSales (for weekly report) seems to be expected as "Vanzari Totale".
+        # Let's define GrossSales = Total - Shipping - Taxes.
+        
+        $grossSales = $total - $shipping - $taxes
+        
+        # DEBUG CHECK
+        if ($processedOrders.Count -eq 0) {
+            Write-Host "DEBUG FIRST ORDER GROSS SALES: Total=$total Shipping=$shipping Taxes=$taxes Gross=$grossSales"
+        }
+        
         $orderObj = @{
-            Name         = $orderId
-            Email        = $email
-            Date         = $dateObj
-            Month        = $monthKey
-            Year         = $year
-            Quarter      = $qtr
-            Day          = $dayKey
-            IsCanceled   = $isCanceled
-            Total        = $total
-            Refunded     = $refunded
-            NetSales     = $netSales
-            OrderType    = $orderType  # OTP, SUB1, SUB3
-            Tags         = $tags
-            IsFirstOrder = $false # Calculated later
-            Shipping     = $shipping
-            Taxes        = $taxes
+            Name           = $orderId
+            Email          = $email
+            Date           = $dateObj
+            Month          = $monthKey
+            Year           = $year
+            Quarter        = $qtr
+            Day            = $dayKey
+            IsCanceled     = $isCanceled
+            Total          = $total
+            Refunded       = $refunded
+            NetSales       = $netSales
+            GrossSales     = $grossSales
+            OrderType      = $orderType  # OTP, SUB1, SUB3
+            Tags           = $tags
+            IsFirstOrder   = $false # Calculated later
+            Shipping       = $shipping
+            Taxes          = $taxes
+            DiscountAmount = $discountAmount
+            DiscountCode   = $discountCode
         }
         
         $processedOrders[$orderId] = $orderObj
@@ -174,15 +196,15 @@ foreach ($row in $allRecords) {
         $price = Parse-Num $row.'Lineitem price'
         $lineRev = $qty * $price 
         
-        $processedItems += @{
-            "Lineitem name"     = $row.'Lineitem name'
-            "Lineitem quantity" = $qty
-            "Line_Revenue"      = $lineRev
-            Month               = $monthKey
-            Year                = $year
-            Quarter             = $qtr
-            Day                 = $dayKey
-        }
+        $processedItems.Add(@{
+                "Lineitem name"     = $row.'Lineitem name'
+                "Lineitem quantity" = $qty
+                "Line_Revenue"      = $lineRev
+                Month               = $monthKey
+                Year                = $year
+                Quarter             = $qtr
+                Day                 = $dayKey
+            })
     }
 }
 
@@ -339,9 +361,13 @@ function Aggregate-Metrics($periodType) {
                 # New Metrics for Report
                 shipping              = 0.0
                 taxes                 = 0.0
+                gross_sales           = 0.0
+                discounted_orders     = 0
+                discounts_value       = 0.0
                 canceled_orders       = 0
                 refunded_count        = 0
-                all_products          = @()
+                all_products          = [System.Collections.Generic.List[object]]::new()
+                discount_codes        = @{}
             }
         }
         
@@ -351,8 +377,20 @@ function Aggregate-Metrics($periodType) {
         if (-not $ord.IsCanceled) {
             $g.valid_orders++
             $g.net_sales += $ord.NetSales
+            $g.gross_sales += $ord.GrossSales
             $g.shipping += $ord.Shipping
             $g.taxes += $ord.Taxes
+            
+            if ($ord.DiscountAmount -gt 0) {
+                $g.discounted_orders++
+                $g.discounts_value += $ord.DiscountAmount
+            }
+            
+            if (-not [string]::IsNullOrWhiteSpace($ord.DiscountCode)) {
+                $dc = $ord.DiscountCode
+                if (-not $g.discount_codes.ContainsKey($dc)) { $g.discount_codes[$dc] = 0 }
+                $g.discount_codes[$dc]++
+            }
             
             # Type Breakdown (Sales)
             $t = $ord.OrderType
@@ -455,9 +493,12 @@ function Aggregate-Metrics($periodType) {
     foreach ($item in $processedItems) {
         # Check if item key exists (Month/Year/etc) matches the grouping
         if ($item.ContainsKey($periodType)) {
+            # Optimize: do NOT store product list for Quarter or Year (saves ~50% size)
+            if ($periodType -eq "Year" -or $periodType -eq "Quarter") { continue }
+
             $k = $item[$periodType]
             if ($finalResults.ContainsKey($k)) {
-                $finalResults[$k].all_products += $item
+                $finalResults[$k].all_products.Add($item)
             }
         }
         # Fallback: if periodType is "Month", item has "Month" key.
@@ -484,13 +525,24 @@ $outputObject = @{
 }
 
 
+
+# --- Optimization: cleanup redundant fields from items to save JSON space ---
+Write-Host "Optimizing JSON size..."
+foreach ($item in $processedItems) {
+    if ($null -ne $item) {
+        $item.Remove("Year")
+        $item.Remove("Quarter")
+        $item.Remove("Month")
+        $item.Remove("Day")
+    }
+}
+
 $jsonPayload = $outputObject | ConvertTo-Json -Depth 10
 $jsContent = "window.salesData = " + $jsonPayload + ";"
 Set-Content -Path $outputFile -Value $jsContent -Encoding UTF8
 
 Write-Host "Done! Data saved to $outputFile"
 
-# DEBUG: Export Unique Tags
-$uniqueTags = $globalTags.Keys | Sort-Object
-$uniqueTags | Out-File "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte Varianta Finala\DASHBOARD ZITAMINE\unique_tags.txt"
-Write-Host "Debug: Exported $($uniqueTags.Count) unique tags to unique_tags.txt"
+# Cleanup debug
+# $uniqueTags = $globalTags.Keys | Sort-Object
+# $uniqueTags | Out-File ...

@@ -840,7 +840,7 @@
                     <!-- Weekly KPIs -->
                     <div class="metrics-grid" id="weeklyKpis">
                         <div class="card">
-                            <h3>VÂNZĂRI NETE</h3>
+                            <h3>VÂNZĂRI TOTALE</h3>
                             <p class="value" id="wkNetSales">-</p>
                             <p class="subtext">Săptămâna selectată</p>
                         </div>
@@ -1863,9 +1863,9 @@
         function renderAggregatedDiscounts(metrics) {
             const discMap = {};
             metrics.forEach(period => {
-                if (!period.top_discounts) return;
-                Object.keys(period.top_discounts).forEach(code => {
-                    const count = period.top_discounts[code];
+                if (!period.discount_codes) return;
+                Object.keys(period.discount_codes).forEach(code => {
+                    const count = period.discount_codes[code];
                     discMap[code] = (discMap[code] || 0) + count;
                 });
             });
@@ -2516,10 +2516,14 @@
                     result.total_refunds += d.total_refunds || 0;
 
                     // Products
-                    for (const p of (d.products || [])) {
-                        if (!result.products[p.name]) result.products[p.name] = { name: p.name, qty: 0, rev: 0 };
-                        result.products[p.name].qty += p.qty;
-                        result.products[p.name].rev += p.rev;
+                    for (const item of (d.all_products || [])) {
+                        const name = item['Lineitem name'];
+                        const qty = item['Lineitem quantity'];
+                        const rev = item['Line_Revenue'];
+
+                        if (!result.products[name]) result.products[name] = { name: name, qty: 0, rev: 0 };
+                        result.products[name].qty += qty;
+                        result.products[name].rev += rev;
                     }
 
                     // Discount codes
@@ -2624,7 +2628,7 @@
             // Totals row
             tfoot.innerHTML = `<tr style="font-weight:700; border-top:2px solid #4b5563; background:rgba(139,92,246,0.08);">
                 <td colspan="2">TOTAL</td>
-                <td style="text-align:right">${formatCurrency(data.net_sales)}</td>
+                <td style="text-align:right">${formatCurrency(data.gross_sales)}</td>
                 <td style="text-align:right">${data.valid_orders}</td>
                 <td style="text-align:right">${data.discounted_orders}</td>
                 <td style="text-align:right">${data.canceled_orders + data.refunded_count}</td>
