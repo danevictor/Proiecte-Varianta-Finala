@@ -143,6 +143,15 @@ foreach ($row in $allRecords) {
         
         # Net Sales Logic
         $netSales = 0
+        if (-not $isCanceled) {
+            if ($row.'Net Sales') {
+                $netSales = Parse-Num $row.'Net Sales'
+            }
+            else {
+                $netSales = $total - $refunded
+            }
+        }
+        
         if ($netSales -lt 0) { $netSales = 0 }
         
         # STRICT RULE: If Canceled or Voided, ALL Sales metrics must be 0.
