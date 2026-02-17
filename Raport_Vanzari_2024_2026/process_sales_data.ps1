@@ -4,8 +4,8 @@ $ErrorActionPreference = "Stop"
 $inputDir = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Rapoarte\Date_Brute"
 $outputFile = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\Raport_Vanzari_2024_2026\sales_data_2024_2025.js"
 
-Write-Host "Fetching latest data from Shopify..."
-python "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\Raport_Vanzari_2024_2026\fetch_shopify_data.py"
+Write-Host "Fetching latest data from Shopify (Last 7 days)..."
+python "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\Raport_Vanzari_2024_2026\fetch_shopify_data.py" --days 7
 
 Write-Host "Searching for CSV files in $inputDir..."
 $csvFiles = Get-ChildItem -Path $inputDir -Filter "*.csv" -Recurse
@@ -14,15 +14,40 @@ if ($csvFiles.Count -eq 0) {
     Write-Error "No CSV files found!"
 }
 
-$allRecords = @()
+
+# Sort files to ensure chronological processing (Export -> Fetch)
+# Assumes 'orders_export' sorts before 'orders_fetch', and timestamps in fetch are chronological.
+$csvFiles = $csvFiles | Sort-Object Name
+
+# Load and Deduplicate Data (Last Write Wins)
+Write-Host "Consolidating data from files (Last Write Wins strategy)..."
+$latestOrderRows = @{} # Key: OrderID (#...), Value: List of Rows
 
 foreach ($file in $csvFiles) {
-    Write-Host "Reading $($file.Name)..."
+    Write-Host "  Reading $($file.Name)..."
     $data = Import-Csv -LiteralPath $file.FullName
-    $allRecords += $data
+    if ($data.Count -eq 0) { continue }
+    
+    # Group by Order Name within this file
+    $fileGroups = $data | Group-Object Name
+    
+    foreach ($g in $fileGroups) {
+        # Overwrite previous data for this order with the latest file's version
+        $latestOrderRows[$g.Name] = $g.Group
+    }
 }
 
-Write-Host "Total raw rows: $($allRecords.Count)"
+# Flatten to a single list for processing
+$allRecords = [System.Collections.Generic.List[object]]::new()
+foreach ($orderId in $latestOrderRows.Keys) {
+    $rows = $latestOrderRows[$orderId]
+    foreach ($r in $rows) {
+        $allRecords.Add($r)
+    }
+}
+
+Write-Host "Total unique orders to process: $($latestOrderRows.Count)"
+Write-Host "Total consolidated rows: $($allRecords.Count)"
 
 # Helper to parse dates safely
 function Parse-DateStr($d) {
@@ -70,14 +95,38 @@ foreach ($row in $allRecords) {
     $dayKey = $dateObj.ToString("yyyy-MM-dd")
     
     # --- Order Level Data ---
+    # Filter by Financial Status (Exclude Pending/Voided to match Shopify Total Sales view)
+    $fStatus = $row.'Financial Status'
+    if ($null -ne $fStatus) {
+        $fStatus = $fStatus.ToLower()
+        # Filter 'pending' (unpaid) orders
+        if ($fStatus -eq 'pending') {
+            continue
+        }
+        
+    }
+
     if (-not $processedOrders.ContainsKey($orderId)) {
         $isCanceled = -not [string]::IsNullOrWhiteSpace($cancelledAtStr)
         
-        $total = Parse-Num $row.Total
-        $refunded = Parse-Num $row.'Refunded Amount'
-        $shipping = Parse-Num $row.Shipping
-        $taxes = Parse-Num $row.Taxes
-        $discountAmount = Parse-Num $row.'Discount Amount'
+        if ($fStatus -eq 'voided') {
+            Write-Host "DEBUG: Zeroing out VOIDED order $orderId (Original Total: $($row.Total))"
+            $total = 0
+            $refunded = 0
+            $shipping = 0
+            $taxes = 0
+            $discountAmount = 0
+        }
+        else {
+            if ($orderId -eq '#35592') {
+                Write-Host "DEBUG: Processing #35592. Status: $fStatus. Total: $($row.Total)"
+            }
+            $total = Parse-Num $row.Total
+            $refunded = Parse-Num $row.'Refunded Amount'
+            $shipping = Parse-Num $row.Shipping
+            $taxes = Parse-Num $row.Taxes
+            $discountAmount = Parse-Num $row.'Discount Amount'
+        }
         $discountCode = $row.'Discount Code'
         $tags = $row.Tags
         
@@ -94,8 +143,20 @@ foreach ($row in $allRecords) {
         
         # Net Sales Logic
         $netSales = 0
-        if (-not $isCanceled) {
-            $netSales = $total - $refunded
+        if ($netSales -lt 0) { $netSales = 0 }
+        
+        # STRICT RULE: If Canceled or Voided, ALL Sales metrics must be 0.
+        if ($isCanceled -or $fStatus -eq 'voided' -or $fStatus -eq 'refunded') {
+            $netSales = 0
+            $grossSales = 0
+            $total = 0 # Ensure this doesn't leak into other calcs if used
+            $shipping = 0
+            $taxes = 0
+            $discountAmount = 0
+            # Refunded amount should stay as is for record? Or 0 too? 
+            # User said "nu vreau sa apara in suma". 
+            # If NetSales = Total - Refunded, and we set NetSales=0, we're good.
+            # But let's be safe and zero everything that sums up.
         }
 
         # Identify Order Type based on Tags - NEW LOGIC
@@ -137,7 +198,16 @@ foreach ($row in $allRecords) {
         # We need to defer New/Recurring classification until AFTER we have all orders for a customer.
         # See below loop.
 
-        # Order Object
+        if ($netSales -lt 0) { $netSales = 0 }
+        
+        # Debugging Sales Increase
+        if ($dayKey -eq '2026-02-12' -or $dayKey -eq '2026-02-13') {
+            if ($netSales -gt 0) {
+                Write-Host "DEBUG SALES: $dayKey - Order $orderId - NetSales: $netSales (Status: $fStatus)"
+            }
+        }
+
+
         
         # Gross Sales Logic (Total - Shipping - Taxes)
         # This represents the revenue from products before returns are deducted, but after discounts?

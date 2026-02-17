@@ -2600,7 +2600,7 @@
             const data = aggregateWeekData(week.days);
 
             // Update KPIs
-            document.getElementById('wkNetSales').textContent = formatCurrency(data.gross_sales);
+            document.getElementById('wkNetSales').textContent = formatCurrency(data.net_sales);
             document.getElementById('wkOrders').textContent = formatNumber(data.valid_orders);
             document.getElementById('wkDiscounted').textContent = formatNumber(data.discounted_orders);
             document.getElementById('wkCanceled').textContent = formatNumber(data.canceled_orders + data.refunded_count);
@@ -2617,7 +2617,7 @@
                 tbody.innerHTML += `<tr style="${opacity}">
                     <td><strong>${day.dayName}</strong></td>
                     <td>${day.date}</td>
-                    <td style="text-align:right">${formatCurrency(day.gross_sales)}</td>
+                    <td style="text-align:right">${formatCurrency(day.net_sales)}</td>
                     <td style="text-align:right">${day.valid_orders}</td>
                     <td style="text-align:right">${day.discounted_orders}</td>
                     <td style="text-align:right">${day.canceled_orders}</td>
@@ -2628,7 +2628,7 @@
             // Totals row
             tfoot.innerHTML = `<tr style="font-weight:700; border-top:2px solid #4b5563; background:rgba(139,92,246,0.08);">
                 <td colspan="2">TOTAL</td>
-                <td style="text-align:right">${formatCurrency(data.gross_sales)}</td>
+                <td style="text-align:right">${formatCurrency(data.net_sales)}</td>
                 <td style="text-align:right">${data.valid_orders}</td>
                 <td style="text-align:right">${data.discounted_orders}</td>
                 <td style="text-align:right">${data.canceled_orders + data.refunded_count}</td>

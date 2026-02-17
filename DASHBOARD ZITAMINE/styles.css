@@ -244,21 +244,38 @@ body {
 .date-filter {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .date-input {
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 16px; /* 16px prevents iOS zoom */
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 10px;
     outline: none;
     cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 42px;
+    color-scheme: dark; /* Force dark mode calendar in browser */
+}
+
+.date-input:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(239, 146, 29, 0.5);
+}
+
+.date-input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(239, 146, 29, 0.2);
 }
 
 /* Custom Date Picker Indicator */
