@@ -699,3 +699,52 @@ Write-Host "Copied dashboard_data.js to $dashboardDest"
 # Cleanup debug
 # $uniqueTags = $globalTags.Keys | Sort-Object
 # $uniqueTags | Out-File ...
+
+# --- 8. GitHub Automation (Auto-Push) ---
+# Try to find git, or use a standard path. 
+$gitPath = "git" 
+if (-not (Get-Command "git" -ErrorAction SilentlyContinue)) {
+    # Try common Windows paths
+    if (Test-Path "C:\Program Files\Git\cmd\git.exe") { $gitPath = "C:\Program Files\Git\cmd\git.exe" }
+    elseif (Test-Path "C:\Program Files (x86)\Git\cmd\git.exe") { $gitPath = "C:\Program Files (x86)\Git\cmd\git.exe" }
+    elseif (Test-Path "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe") { $gitPath = "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe" }
+    else { 
+        Write-Warning "Git not found in PATH or common locations. Skipping Auto-Push." 
+        $gitPath = $null
+    }
+}
+
+if ($gitPath) {
+    Write-Host "Starting GitHub Auto-Update..."
+    $repoRoot = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity"
+    
+    # We need to run these commands in the repo root
+    Push-Location $repoRoot
+    
+    try {
+        # Check status
+        & $gitPath status -s
+        
+        # Add changes (Specifically the dashboard data and the HTML if modified)
+        Write-Host "Adding changes..."
+        & $gitPath add "Proiecte-Varianta-Finala/DASHBOARD ZITAMINE/dashboard_data.js"
+        
+        # Commit
+        $dateStr = (Get-Date).ToString("yyyy-MM-dd HH:mm")
+        Write-Host "Committing..."
+        & $gitPath commit -m "Auto-update Dashboard Data: $dateStr"
+        
+        # Push
+        Write-Host "Pushing to remote..."
+        & $gitPath push
+        
+        Write-Host "GitHub Update Completed Successfully."
+    }
+    catch {
+        Write-Error "GitHub Update Failed: $_"
+    }
+    finally {
+        Pop-Location
+    }
+}
+

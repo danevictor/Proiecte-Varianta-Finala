@@ -698,7 +698,8 @@
 
         <!-- Main Chart: Sessions + Conversion Rate Over Time -->
         <div class="section">
-            <h2>📉 Evoluția Vizitatorilor, Sesiunilor și Ratei de Conversie</h2>
+            <h2>📉 Evoluția Vizitatorilor, Sesiunilor și Ratei de Conversie <span class="badge badge-warning"
+                    style="vertical-align: middle; margin-left: 10px;">⚠️ Impact Cookie Consent</span></h2>
             <p class="section-desc">Grafic dual: traficul (baruri) vs. rata de conversie (linie).</p>
             <div class="alert" style="background: rgba(253, 203, 110, 0.08); border-color: rgba(253, 203, 110, 0.25);">
                 <span class="icon">🍪</span>
@@ -912,70 +913,8 @@
             </div>
         </div>
 
-        <!-- Revenue Breakdown -->
-        <div class="section">
-            <h2>💰 Evoluția Revenue & AOV</h2>
-            <p class="section-desc">Revenue total lunar corelat cu Average Order Value</p>
-            <div class="chart-container">
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </div>
 
-        <!-- Checkout Conversion vs Overall Conversion -->
-        <div class="section">
-            <h2>🔍 Checkout Conversion vs. Overall Conversion — Unde pierdem clienți?</h2>
-            <p class="section-desc">Checkout conversion (cine ajunge în checkout → cumpără) este bun (~50-56%). Problema
-                e <strong>înainte</strong> de checkout.</p>
-            <div class="chart-container chart-container-sm">
-                <canvas id="funnelChart"></canvas>
-            </div>
-            <div class="callout">
-                <p><strong>📌 Concluzie cheie:</strong> Sunt deux probleme diferite:<br>
-                    1. <strong>Conversion Rate scăzut (0.57-0.94%)</strong> = vizitatorii nu ajung să pună în coș →
-                    problemă de <em>persuasiune, UX, landing page</em><br>
-                    2. <strong>Checkout Conversion bun (50-56%)</strong> = cine pune în coș, 50%+ finalizează →
-                    checkout-ul funcționează rezonabil<br>
-                    <em>Deci, focusul trebuie pus pe a convinge mai mulți vizitatori să adauge produse în coș, nu pe
-                        optimizarea checkout-ului.</em>
-                </p>
-            </div>
-        </div>
-
-        <!-- Extended Sales Data Comparison -->
-        <div class="section">
-            <h2>📊 Comparație Periodică: Clienți Noi vs. Recurenți</h2>
-            <p class="section-desc">Evoluția numărului de clienți noi față de cei recurenți (Jan 2025 – Feb 2026)</p>
-            <div class="chart-container">
-                <canvas id="clientsChart"></canvas>
-            </div>
-            <div class="insight-grid">
-                <div class="insight-card">
-                    <h4>🔴 Scăderea dramatică a clienților noi</h4>
-                    <p>De la <span class="stat">501 clienți noi</span> în ianuarie 2025 la doar <span class="stat">98
-                            clienți noi</span> în ianuarie 2026
-                        = o scădere de <strong>-80%</strong>. Aceasta este principala problemă de creștere.</p>
-                </div>
-                <div class="insight-card">
-                    <h4>🟡 Clienții recurenți scad și ei</h4>
-                    <p>De la <span class="stat">645 recurenți</span> (ian 2025) la <span class="stat">266
-                            recurenți</span> (ian 2026)
-                        = scădere de <strong>-59%</strong>. Retenția nu compensează pierderea clienților noi.</p>
-                </div>
-                <div class="insight-card">
-                    <h4>🟢 AOV-ul pe comandă rămâne stabil</h4>
-                    <p>AOV-ul a crescut ușor de la <span class="stat">288 RON</span> la <span class="stat">320
-                            RON</span></p>
-                    <p>Cei care cumpără, cumpără mai mult — dar sunt <strong>tot mai puțini</strong> care cumpără.</p>
-                </div>
-                <div class="insight-card">
-                    <h4>⚡ Conversion Rate real estimat</h4>
-                    <p>Cu traficul real estimat (incluzând non-cookie visitors), rata de conversie reală ar putea fi
-                        <span class="stat">~0.25-0.35%</span>.
-                        Media e-commerce este <strong>2-3%</strong>. Există un potențial enorm de creștere.
-                    </p>
-                </div>
-            </div>
-        </div>
+        <!-- Revenue, Funnel, and Clients charts removed as requested -->
 
         <!-- Analysis Summary -->
         <div class="section">
@@ -1767,157 +1706,7 @@
             }
         });
 
-        // 4. Revenue + AOV Chart
-        new Chart(document.getElementById('revenueChart'), {
-            type: 'bar',
-            data: {
-                labels: extMonths,
-                datasets: [
-                    {
-                        label: 'Revenue (RON)',
-                        data: totalRevenue,
-                        backgroundColor: 'rgba(108, 92, 231, 0.5)',
-                        borderColor: '#6c5ce7',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: 'AOV (RON)',
-                        data: aov,
-                        type: 'line',
-                        borderColor: '#fdcb6e',
-                        backgroundColor: 'rgba(253, 203, 110, 0.1)',
-                        borderWidth: 3,
-                        pointRadius: 5,
-                        pointBackgroundColor: '#fdcb6e',
-                        pointBorderColor: '#1e2130',
-                        pointBorderWidth: 2,
-                        fill: false,
-                        tension: 0.4,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                scales: {
-                    y: {
-                        position: 'left',
-                        grid: { color: 'rgba(108, 92, 231, 0.06)' },
-                        ticks: { callback: v => (v / 1000).toFixed(0) + 'K' },
-                        title: { display: true, text: 'Revenue (RON)' }
-                    },
-                    y1: {
-                        position: 'right',
-                        grid: { display: false },
-                        ticks: { callback: v => v + ' RON' },
-                        title: { display: true, text: 'AOV (RON)' },
-                        min: 200,
-                        max: 400
-                    },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-        // 5. Funnel Chart
-        new Chart(document.getElementById('funnelChart'), {
-            type: 'bar',
-            data: {
-                labels: months,
-                datasets: [
-                    {
-                        label: 'Vizitatori care NU cumpără (%)',
-                        data: convRate.map(v => (100 - v).toFixed(1)),
-                        backgroundColor: 'rgba(255, 107, 107, 0.3)',
-                        borderColor: '#ff6b6b',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        stack: 'funnel'
-                    },
-                    {
-                        label: 'Adaugă în coș dar NU finalizează (%)',
-                        data: convRate.map((v, i) => {
-                            const addToCart = v * 2; // est. ATC rate
-                            const finalizing = v;
-                            return (addToCart - finalizing).toFixed(2);
-                        }),
-                        backgroundColor: 'rgba(253, 203, 110, 0.4)',
-                        borderColor: '#fdcb6e',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        stack: 'conv'
-                    },
-                    {
-                        label: 'Conversie finală (%)',
-                        data: convRate,
-                        backgroundColor: 'rgba(0, 206, 201, 0.5)',
-                        borderColor: '#00cec9',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        stack: 'conv'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        grid: { color: 'rgba(108, 92, 231, 0.06)' },
-                        ticks: { callback: v => v + '%' },
-                        max: 3
-                    },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-        // 6. Clients New vs Recurring
-        new Chart(document.getElementById('clientsChart'), {
-            type: 'bar',
-            data: {
-                labels: extMonths,
-                datasets: [
-                    {
-                        label: 'Clienți Noi',
-                        data: newClients,
-                        backgroundColor: 'rgba(108, 92, 231, 0.6)',
-                        borderColor: '#6c5ce7',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        stack: 'stack1'
-                    },
-                    {
-                        label: 'Clienți Recurenți',
-                        data: recurClients,
-                        backgroundColor: 'rgba(0, 206, 201, 0.5)',
-                        borderColor: '#00cec9',
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        stack: 'stack1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        stacked: true,
-                        grid: { color: 'rgba(108, 92, 231, 0.06)' },
-                        title: { display: true, text: 'Număr clienți' }
-                    },
-                    x: {
-                        stacked: true,
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
+        // REMOVED CONFIGS FOR revenueChart, funnelChart, clientsChart
     </script>
 
 </body>
