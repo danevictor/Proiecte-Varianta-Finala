@@ -37,14 +37,35 @@ let processedSalesData = null;
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if salesData is loaded
-    if (typeof window.salesData === 'undefined') {
-        console.error("Sales Data not found! Make sure sales_data_2024_2025.js is loaded.");
-        return;
-    }
+    // Wait for Data with Timeout/Retry
+    const waitForData = (retries = 20, interval = 500) => {
+        if (typeof window.salesData !== 'undefined' && window.salesData.monthly) {
+            try {
+                initDashboard();
+            } catch (e) {
+                console.error("ERROR in initDashboard: " + e.message);
+                console.error(e);
+            }
+        } else if (retries > 0) {
+            console.warn(`Waiting for salesData... (${retries} retries left)`);
+            setTimeout(() => waitForData(retries - 1, interval), interval);
+        } else {
+            console.error("TIMEOUT: salesData not found.");
+            alert("Eroare Critică: Datele nu s-au încărcat. Verificați consola browserului (F12).");
+        }
+    };
 
+    waitForData();
+});
+
+function initDashboard() {
     // Process Raw Data into Arrays
-    processedSalesData = processData(window.salesData);
+    try {
+        processedSalesData = processData(window.salesData);
+    } catch (e) {
+        console.error("Error processing data: " + e.message);
+        throw e;
+    }
 
     // Initialize Date Pickers
     setupDateFilters();
@@ -52,13 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Charts (Empty placeholders if needed, but updateDashboard handles creation)
 
     // Initial Dashboard Update
-    updateDashboard();
+    // Initial Dashboard Update
+    try {
+        updateDashboard();
+    } catch (e) {
+        console.error("Error updating UI: " + e.message);
+        throw e;
+    }
 
     // Update Last Updated Text
-    if (window.salesData.lastUpdated) {
-        document.getElementById('lastUpdatedText').textContent = 'Actualizat: ' + window.salesData.lastUpdated;
-    }
-});
+}
 
 // ============================================
 // DATA PROCESSING (Raw JSON -> Arrays)
@@ -85,7 +109,19 @@ function processData(rawData) {
         frequency: [],
         cohorts: { otp: [], sub1: [], sub3: [], sub6: [] },
         cohortCustomers: { otp: [], sub1: [], sub3: [], sub6: [] },
-        conversions: { otpToSub: [], sub1ToSub3: [], downgrades: [], churn: [] }
+        conversions: { otpToSub: [], sub1ToSub3: [], downgrades: [], churn: [] },
+        churnAnalysis: {
+            otp: { count: [], rate: [], active: [] },
+            sub1: { count: [], rate: [], active: [] },
+            sub3: { count: [], rate: [], active: [] },
+            sub6: { count: [], rate: [], active: [] }
+        },
+        cltvAnalysis: {
+            otp: [],
+            sub1: [],
+            sub3: [],
+            sub6: []
+        }
     };
 
     sortedKeys.forEach(key => {
@@ -124,7 +160,7 @@ function processData(rawData) {
             result.cohorts.sub6.push(0);
         }
 
-        // Conversions
+        // Conversions & Churn Analysis
         if (m.conversions) {
             result.conversions.otpToSub.push(m.conversions.otp_to_sub || 0);
             result.conversions.sub1ToSub3.push(m.conversions.sub1_to_sub3 || 0);
@@ -133,11 +169,50 @@ function processData(rawData) {
 
             const churnTotal = (m.conversions.churn_otp || 0) + (m.conversions.churn_sub1 || 0) + (m.conversions.churn_sub3 || 0) + (m.conversions.churn_sub6 || 0);
             result.conversions.churn.push(churnTotal);
+
+            // Detailed Churn Analysis
+            // OTP
+            const churnOtp = m.conversions.churn_otp || 0;
+            const activeOtp = m.customers_by_type?.OTP || 0;
+            result.churnAnalysis.otp.count.push(churnOtp);
+            result.churnAnalysis.otp.active.push(activeOtp);
+            const totalOtpExposure = activeOtp + churnOtp;
+            result.churnAnalysis.otp.rate.push(totalOtpExposure > 0 ? ((churnOtp / totalOtpExposure) * 100).toFixed(1) : 0);
+
+            // SUB1
+            const churnSub1 = m.conversions.churn_sub1 || 0;
+            const activeSub1 = m.customers_by_type?.SUB1 || 0;
+            result.churnAnalysis.sub1.count.push(churnSub1);
+            result.churnAnalysis.sub1.active.push(activeSub1);
+            const totalSub1Exposure = activeSub1 + churnSub1;
+            result.churnAnalysis.sub1.rate.push(totalSub1Exposure > 0 ? ((churnSub1 / totalSub1Exposure) * 100).toFixed(1) : 0);
+
+            // SUB3
+            const churnSub3 = m.conversions.churn_sub3 || 0;
+            const activeSub3 = m.customers_by_type?.SUB3 || 0;
+            result.churnAnalysis.sub3.count.push(churnSub3);
+            result.churnAnalysis.sub3.active.push(activeSub3);
+            const totalSub3Exposure = activeSub3 + churnSub3;
+            result.churnAnalysis.sub3.rate.push(totalSub3Exposure > 0 ? ((churnSub3 / totalSub3Exposure) * 100).toFixed(1) : 0);
+
+            // SUB6
+            const churnSub6 = m.conversions.churn_sub6 || 0;
+            const activeSub6 = m.customers_by_type?.SUB6 || 0;
+            result.churnAnalysis.sub6.count.push(churnSub6);
+            result.churnAnalysis.sub6.active.push(activeSub6);
+            const totalSub6Exposure = activeSub6 + churnSub6;
+            result.churnAnalysis.sub6.rate.push(totalSub6Exposure > 0 ? ((churnSub6 / totalSub6Exposure) * 100).toFixed(1) : 0);
+
         } else {
             result.conversions.otpToSub.push(0);
             result.conversions.sub1ToSub3.push(0);
             result.conversions.downgrades.push(0);
             result.conversions.churn.push(0);
+
+            ['otp', 'sub1', 'sub3', 'sub6'].forEach(k => {
+                result.churnAnalysis[k].count.push(0);
+                result.churnAnalysis[k].rate.push(0);
+            });
         }
 
         // Cohort Customers (Customers by Type)
@@ -157,6 +232,17 @@ function processData(rawData) {
         result.customers.new.push(m.customers_new || 0);
         result.customers.recurring.push(m.customers_recurring || 0);
         result.customers.active.push(m.customers_active || 0);
+
+        // CLTV Analysis per Cohort (Revenue / Active Customers)
+        const cohorts = ['OTP', 'SUB1', 'SUB3', 'SUB6'];
+        cohorts.forEach(c => {
+            const key = c.toLowerCase();
+            const revenue = (m.sales_by_type && m.sales_by_type[c]) ? m.sales_by_type[c] : 0;
+            const active = (m.customers_by_type && m.customers_by_type[c]) ? m.customers_by_type[c] : 0;
+            // Avoid division by zero
+            const val = active > 0 ? parseFloat((revenue / active).toFixed(2)) : 0;
+            result.cltvAnalysis[key].push(val);
+        });
     });
 
     return result;
@@ -247,13 +333,30 @@ function updateDashboard(startIndex = -1, endIndex = -1) {
             otpToSub: slice(data.conversions.otpToSub),
             sub1ToSub3: slice(data.conversions.sub1ToSub3),
             downgrades: slice(data.conversions.downgrades),
+            downgrades: slice(data.conversions.downgrades),
             churn: slice(data.conversions.churn)
+        },
+        churnAnalysis: {
+            otp: { count: slice(data.churnAnalysis.otp.count), rate: slice(data.churnAnalysis.otp.rate), active: slice(data.churnAnalysis.otp.active) },
+            sub1: { count: slice(data.churnAnalysis.sub1.count), rate: slice(data.churnAnalysis.sub1.rate), active: slice(data.churnAnalysis.sub1.active) },
+            sub3: { count: slice(data.churnAnalysis.sub3.count), rate: slice(data.churnAnalysis.sub3.rate), active: slice(data.churnAnalysis.sub3.active) },
+            sub6: { count: slice(data.churnAnalysis.sub6.count), rate: slice(data.churnAnalysis.sub6.rate), active: slice(data.churnAnalysis.sub6.active) },
+        },
+        cltvAnalysis: {
+            otp: slice(data.cltvAnalysis.otp),
+            sub1: slice(data.cltvAnalysis.sub1),
+            sub3: slice(data.cltvAnalysis.sub3),
+            sub6: slice(data.cltvAnalysis.sub6)
         }
     };
 
     updateSalesChart(slicedData);
     updateAOVChart(slicedData);
     updateCLTVChart(slicedData);
+    updateChurnCharts(slicedData); // NEW Chart Call
+    updateGrowthCharts(slicedData); // Growth & Retention
+    updateCohortCLTVChart(slicedData); // CLTV per Cohort
+    updateCohortLifetimeChart(slicedData); // Customer Lifetime (Duration)
     updateCustomersChart(slicedData);
     updateSubscriptionChart(slicedData);
     updateConversionChart(slicedData);
@@ -353,8 +456,31 @@ function updateSalesChart(data) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: true } },
-                scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, stacked: true } }
+                plugins: {
+                    legend: { display: true },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toLocaleString('ro-RO') + ' RON';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        stacked: true,
+                        ticks: { callback: function (value) { return value.toLocaleString('ro-RO') + ' RON'; } }
+                    }
+                }
             }
         });
     }
@@ -376,8 +502,30 @@ function updateAOVChart(data) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } }
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toLocaleString('ro-RO') + ' RON';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { callback: function (value) { return value + ' RON'; } }
+                    }
+                }
             }
         });
     }
@@ -402,8 +550,30 @@ function updateCLTVChart(data) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } }
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toLocaleString('ro-RO') + ' RON';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { callback: function (value) { return value + ' RON'; } }
+                    }
+                }
             }
         });
     }
@@ -432,7 +602,34 @@ function updateCustomersChart(data) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } } }
+                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } } },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+
+                                    // Calculate Percentage
+                                    let total = 0;
+                                    context.chart.data.datasets.forEach(dataset => {
+                                        total += dataset.data[context.dataIndex];
+                                    });
+
+                                    if (total > 0) {
+                                        const percentage = ((context.parsed.y / total) * 100).toFixed(1);
+                                        label += ` (${percentage}%)`;
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
@@ -448,18 +645,19 @@ function updateSubscriptionChart(data) {
     const otp = sum(data.cohorts.otp);
     const sub1 = sum(data.cohorts.sub1);
     const sub3 = sum(data.cohorts.sub3);
+    const sub6 = sum(data.cohorts.sub6);
 
     if (charts.subscription) {
-        charts.subscription.data.datasets[0].data = [otp, sub1, sub3];
+        charts.subscription.data.datasets[0].data = [otp, sub1, sub3, sub6];
         charts.subscription.update();
     } else {
         charts.subscription = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['OTP', 'SUB1', 'SUB3'],
+                labels: ['OTP', 'SUB1', 'SUB3', 'SUB6'],
                 datasets: [{
-                    data: [otp, sub1, sub3],
-                    backgroundColor: [colors.primary, colors.secondary, colors.success],
+                    data: [otp, sub1, sub3, sub6],
+                    backgroundColor: [colors.primary, colors.secondary, colors.success, colors.warning],
                     borderColor: 'rgba(0,0,0,0)',
                     borderWidth: 0
                 }]
@@ -467,7 +665,34 @@ function updateSubscriptionChart(data) {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'right' } }
+                plugins: {
+                    legend: { position: 'right' },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed.toLocaleString('ro-RO') + ' RON';
+
+                                    // Calculate Percentage
+                                    let total = 0;
+                                    context.chart.data.datasets[0].data.forEach(val => {
+                                        total += val;
+                                    });
+
+                                    if (total > 0) {
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        label += ` (${percentage}%)`;
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
@@ -483,6 +708,7 @@ function updateCohortSalesChart(data) {
         charts.cohortSales.data.datasets[0].data = data.cohorts.otp;
         charts.cohortSales.data.datasets[1].data = data.cohorts.sub1;
         charts.cohortSales.data.datasets[2].data = data.cohorts.sub3;
+        charts.cohortSales.data.datasets[3].data = data.cohorts.sub6;
         charts.cohortSales.update();
     } else {
         charts.cohortSales = new Chart(ctx, {
@@ -492,13 +718,52 @@ function updateCohortSalesChart(data) {
                 datasets: [
                     { label: 'OTP', data: data.cohorts.otp, backgroundColor: colors.primary, borderRadius: 4 },
                     { label: 'SUB1', data: data.cohorts.sub1, backgroundColor: colors.secondary, borderRadius: 4 },
-                    { label: 'SUB3', data: data.cohorts.sub3, backgroundColor: colors.success, borderRadius: 4 }
+                    { label: 'SUB3', data: data.cohorts.sub3, backgroundColor: colors.success, borderRadius: 4 },
+                    { label: 'SUB6', data: data.cohorts.sub6, backgroundColor: colors.warning, borderRadius: 4 }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } } }
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: {
+                        stacked: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { callback: function (value) { return value.toLocaleString('ro-RO') + ' RON'; } }
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toLocaleString('ro-RO') + ' RON';
+
+                                    // Calculate Percentage
+                                    let total = 0;
+                                    context.chart.data.datasets.forEach(dataset => {
+                                        total += dataset.data[context.dataIndex];
+                                    });
+
+                                    if (total > 0) {
+                                        const percentage = ((context.parsed.y / total) * 100).toFixed(1);
+                                        label += ` (${percentage}%)`;
+                                    }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
@@ -513,18 +778,19 @@ function updateCohortPieChart(data) {
     const otp = sum(data.cohorts.otp);
     const sub1 = sum(data.cohorts.sub1);
     const sub3 = sum(data.cohorts.sub3);
+    const sub6 = sum(data.cohorts.sub6);
 
     if (charts.cohortPie) {
-        charts.cohortPie.data.datasets[0].data = [otp, sub1, sub3];
+        charts.cohortPie.data.datasets[0].data = [otp, sub1, sub3, sub6];
         charts.cohortPie.update();
     } else {
         charts.cohortPie = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['OTP', 'SUB1', 'SUB3'],
+                labels: ['OTP', 'SUB1', 'SUB3', 'SUB6'],
                 datasets: [{
-                    data: [otp, sub1, sub3],
-                    backgroundColor: [colors.primary, colors.secondary, colors.success],
+                    data: [otp, sub1, sub3, sub6],
+                    backgroundColor: [colors.primary, colors.secondary, colors.success, colors.warning],
                     borderWidth: 0
                 }]
             },
@@ -678,6 +944,7 @@ function updateChurnChart(data) {
     // Churn Count = Sum of all churn events
     const churnRates = [];
     const churnCounts = [];
+    const activeCounts = [];
 
     for (let i = 0; i < data.months.length; i++) {
         // Total Churn Count from conversion data
@@ -691,6 +958,7 @@ function updateChurnChart(data) {
 
         // Active Customers
         const active = (data.customers && data.customers.active && data.customers.active.length > i) ? data.customers.active[i] : 0;
+        activeCounts.push(active);
 
         let rate = 0;
         // Avoid division by zero
@@ -710,6 +978,18 @@ function updateChurnChart(data) {
             labels: data.months,
             datasets: [
                 {
+                    label: 'Total Activi',
+                    data: activeCounts,
+                    type: 'line',
+                    borderColor: '#3b82f6', // Blue
+                    backgroundColor: '#3b82f6',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    yAxisID: 'y1',
+                    order: 3
+                },
+                {
                     label: 'Rata de Renunțare (%)',
                     data: churnRates,
                     type: 'line',
@@ -719,7 +999,8 @@ function updateChurnChart(data) {
                     yAxisID: 'y',
                     tension: 0.4,
                     pointRadius: 4,
-                    pointHoverRadius: 6
+                    pointHoverRadius: 6,
+                    order: 1
                 },
                 {
                     label: 'Nr. Clienți Pierduți',
@@ -728,7 +1009,8 @@ function updateChurnChart(data) {
                     backgroundColor: 'rgba(239, 68, 68, 0.5)',
                     borderColor: 'rgba(239, 68, 68, 1)',
                     borderWidth: 1,
-                    yAxisID: 'y1'
+                    yAxisID: 'y1',
+                    order: 2
                 }
             ]
         },
@@ -749,7 +1031,7 @@ function updateChurnChart(data) {
                             }
                             if (context.parsed.y !== null) {
                                 label += context.parsed.y;
-                                if (context.dataset.type === 'line') label += '%';
+                                if (context.dataset.label.includes('(%)')) label += '%';
                             }
                             return label;
                         }
@@ -937,3 +1219,394 @@ function initTooltips() {
 
 // Call initTooltips on load
 document.addEventListener('DOMContentLoaded', initTooltips);
+
+
+function updateChurnCharts(data) {
+    const types = ['otp', 'sub1', 'sub3', 'sub6'];
+    const labels = { otp: 'OTP', sub1: 'SUB1', sub3: 'SUB3', sub6: 'SUB6' };
+    const chartColors = { otp: colors.primary, sub1: colors.secondary, sub3: colors.success, sub6: colors.warning };
+
+    types.forEach(type => {
+        const canvasId = `churn${type.charAt(0).toUpperCase() + type.slice(1)}Chart`; // e.g., churnOtpChart
+        const cnv = document.getElementById(canvasId);
+        if (!cnv) return;
+        const ctx = cnv.getContext('2d');
+
+        const churnCount = data.churnAnalysis[type].count;
+        const churnActive = data.churnAnalysis[type].active;
+        const churnRate = data.churnAnalysis[type].rate;
+        const months = data.months;
+        const color = chartColors[type];
+
+        if (charts[`churn${type}`]) {
+            charts[`churn${type}`].data.labels = months;
+            charts[`churn${type}`].data.datasets[0].data = churnActive;
+            charts[`churn${type}`].data.datasets[1].data = churnCount;
+            charts[`churn${type}`].data.datasets[2].data = churnRate;
+            charts[`churn${type}`].update();
+        } else {
+            charts[`churn${type}`] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Clienți Activi',
+                            data: churnActive,
+                            backgroundColor: color,
+                            borderRadius: 4,
+                            order: 3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Clienți Pierduți',
+                            data: churnCount,
+                            backgroundColor: '#ef4444',
+                            borderRadius: 4,
+                            order: 2,
+                            yAxisID: 'y'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Rata de Churn (%)',
+                            data: churnRate,
+                            borderColor: '#991b1b', // Darker Red for Contrast
+                            backgroundColor: '#991b1b',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            tension: 0.3,
+                            order: 1,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            title: { display: true, text: 'Nr. Clienți' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { callback: value => value + '%' },
+                            title: { display: true, text: 'Rata %' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }, // Custom legend used in HTML
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y;
+                                        if (context.dataset.yAxisID === 'y1') {
+                                            label += '%';
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+
+
+function updateGrowthCharts(data) {
+    // 1. Net Growth Chart
+    const netGrowthCtx = document.getElementById('netGrowthChart');
+    if (netGrowthCtx) {
+        const ctx = netGrowthCtx.getContext('2d');
+        const labels = data.months;
+        const newCust = data.customers.new;
+        const lostCust = data.conversions.churn.map(v => -v); // Negative for visual
+        const netGrowth = newCust.map((v, i) => v - data.conversions.churn[i]);
+
+        if (charts.netGrowth) {
+            charts.netGrowth.data.labels = labels;
+            charts.netGrowth.data.datasets[0].data = newCust;
+            charts.netGrowth.data.datasets[1].data = lostCust;
+            charts.netGrowth.data.datasets[2].data = netGrowth;
+            charts.netGrowth.update();
+        } else {
+            charts.netGrowth = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Clienți Noi',
+                            data: newCust,
+                            backgroundColor: colors.success,
+                            order: 2,
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'Clienți Pierduți',
+                            data: lostCust,
+                            backgroundColor: colors.danger,
+                            order: 2,
+                            stack: 'Stack 0'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Creștere Netă',
+                            data: netGrowth,
+                            borderColor: colors.primary,
+                            borderWidth: 2,
+                            pointBackgroundColor: '#fff',
+                            tension: 0.3,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { styled: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    let val = context.parsed.y;
+                                    // Show positive value for lost customers in tooltip
+                                    if (context.dataset.label === 'Clienți Pierduți') val = Math.abs(val);
+                                    return label + val;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 2. Active Cohort Breakdown (Stacked Bar)
+    const activeBreakdownCtx = document.getElementById('activeBreakdownChart');
+    if (activeBreakdownCtx) {
+        const ctx = activeBreakdownCtx.getContext('2d');
+        if (charts.activeBreakdown) {
+            charts.activeBreakdown.data.labels = data.months;
+            charts.activeBreakdown.data.datasets[0].data = data.cohortCustomers.otp;
+            charts.activeBreakdown.data.datasets[1].data = data.cohortCustomers.sub1;
+            charts.activeBreakdown.data.datasets[2].data = data.cohortCustomers.sub3;
+            charts.activeBreakdown.data.datasets[3].data = data.cohortCustomers.sub6;
+            charts.activeBreakdown.update();
+        } else {
+            charts.activeBreakdown = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.months,
+                    datasets: [
+                        { label: 'OTP', data: data.cohortCustomers.otp, backgroundColor: colors.primary, stack: 'Stack 0' },
+                        { label: 'SUB1', data: data.cohortCustomers.sub1, backgroundColor: colors.secondary, stack: 'Stack 0' },
+                        { label: 'SUB3', data: data.cohortCustomers.sub3, backgroundColor: colors.success, stack: 'Stack 0' },
+                        { label: 'SUB6', data: data.cohortCustomers.sub6, backgroundColor: colors.warning, stack: 'Stack 0' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                    },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+    }
+}
+
+// --- 7. CLTV by Cohort Chart ---
+let cohortCLTVChart = null;
+function updateCohortCLTVChart(data) {
+    const ctx = document.getElementById('cltvCohortChart');
+    if (!ctx) return;
+
+    if (cohortCLTVChart) {
+        cohortCLTVChart.destroy();
+    }
+
+    cohortCLTVChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.months,
+            datasets: [
+                {
+                    label: 'OTP',
+                    data: data.cltvAnalysis.otp,
+                    borderColor: '#94a3b8', // Gray
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'SUB1',
+                    data: data.cltvAnalysis.sub1,
+                    borderColor: '#38bdf8', // Light Blue
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'SUB3',
+                    data: data.cltvAnalysis.sub3,
+                    borderColor: '#818cf8', // Indigo
+                    tension: 0.3,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#e2e8f0' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' });
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: '#1e293b' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+}
+
+// --- 8. Customer Lifetime (Duration) by Cohort Chart ---
+let cohortLifetimeChart = null;
+function updateCohortLifetimeChart(data) {
+    const ctx = document.getElementById('cohortLifetimeChart');
+    if (!ctx) return;
+
+    if (cohortLifetimeChart) {
+        cohortLifetimeChart.destroy();
+    }
+
+    // Helper to calculate Lifetime from Churn Rate (String %)
+    // Uses a 3-month rolling average to smooth out volatility in small cohorts
+    const calcLifetime = (rateArray) => {
+        return rateArray.map((_, index) => {
+            // Get current and previous 2 months' rates
+            let sum = 0;
+            let count = 0;
+
+            for (let i = 0; i < 3; i++) {
+                if (index - i >= 0) {
+                    sum += parseFloat(rateArray[index - i]);
+                    count++;
+                }
+            }
+
+            const avgRate = count > 0 ? sum / count : 0;
+
+            if (avgRate <= 0.1) return 60; // Cap at 60 months if avg churn is near 0
+            return parseFloat((1 / (avgRate / 100)).toFixed(1));
+        });
+    };
+
+    const lifetimeOtp = calcLifetime(data.churnAnalysis.otp.rate);
+    const lifetimeSub1 = calcLifetime(data.churnAnalysis.sub1.rate);
+    const lifetimeSub3 = calcLifetime(data.churnAnalysis.sub3.rate);
+    const lifetimeSub6 = calcLifetime(data.churnAnalysis.sub6.rate);
+
+    cohortLifetimeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.months,
+            datasets: [
+                {
+                    label: 'OTP',
+                    data: lifetimeOtp,
+                    borderColor: '#94a3b8', // Gray
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'SUB1',
+                    data: lifetimeSub1,
+                    borderColor: '#38bdf8', // Light Blue
+                    tension: 0.3,
+                    fill: false
+                },
+                {
+                    label: 'SUB3',
+                    data: lifetimeSub3,
+                    borderColor: '#818cf8', // Indigo
+                    tension: 0.3,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#e2e8f0' }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return context.dataset.label + ': ' + context.parsed.y + ' luni';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    grid: { color: '#1e293b' },
+                    ticks: { color: '#94a3b8' },
+                    title: { display: true, text: 'Luni', color: '#64748b' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        }
+    });
+}

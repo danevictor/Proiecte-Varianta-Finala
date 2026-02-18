@@ -19,23 +19,48 @@ if ($csvFiles.Count -eq 0) {
 # Assumes 'orders_export' sorts before 'orders_fetch', and timestamps in fetch are chronological.
 $csvFiles = $csvFiles | Sort-Object Name
 
-# Load and Deduplicate Data (Last Write Wins)
-Write-Host "Consolidating data from files (Last Write Wins strategy)..."
+# Load and Deduplicate Data (Master Cache + Delta Strategy)
+$masterFile = Join-Path $PSScriptRoot "master_orders.csv"
 $latestOrderRows = @{} # Key: OrderID (#...), Value: List of Rows
+$pivotDate = [DateTime]::MinValue
 
-foreach ($file in $csvFiles) {
-    Write-Host "  Reading $($file.Name)..."
+# 1. Load Master Cache if exists
+if (Test-Path $masterFile) {
+    Write-Host "Loading Master Data from $masterFile..."
+    $pivotDate = (Get-Item $masterFile).LastWriteTime
+    $masterData = Import-Csv -LiteralPath $masterFile
+    foreach ($row in $masterData) {
+        if (-not $latestOrderRows.ContainsKey($row.Name)) {
+            $latestOrderRows[$row.Name] = [System.Collections.Generic.List[object]]::new()
+        }
+        $latestOrderRows[$row.Name].Add($row)
+    }
+    Write-Host "Master Data loaded ($($latestOrderRows.Count) orders). Timestamp: $pivotDate"
+    
+
+}
+else {
+    Write-Host "No Master Cache found. Performing full initial processing."
+}
+
+
+# 2. Identify Delta Files
+$deltaFiles = $csvFiles | Where-Object { $_.LastWriteTime -gt $pivotDate }
+Write-Host "Found $($deltaFiles.Count) new/modified files."
+
+# 3. Process Delta Files
+foreach ($file in $deltaFiles) {
+    Write-Host "  Reading delta: $($file.Name)..."
     $data = Import-Csv -LiteralPath $file.FullName
     if ($data.Count -eq 0) { continue }
     
-    # Group by Order Name within this file
     $fileGroups = $data | Group-Object Name
-    
     foreach ($g in $fileGroups) {
-        # Overwrite previous data for this order with the latest file's version
         $latestOrderRows[$g.Name] = $g.Group
     }
 }
+
+
 
 # Flatten to a single list for processing
 $allRecords = [System.Collections.Generic.List[object]]::new()
@@ -44,6 +69,13 @@ foreach ($orderId in $latestOrderRows.Keys) {
     foreach ($r in $rows) {
         $allRecords.Add($r)
     }
+}
+
+# 4. Update Master Cache (Only if updates found)
+if ($deltaFiles.Count -gt 0 -or -not (Test-Path $masterFile)) {
+    Write-Host "Updating Master CSV Cache..."
+    $allRecords | Export-Csv -Path $masterFile -NoTypeInformation -Encoding UTF8
+    Write-Host "Master CSV Updated."
 }
 
 Write-Host "Total unique orders to process: $($latestOrderRows.Count)"
@@ -169,6 +201,10 @@ foreach ($row in $allRecords) {
         }
 
         # Identify Order Type based on Tags - NEW LOGIC
+        # Priority: SUB6 (saseluni) > SUB3 (treiluni/treluni) > SUB1 (appstle) > OTP
+        $orderType = "OTP"
+        $tagsLower = $tags.ToLower()
+        
         # Priority: SUB6 (saseluni) > SUB3 (treiluni/treluni) > SUB1 (appstle) > OTP
         $orderType = "OTP"
         $tagsLower = $tags.ToLower()
@@ -395,9 +431,16 @@ foreach ($email in $customerHistory.Keys) {
                     else { $monthlyEvents[$simKey].churn_sub1++ }
                     $isChurned = $true
                 }
-                # Rule: SUB3 -> 6 months
+                # Rule: SUB3 -> 6 months (Actually 3 months + grace? No, SUB3 is quarterly. so 3 months cycle. Let's assume 4 months gap?)
+                # Wait, existing code says 6 months for SUB3? "Rule: SUB3 -> 6 months". 
+                # If SUB3 is every 3 months, then 6 months without order = churn seems safe (2 missed cycles).
                 elseif ($lastOrderType -eq "SUB3" -and $diffMonths -eq 6) {
                     $monthlyEvents[$simKey].churn_sub3++
+                    $isChurned = $true
+                }
+                # Rule: SUB6 -> 7 months (6 months cycle + 1 month grace)
+                elseif ($lastOrderType -eq "SUB6" -and $diffMonths -eq 7) {
+                    $monthlyEvents[$simKey].churn_sub6++
                     $isChurned = $true
                 }
             }
@@ -619,8 +662,39 @@ foreach ($item in $processedItems) {
 $jsonPayload = $outputObject | ConvertTo-Json -Depth 10
 $jsContent = "window.salesData = " + $jsonPayload + ";"
 Set-Content -Path $outputFile -Value $jsContent -Encoding UTF8
+Write-Host "Done! Full Data saved to $outputFile"
 
-Write-Host "Done! Data saved to $outputFile"
+# --- DASHBOARD OPTIMIZATION (Lightweight Export) ---
+Write-Host "Generating Lightweight Dashboard Data..."
+
+function Remove-Heavy-Data($collection) {
+    if ($null -eq $collection) { return }
+    # Collection keys might be modified during iteration if we are not careful?
+    # No, we are iterating keys and modifying values (nested objects).
+    # Create a copy of the keys to iterate safely
+    $keys = @($collection.Keys)
+    foreach ($key in $collection.Keys) {
+        if ($collection[$key].ContainsKey('all_products')) {
+            $collection[$key].Remove('all_products')
+        }
+    }
+}
+
+Remove-Heavy-Data $outputObject.monthly
+Remove-Heavy-Data $outputObject.quarterly
+Remove-Heavy-Data $outputObject.annual
+Remove-Heavy-Data $outputObject.daily
+
+$dashboardJson = $outputObject | ConvertTo-Json -Depth 10
+$dashboardJs = "window.salesData = " + $dashboardJson + ";"
+$dashboardFile = Join-Path $PSScriptRoot "dashboard_data.js"
+Set-Content -Path $dashboardFile -Value $dashboardJs -Encoding UTF8
+Write-Host "Dashboard Data saved to $dashboardFile"
+
+# Copy to Dashboard Folder
+$dashboardDest = "c:\Users\Zitamine\zitamine\Drive - NEW\Antigravity\Proiecte-Varianta-Finala\DASHBOARD ZITAMINE\dashboard_data.js"
+Copy-Item $dashboardFile -Destination $dashboardDest -Force
+Write-Host "Copied dashboard_data.js to $dashboardDest"
 
 # Cleanup debug
 # $uniqueTags = $globalTags.Keys | Sort-Object

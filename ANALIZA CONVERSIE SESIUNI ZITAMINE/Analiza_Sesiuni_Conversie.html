@@ -602,9 +602,9 @@
         <!-- Hero -->
         <div class="hero">
             <h1>📊 Analiză Sesiuni & Conversion Rate</h1>
-            <p class="subtitle">Zitamine.ro — Corelare trafic, sesiuni și conversii (Octombrie 2025 – Februarie 2026)
+            <p class="subtitle">Zitamine.ro — Corelare trafic, sesiuni și conversii (Ianuarie 2025 – Februarie 2026)
             </p>
-            <p class="date">Generat: 12 Februarie 2026 • Sursa: Shopify Analytics</p>
+            <p class="date">Generat: 17 Februarie 2026 • Sursa: Shopify Analytics + Brute CSV</p>
         </div>
 
         <!-- Cookie Alert -->
@@ -665,42 +665,53 @@
         <!-- TOP KPI Cards -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <div class="label">Vizitatori (Oct-Feb)</div>
-                <div class="value" style="color: var(--accent-light);">90,604</div>
-                <div class="change negative">~150k-225k reali estimați</div>
+                <div class="label">Vizitatori (Ian 25 - Ian 26)</div>
+                <div class="value" style="color: var(--accent-light);">382,875</div>
+                <div class="change negative">~650k-950k reali estimați</div>
                 <div class="bar" style="background: var(--gradient-1);"></div>
             </div>
             <div class="metric-card">
                 <div class="label">Sesiuni totale</div>
-                <div class="value" style="color: var(--accent-light);">112,177</div>
+                <div class="value" style="color: var(--accent-light);">476,122</div>
                 <div class="change">1.24 sesiuni/vizitator</div>
                 <div class="bar" style="background: var(--gradient-1);"></div>
             </div>
             <div class="metric-card">
                 <div class="label">Conversion Rate mediu</div>
-                <div class="value" style="color: var(--danger);">0.76%</div>
-                <div class="change negative">↓ -40% față de vara 2025</div>
+                <div class="value" style="color: var(--warning);">1.02%</div>
+                <div class="change negative">Scade de la 1.62% (Iul) la 0.59% (Ian)</div>
                 <div class="bar" style="background: var(--gradient-2);"></div>
             </div>
             <div class="metric-card">
-                <div class="label">Checkout Conversion</div>
-                <div class="value" style="color: var(--success);">51.8%</div>
+                <div class="label">Checkout Conv (Ian 26)</div>
+                <div class="value" style="color: var(--success);">52.4%</div>
                 <div class="change positive">Bun — cine ajunge în checkout, cumpără</div>
                 <div class="bar" style="background: var(--gradient-3);"></div>
             </div>
             <div class="metric-card">
-                <div class="label">Comenzi totale (Oct-Jan)</div>
-                <div class="value" style="color: var(--warning);">1,773</div>
-                <div class="change negative">↓ scădere progresivă luna/lună</div>
+                <div class="label">Comenzi totale (Ian-Ian)</div>
+                <div class="value" style="color: var(--warning);">9,114</div>
+                <div class="change negative">↓ scădere constantă din toamnă</div>
                 <div class="bar" style="background: var(--gradient-4);"></div>
             </div>
         </div>
 
         <!-- Main Chart: Sessions + Conversion Rate Over Time -->
         <div class="section">
-            <h2>📈 Evoluția Vizitatorilor, Sesiunilor și Ratei de Conversie</h2>
-            <p class="section-desc">Grafic dual: traficul (baruri) vs. rata de conversie (linie). Observă paradoxul:
-                traficul crește, dar conversia scade.</p>
+            <h2>📉 Evoluția Vizitatorilor, Sesiunilor și Ratei de Conversie</h2>
+            <p class="section-desc">Grafic dual: traficul (baruri) vs. rata de conversie (linie).</p>
+            <div class="alert" style="background: rgba(253, 203, 110, 0.08); border-color: rgba(253, 203, 110, 0.25);">
+                <span class="icon">🍪</span>
+                <div>
+                    <h3>Impact Consent Mode (Martie/Aprilie 2025)</h3>
+                    <p>În intervalul <strong>Martie - Aprilie 2025</strong> a fost implementat banner-ul de cookie-uri
+                        (GDPR).
+                        Acest lucru explică scăderea bruscă a numărului de vizitatori raportați începând cu Aprilie 2025
+                        (de la ~58k la ~28k).
+                        Datele de după acest moment reflectă doar utilizatorii care au acceptat explicit cookie-urile
+                        (aprox. 40-60% din totalul real).</p>
+                </div>
+            </div>
             <div class="chart-container">
                 <canvas id="mainChart"></canvas>
             </div>
@@ -734,9 +745,99 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td><strong>Ian 2025</strong></td>
+                            <td>58,488</td>
+                            <td>~99k</td>
+                            <td>72,546</td>
+                            <td class="highlight-bad">0.95%</td>
+                            <td class="highlight-bad">31.9%</td>
+                            <td>1,188</td>
+                            <td>342,780 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Feb 2025</strong></td>
+                            <td>57,954</td>
+                            <td>~98k</td>
+                            <td>73,233</td>
+                            <td class="highlight-bad">0.80%</td>
+                            <td class="highlight-bad">30.0%</td>
+                            <td>1,053</td>
+                            <td>274,466 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mar 2025</strong></td>
+                            <td>58,101</td>
+                            <td>~98k</td>
+                            <td>70,591</td>
+                            <td class="highlight-bad">0.75%</td>
+                            <td class="highlight-bad">36.1%</td>
+                            <td>1,028</td>
+                            <td>283,966 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Apr 2025</strong></td>
+                            <td>28,258</td>
+                            <td>~48k</td>
+                            <td>35,155</td>
+                            <td class="highlight-good">1.18%</td>
+                            <td>46.3%</td>
+                            <td>901</td>
+                            <td>277,564 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mai 2025</strong></td>
+                            <td>22,320</td>
+                            <td>~38k</td>
+                            <td>27,858</td>
+                            <td class="highlight-good">1.39%</td>
+                            <td>39.9%</td>
+                            <td>715</td>
+                            <td>213,568 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Iun 2025</strong></td>
+                            <td>18,402</td>
+                            <td>~31k</td>
+                            <td>22,848</td>
+                            <td class="highlight-good">1.58%</td>
+                            <td>43.6%</td>
+                            <td>660</td>
+                            <td>191,227 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Iul 2025</strong></td>
+                            <td>19,087</td>
+                            <td>~32k</td>
+                            <td>24,030</td>
+                            <td class="highlight-good">1.62%</td>
+                            <td>37.1%</td>
+                            <td>780</td>
+                            <td>208,298 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aug 2025</strong></td>
+                            <td>19,947</td>
+                            <td>~34k</td>
+                            <td>24,585</td>
+                            <td class="highlight-bad">0.99%</td>
+                            <td>46.2%</td>
+                            <td>510</td>
+                            <td>146,744 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sep 2025</strong></td>
+                            <td>18,198</td>
+                            <td>~31k</td>
+                            <td>22,829</td>
+                            <td class="highlight-bad">0.85%</td>
+                            <td class="highlight-good">52.0%</td>
+                            <td>506</td>
+                            <td>156,986 RON</td>
+                        </tr>
+                        <tr>
                             <td><strong>Oct 2025</strong></td>
                             <td>20,520</td>
-                            <td>~34k–51k</td>
+                            <td>~35k</td>
                             <td>26,511</td>
                             <td class="highlight-bad">0.94%</td>
                             <td class="highlight-good">56.4%</td>
@@ -746,7 +847,7 @@
                         <tr>
                             <td><strong>Nov 2025</strong></td>
                             <td>16,629</td>
-                            <td>~28k–42k</td>
+                            <td>~28k</td>
                             <td>19,621</td>
                             <td class="highlight-bad">0.98%</td>
                             <td>45.9%</td>
@@ -756,7 +857,7 @@
                         <tr>
                             <td><strong>Dec 2025</strong></td>
                             <td>21,448</td>
-                            <td>~36k–54k</td>
+                            <td>~36k</td>
                             <td>26,513</td>
                             <td class="highlight-bad">0.71%</td>
                             <td class="highlight-good">53.8%</td>
@@ -766,7 +867,7 @@
                         <tr>
                             <td><strong>Ian 2026</strong></td>
                             <td>23,523</td>
-                            <td>~39k–59k</td>
+                            <td>~40k</td>
                             <td>29,802</td>
                             <td class="highlight-bad">0.59%</td>
                             <td class="highlight-good">52.4%</td>
@@ -775,11 +876,11 @@
                         </tr>
                         <tr>
                             <td><strong>Feb 2026*</strong></td>
-                            <td>8,484</td>
-                            <td>~14k–21k</td>
-                            <td>9,730</td>
-                            <td class="highlight-bad">0.57%</td>
-                            <td class="highlight-good">50.5%</td>
+                            <td>11,904</td>
+                            <td>~20k</td>
+                            <td>13,791</td>
+                            <td class="highlight-bad">0.64%</td>
+                            <td class="highlight-good">51.8%</td>
                             <td>51**</td>
                             <td>14,400 RON**</td>
                         </tr>
@@ -878,61 +979,53 @@
 
         <!-- Analysis Summary -->
         <div class="section">
-            <h2>🎯 Concluzii & Ce s-a întâmplat</h2>
+            <h2>🎯 Concluzii & Ce s-a întâmplat (Ian 2025 - Feb 2026)</h2>
             <p class="section-desc">Cronologia evenimentelor și interpretarea datelor</p>
 
             <div style="margin-top: 16px;">
-                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Octombrie 2025 — Trafic mare, conversie în
-                    scădere</h4>
+                <h4 style="color: var(--success); margin-bottom: 12px;">📅 Q1 2025 (Ian-Mar) — Trafic ridicat pre-Cookie
+                    Banner</h4>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
-                    • <strong>20,520 vizitatori</strong> (cel mai mare toamnă) dar conversie de doar
-                    <strong>0.94%</strong><br>
-                    • Checkout conversion excelent: <strong>56.4%</strong> — site-ul convertește bine <em>dacă</em>
-                    oamenii ajung la checkout<br>
-                    • <strong>511 comenzi, 153,715 RON</strong> — lună solidă dar sub potențial<br>
-                    • Cauze probabile: campaniile de ads aduc trafic mare dar necalificat
+                    • Trafic constant de <strong>~58,000 vizitatori/lună</strong>.<br>
+                    • Conversion Rate stabil la <strong>~0.75-0.95%</strong>.<br>
+                    • Aceasta este perioada "de referință" înainte de schimbările majore de tracking.
                 </p>
 
-                <h4 style="color: var(--warning); margin-bottom: 12px;">📅 Noiembrie 2025 — Scădere trafic, conversie
-                    marginally up</h4>
+                <h4 style="color: var(--warning); margin-bottom: 12px;">📅 Aprilie 2025 — Impactul Cookie Banner</h4>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
-                    • Vizitatorii scad la <strong>16,629</strong> (-19%) dar conversie crește minimal la
-                    <strong>0.98%</strong><br>
-                    • Checkout conversion scade la <strong>45.9%</strong> — cel mai slab din tot intervalul<br>
-                    • <strong>464 comenzi, 138,877 RON</strong><br>
-                    • Sugestie: traficul a fost puțin mai calificat decât în octombrie, dar mulți abandonează
-                    checkout-ul
+                    • <strong>Scădere artificială de trafic</strong>: de la 58k la 28k (-51%).<br>
+                    • Vizitatorii raportați sunt acum doar cei care acceptă cookies.<br>
+                    • Paradoxal, Rata de Conversie <strong>crește</strong> la 1.18% (aprilie) și apoi spre 1.62%
+                    (iulie),
+                    deoarece utilizatorii care acceptă cookies sunt de obicei mai engaged/dispuși să cumpere.
                 </p>
 
-                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Decembrie 2025 — Sezon de sărbători dar
-                    conversie la minim</h4>
+                <h4 style="color: var(--success); margin-bottom: 12px;">📅 Vara 2025 (Mai-Iul) — Eficiență Maximă</h4>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
-                    • Trafic revine la <strong>21,448 vizitatori</strong> dar conversie cade la
-                    <strong>0.71%</strong><br>
-                    • Checkout conversion se recuperează la <strong>53.8%</strong><br>
-                    • <strong>407 comenzi, 118,483 RON</strong> — scădere de 18% a comenzilor de la nov.<br>
-                    • Posibil: competiția pentru atenție în sezonul de sărbători, ofertele concurenților sunt mai
-                    agresive
+                    • Trafic raportat stabil la ~20k vizitatori.<br>
+                    • <strong>Conversion Rate record</strong>: 1.39% - 1.62%.<br>
+                    • Checkout Conversion robust (~40%).<br>
+                    • Site-ul performa foarte bine pentru traficul adus în această perioadă.
                 </p>
 
-                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Ianuarie 2026 — Record de trafic, record
-                    negativ de conversie</h4>
+                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Toamna/Iarna 2025 — Declinul Ratei de
+                    Conversie</h4>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
-                    • <strong>23,523 vizitatori</strong> — <span class="badge badge-success">MAXIM</span> din tot
-                    intervalul<br>
-                    • Dar conversie la doar <strong>0.59%</strong> — <span class="badge badge-danger">MINIM</span><br>
-                    • <strong>391 comenzi, 125,087 RON</strong> — continuă trendul descendent<br>
-                    • Doar <strong>98 clienți noi</strong> vs. 501 în ianuarie 2025 (<span
-                        class="badge badge-danger">-80%</span>)<br>
-                    • Cauze probabile: ads scalate dar neoptimizate, landing page neconvingător, lipsă oferte/urgență
+                    • Începând cu August/Septembrie, conversion rate scade sub 1%.<br>
+                    • Oct-Ian: Vizitatorii (consimțiți) cresc ușor spre 23k, dar conversia scade constant până la
+                    <strong>0.59%</strong> în Ianuarie 2026.<br>
+                    • <strong>Checkout Conversion RĂMÂNE BUN (50%+)</strong>: Problema este strict în atragerea
+                    vizitatorilor spre coș (Add to Cart).<br>
+                    • Cauze posibile: Mix de trafic mai rece (ads scalate?) sau oboseala audienței.
                 </p>
 
-                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Februarie 2026 (parțial) — Trendul continuă
-                </h4>
+                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Ian-Feb 2026 — Situația Critică</h4>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
-                    • Primele 12 zile: <strong>8,484 vizitatori, 0.57% conversie</strong><br>
-                    • Proiecție lună completă: ~24k vizitatori, ~110 comenzi, ~30k RON<br>
-                    • Dacă trendul continuă fără intervenție, va fi cea mai slabă lună din ultimul an
+                    • Ianuarie 2026: <strong>Maxim de trafic recent (23,523)</strong> dar <strong>Minim istoric de
+                        conversie (0.59%)</strong>.<br>
+                    • Februarie 2026 (parțial): Trendul de 0.6% se menține.<br>
+                    • Avem vizitatori, dar nu cumpără. Focusul trebuie să fie pe <strong>CRO (Conversion Rate
+                        Optimization)</strong> înainte de checkout.
                 </p>
             </div>
         </div>
@@ -1116,8 +1209,7 @@
                     </p>
                     <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
                             class="stat">gumgkv</span>
-                        <a href="https://clarity.microsoft.com/shared/recording/667565f8-3e44-48f8-b80c-7833a6932400"
-                            target="_blank" class="video-btn">
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
                             <svg viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg> Vezi Video
@@ -1135,8 +1227,7 @@
                         normal.</p>
                     <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
                             class="stat">1jn2pph</span>
-                        <a href="https://clarity.microsoft.com/player/ayjsmddwdy/1jn2pph/10j2qnz/?ss=1769193287000&sd=720"
-                            target="_blank" class="video-btn">
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
                             <svg viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg> Vezi Video
@@ -1155,8 +1246,7 @@
                         abandonează.</p>
                     <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
                             class="stat">yxngep</span>
-                        <a href="https://clarity.microsoft.com/player/ayjsmddwdy/yxngep/kaocwv/?ss=1768994278000&sd=3149"
-                            target="_blank" class="video-btn">
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
                             <svg viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg> Vezi Video
@@ -1176,8 +1266,7 @@
                     </p>
                     <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
                             class="stat">vll471</span>
-                        <a href="https://clarity.microsoft.com/player/ayjsmddwdy/vll471/1oupvqo/?ss=1767905109000&sd=2321"
-                            target="_blank" class="video-btn">
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
                             <svg viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg> Vezi Video
@@ -1216,9 +1305,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>1jn2pph</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/1jn2pph/10j2qnz/?ss=1769193287000&sd=720"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>1jn2pph</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>ChromeMobile</td>
@@ -1228,9 +1316,8 @@
                             <td class="highlight-bad">Rage clicks pe prețuri "0 lei" + eroare JS</td>
                         </tr>
                         <tr>
-                            <td><strong>vll471</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/vll471/1oupvqo/?ss=1767905109000&sd=2321"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>vll471</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>MobileSafari</td>
@@ -1240,9 +1327,8 @@
                             <td class="highlight-bad">Blocat în flow-ul Quiz din coș (180 clicks!)</td>
                         </tr>
                         <tr>
-                            <td><strong>yxngep</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/yxngep/kaocwv/?ss=1768994278000&sd=3149"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>yxngep</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>Mobile</td>
@@ -1252,9 +1338,8 @@
                             <td>Coș 3,993 lei. Cautat suport telefonic, abandonat</td>
                         </tr>
                         <tr>
-                            <td><strong>gumgkv</strong> <a
-                                    href="https://clarity.microsoft.com/shared/recording/667565f8-3e44-48f8-b80c-7833a6932400"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>gumgkv</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>ChromeMobile</td>
@@ -1265,9 +1350,8 @@
                         </tr>
 
                         <tr>
-                            <td><strong>je1g0d</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/je1g0d/rpb60b/?ss=1765665247000&sd=6071"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>je1g0d</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>Mobile</td>
@@ -1277,9 +1361,8 @@
                             <td>Erori JS repetate la checkout (querySelectorAll null) la min 30, 39, 56</td>
                         </tr>
                         <tr>
-                            <td><strong>1fgbb0j</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/1fgbb0j/exftn3/?ss=1770224179000&sd=3634"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>1fgbb0j</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>ChromeMobile</td>
@@ -1289,9 +1372,8 @@
                             <td class="highlight-bad">Eroare „Shopify.clear is not a function" după quiz</td>
                         </tr>
                         <tr>
-                            <td><strong>1g2rt88</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/1g2rt88/1akr1cr/?ss=1766465979000&sd=3200"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>1g2rt88</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>Mobile</td>
@@ -1302,9 +1384,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>gxooej</strong> <a
-                                    href="https://clarity.microsoft.com/shared/recording/a0f9b605-6490-449e-af54-054665476332"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>gxooej</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>Mobile</td>
@@ -1314,9 +1395,8 @@
                             <td>A alternat repetat Abonament ↔ Comandă unică, nu s-a decis</td>
                         </tr>
                         <tr>
-                            <td><strong>1cldd9j</strong> <a
-                                    href="https://clarity.microsoft.com/shared/recording/e9022aac-0683-49dc-b3a5-81676646cc26"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>1cldd9j</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>FacebookApp</td>
@@ -1326,9 +1406,8 @@
                             <td class="highlight-bad">3 produse în coș, eroare JS la checkout (2 încercări eșuate)</td>
                         </tr>
                         <tr>
-                            <td><strong>mlye4w</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/mlye4w/1emryie/?ss=1764533596000&sd=687"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>mlye4w</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>FacebookApp</td>
@@ -1338,9 +1417,8 @@
                             <td>Dead clicks repetate + „quick back" în quiz, s-a întors la blog</td>
                         </tr>
                         <tr>
-                            <td><strong>gzhja2</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/gzhja2/o94lwr/?ss=1766931148000&sd=529"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>gzhja2</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>ChromeMobile</td>
@@ -1350,9 +1428,8 @@
                             <td>Comparison shopper: căutat „pachet", comparat ingrediente, nu a adăugat</td>
                         </tr>
                         <tr>
-                            <td><strong>jp0hl4</strong> <a
-                                    href="https://clarity.microsoft.com/shared/recording/86c69784-fd33-4f93-b9be-97e366a504c5"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>jp0hl4</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>FacebookApp</td>
@@ -1362,9 +1439,8 @@
                             <td class="highlight-bad">8 produse în coș → eroare JS „ZitamineQuiz" la checkout</td>
                         </tr>
                         <tr>
-                            <td><strong>vi20ev</strong> <a
-                                    href="https://clarity.microsoft.com/player/ayjsmddwdy/vi20ev/1s8ye5i/?ss=1765021363000&sd=899"
-                                    target="_blank" class="video-btn"><svg viewBox="0 0 24 24">
+                            <td><strong>vi20ev</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z" />
                                     </svg> Video</a></td>
                             <td>Instagram</td>
@@ -1398,8 +1474,7 @@
                     <p style="margin-top: 8px;"><strong>Ce se întâmplă:</strong> În coș, utilizatorii dau click repetat
                         pe cele două opțiuni (Abonament / O singură comandă), alternând între ele câteva minute. User
                         <span class="stat">gxooej</span>
-                        <a href="https://clarity.microsoft.com/shared/recording/a0f9b605-6490-449e-af54-054665476332"
-                            target="_blank" class="video-btn">
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
                             <svg viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg> Vezi Video
@@ -1518,21 +1593,27 @@
         Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
         Chart.defaults.plugins.legend.labels.padding = 16;
 
-        const months = ['Oct 2025', 'Nov 2025', 'Dec 2025', 'Ian 2026', 'Feb 2026*'];
-        const visitors = [20520, 16629, 21448, 23523, 8484];
-        const sessions = [26511, 19621, 26513, 29802, 9730];
-        const convRate = [0.94, 0.98, 0.71, 0.59, 0.57];
-        const checkoutConv = [56.4, 45.9, 53.8, 52.4, 50.5];
-        const orders = [511, 464, 407, 391, 51];
-        const revenue = [153715, 138877, 118483, 125087, 14400];
+        const months = ['Ian 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'Mai 2025', 'Iun 2025', 'Iul 2025', 'Aug 2025', 'Sep 2025', 'Oct 2025', 'Nov 2025', 'Dec 2025', 'Ian 2026', 'Feb 2026*'];
 
-        // Extended months (from sales metrics)
-        const extMonths = ['Ian 25', 'Feb 25', 'Mar 25', 'Apr 25', 'Mai 25', 'Iun 25', 'Iul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Ian 26', 'Feb 26*'];
+        // Traffic Data (from CSV: Sessions over time - 2025-01-01 - 2026-02-17.csv)
+        const visitors = [58488, 57954, 58101, 28258, 22320, 18402, 19087, 19947, 18198, 20520, 16629, 21448, 23523, 11904];
+        const sessions = [72546, 73233, 70591, 35155, 27858, 22848, 24030, 24585, 22829, 26511, 19621, 26513, 29802, 13791];
+
+        // Conversion Rates (from CSV: Sessions over time - 2025-01-01 - 2026-02-17.csv)
+        // Multiplied by 100 to get percentage
+        const convRate = [0.95, 0.80, 0.75, 1.18, 1.39, 1.58, 1.62, 0.99, 0.85, 0.94, 0.98, 0.71, 0.59, 0.64];
+        const checkoutConv = [31.98, 30.02, 36.18, 46.37, 39.98, 43.61, 37.14, 46.29, 52.00, 56.36, 45.93, 53.85, 52.38, 51.76];
+
+        // Sales Data (Existing "Total" arrays)
+        const orders = [1188, 1053, 1028, 901, 715, 660, 780, 510, 506, 511, 464, 407, 391, 51];
+        const revenue = [342780, 274466, 283966, 277564, 213568, 191227, 208298, 146744, 156986, 153715, 138877, 118483, 125087, 14400];
+
+        // AOV Data
+        const aov = [288.54, 260.65, 276.23, 308.06, 298.70, 289.74, 267.05, 287.73, 310.25, 300.81, 299.30, 291.11, 319.92, 282.34];
+
+        // Client Data (Clients vs Recurring) - Keeping as is for now
         const newClients = [501, 406, 347, 309, 225, 205, 320, 169, 177, 146, 120, 112, 98, 12];
         const recurClients = [645, 600, 626, 552, 456, 432, 430, 320, 313, 342, 315, 263, 266, 39];
-        const totalOrders = [1188, 1053, 1028, 901, 715, 660, 780, 510, 506, 511, 464, 407, 391, 51];
-        const totalRevenue = [342780, 274466, 283966, 277564, 213568, 191227, 208298, 146744, 156986, 153715, 138877, 118483, 125087, 14400];
-        const aov = [288.54, 260.65, 276.23, 308.06, 298.70, 289.74, 267.05, 287.73, 310.25, 300.81, 299.30, 291.11, 319.92, 282.34];
 
         // 1. Main Chart: Visitors + Sessions (bars) + Conversion Rate (line)
         new Chart(document.getElementById('mainChart'), {

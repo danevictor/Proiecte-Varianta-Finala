@@ -200,6 +200,44 @@
                         <canvas id="cltvChart"></canvas>
                     </div>
                 </div>
+
+                <!-- CLTV by Cohort (Moved) -->
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Valoarea medie a unui client (Revenue / Active Customers) în funcție de tipul de abonament. Arată cât de valoros este un client din fiecare cohortă în fiecare lună.">
+                        <h3>CLTV Lunar per Cohortă (RON) ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span>
+                                OTP</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span>
+                                SUB1</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #818cf8;"></span>
+                                SUB3</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cltvCohortChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Customer Lifetime Duration (New) -->
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Durata medie de viață a unui client (în luni), calculată pe baza ratei de churn. Formula: 1 / Churn Rate.">
+                        <h3>Customer Lifetime (Luni) pe Cohortă ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span>
+                                OTP</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span>
+                                SUB1</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #818cf8;"></span>
+                                SUB3</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cohortLifetimeChart"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -221,6 +259,8 @@
                                 SUB1</span>
                             <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
                                 SUB3</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                SUB6</span>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -243,6 +283,9 @@
                             <span class="legend-item"><span class="legend-dot"
                                     style="background: rgba(16, 185, 129, 0.5);"></span>
                                 SUB3 Clienți</span>
+                            <span class="legend-item"><span class="legend-dot"
+                                    style="background: rgba(245, 158, 11, 0.5);"></span>
+                                SUB6 Clienți</span>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -324,6 +367,8 @@
                 </div>
             </div>
         </section>
+
+
 
         <!-- Customers Section -->
         <section id="customers" class="section">
@@ -473,9 +518,11 @@
                 <div class="charts-grid">
                     <div class="chart-card large">
                         <div class="chart-header"
-                            data-tooltip="Rata de renunțare: Procentul de clienți activi care au devenit inactivi conform regulilor de 'drop-off' (3 luni OTP/SUB1, 6 luni SUB3).">
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
                             <h3>Rata de Churn Lunară (%) ℹ️</h3>
                             <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span>
+                                    Total Activi</span>
                                 <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
                                     Rata Churn</span>
                             </div>
@@ -498,6 +545,145 @@
                         <div class="kpi-content">
                             <span class="kpi-value" id="kpi-churn-count">0</span>
                             <span class="kpi-label">Total Clienți Pierduți ℹ️</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Churn & Downgrade Analysis Section -->
+            <section id="churn-analysis" class="section">
+                <h2 class="section-title">
+                    <span class="title-icon">📉</span>
+                    Analiză Churn & Downgrades (Lunar)
+                </h2>
+
+                <div class="grid-2-cols" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <!-- OTP Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn OTP</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnOtpChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB1 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB1</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #22d3ee;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub1Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB3 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB3</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub3Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB6 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB6</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub6Chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Growth & Retention Analysis Section (NEW) -->
+            <section id="growth-analysis" class="section">
+                <h2 class="section-title">
+                    <span class="title-icon">🌱</span>
+                    Analiză Flux & Creștere
+                </h2>
+                <div class="charts-grid">
+                    <!-- Net Growth Chart -->
+                    <div class="chart-card large">
+                        <div class="chart-header"
+                            data-tooltip="Evoluția bătăliei dintre achiziție și retenție. Barele verzi = Clienți Noi, Barele Roșii = Clienți Pierduți. Linia Albastră = Creșterea Netă (Pozitivă = Creștere reală).">
+                            <h3>Evoluție Netă (Clienți Noi vs Pierduți) ℹ️</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    Noi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    Net</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="netGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Active Base Breakdown -->
+                    <div class="chart-card large">
+                        <div class="chart-header"
+                            data-tooltip="Compoziția bazei de clienți activi pe tipuri de abonament. Arată cum evoluează mixul de clienți în timp.">
+                            <h3>Compoziția Bazei Active (Cohorte) ℹ️</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    OTP</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #22d3ee;"></span>
+                                    SUB1</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    SUB3</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                    SUB6</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activeBreakdownChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -635,6 +821,8 @@
             </div>
         </section>
 
+
+
         <!-- Insights Section -->
         <section id="insights" class="section">
             <h2 class="section-title">
@@ -725,7 +913,7 @@
     </main>
 
     <!-- Load Data Script (Adjust path if needed) -->
-    <script src="../Raport_Vanzari_2024_2026/sales_data_2024_2025.js"></script>
+    <script src="../Raport_Vanzari_2024_2026/dashboard_data.js"></script>
     <script src="charts.js"></script>
     <!-- ZITAMINE PASSWORD PROTECTION -->
     <!-- ZITAMINE PREMIUM PASSWORD PROTECTION -->
@@ -790,7 +978,10 @@
             margin-bottom: 8px;
             background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            color: transparent;
+            /* Fallback */
         }
 
         #zitamine-lock-desc {
