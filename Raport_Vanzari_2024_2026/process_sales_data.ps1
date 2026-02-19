@@ -142,22 +142,21 @@ foreach ($row in $allRecords) {
         $isCanceled = -not [string]::IsNullOrWhiteSpace($cancelledAtStr)
         
         if ($fStatus -eq 'voided') {
-            Write-Host "DEBUG: Zeroing out VOIDED order $orderId (Original Total: $($row.Total))"
+            # Voided orders: zero everything
             $total = 0
             $refunded = 0
             $shipping = 0
             $taxes = 0
             $discountAmount = 0
+            $returns = 0
         }
         else {
-            if ($orderId -eq '#35592') {
-                Write-Host "DEBUG: Processing #35592. Status: $fStatus. Total: $($row.Total)"
-            }
             $total = Parse-Num $row.Total
             $refunded = Parse-Num $row.'Refunded Amount'
             $shipping = Parse-Num $row.Shipping
             $taxes = Parse-Num $row.Taxes
             $discountAmount = Parse-Num $row.'Discount Amount'
+            $returns = Parse-Num $row.Returns
         }
         $discountCode = $row.'Discount Code'
         $tags = $row.Tags
@@ -173,32 +172,39 @@ foreach ($row in $allRecords) {
             }
         }
         
-        # Net Sales Logic
-        $netSales = 0
-        if (-not $isCanceled) {
-            if ($row.'Net Sales') {
+        # === SHOPIFY-ALIGNED SALES FORMULA ===
+        # Shopify Total Sales = Gross Sales - Discounts - Returns + Shipping + Taxes
+        # 
+        # Voided: everything is already zeroed above
+        # Canceled (including refunded+canceled): zero all sales
+        # Pending: excluded earlier (line 135)
+        
+        if ($isCanceled) {
+            # Canceled orders (regardless of refund status): zero everything
+            $netSales = 0
+            $shipping = 0
+            $taxes = 0
+            $discountAmount = 0
+            $returns = 0
+        }
+        else {
+            # Active orders: calculate Net Sales
+            if ($row.'Net Sales' -and $row.'Net Sales' -ne '' -and $row.'Net Sales' -ne '0') {
+                # Use pre-calculated Net Sales from fetch_shopify_data.py (= line_item_gross - discounts)
                 $netSales = Parse-Num $row.'Net Sales'
+                # Subtract returns (refunded line item values)
+                $netSales = $netSales - $returns
             }
             else {
-                $netSales = $total - $refunded
+                # Fallback: derive product-only value from Total
+                # Shopify Total = Subtotal + Shipping + Taxes
+                # So: product-only value = Total - Shipping - Taxes
+                # Then subtract refunds to get net product value
+                $netSales = $total - $shipping - $taxes - $refunded
             }
         }
         
         if ($netSales -lt 0) { $netSales = 0 }
-        
-        # STRICT RULE: If Canceled or Voided, ALL Sales metrics must be 0.
-        if ($isCanceled -or $fStatus -eq 'voided' -or $fStatus -eq 'refunded') {
-            $netSales = 0
-            $grossSales = 0
-            $total = 0 # Ensure this doesn't leak into other calcs if used
-            $shipping = 0
-            $taxes = 0
-            $discountAmount = 0
-            # Refunded amount should stay as is for record? Or 0 too? 
-            # User said "nu vreau sa apara in suma". 
-            # If NetSales = Total - Refunded, and we set NetSales=0, we're good.
-            # But let's be safe and zero everything that sums up.
-        }
 
         # Identify Order Type based on Tags - NEW LOGIC
         # Priority: SUB6 (saseluni) > SUB3 (treiluni/treluni) > SUB1 (appstle) > OTP
@@ -243,34 +249,16 @@ foreach ($row in $allRecords) {
         # We need to defer New/Recurring classification until AFTER we have all orders for a customer.
         # See below loop.
 
-        if ($netSales -lt 0) { $netSales = 0 }
+        # Gross Sales = line item price * qty (before discounts/returns)
+        # For orders from new CSVs, we can compute from line items.
+        # For the order-level, we approximate: grossSales = total - shipping - taxes + discountAmount
+        # Because total = gross - discounts + shipping + taxes
+        # So gross = total - shipping - taxes + discountAmount
+        $grossSales = $total - $shipping - $taxes + $discountAmount
         
-        # Debugging Sales Increase
-        if ($dayKey -eq '2026-02-12' -or $dayKey -eq '2026-02-13') {
-            if ($netSales -gt 0) {
-                Write-Host "DEBUG SALES: $dayKey - Order $orderId - NetSales: $netSales (Status: $fStatus)"
-            }
-        }
-
-
-        
-        # Gross Sales Logic (Total - Shipping - Taxes)
-        # This represents the revenue from products before returns are deducted, but after discounts?
-        # Actually, if we want "Gross Sales" typically it enters before discounts.
-        # But here, "Total" from Shopify usually includes Shipping + Taxes - Discounts.
-        # Let's calculate "Gross Sales" as NetSales + DiscountAmount?
-        # Or simply Total - Shipping - Taxes + DiscountAmount?
-        # Let's stick to what the user likely wants: The amount processed for products.
-        # NetSales = Total - Refunded.
-        # GrossSales (for weekly report) seems to be expected as "Vanzari Totale".
-        # Let's define GrossSales = Total - Shipping - Taxes.
-        
-        $grossSales = $total - $shipping - $taxes
-        
-        # DEBUG CHECK
-        if ($processedOrders.Count -eq 0) {
-            Write-Host "DEBUG FIRST ORDER GROSS SALES: Total=$total Shipping=$shipping Taxes=$taxes Gross=$grossSales"
-        }
+        # Shopify Total Sales = Net Sales + Shipping + Taxes
+        # netSales is always product-only value (gross - discounts - returns/refunds)
+        $totalSales = $netSales + $shipping + $taxes
         
         $orderObj = @{
             Name           = $orderId
@@ -283,8 +271,10 @@ foreach ($row in $allRecords) {
             IsCanceled     = $isCanceled
             Total          = $total
             Refunded       = $refunded
+            Returns        = $returns
             NetSales       = $netSales
             GrossSales     = $grossSales
+            TotalSales     = $totalSales
             OrderType      = $orderType  # OTP, SUB1, SUB3
             Tags           = $tags
             IsFirstOrder   = $false # Calculated later
@@ -484,6 +474,8 @@ function Aggregate-Metrics($periodType) {
                 shipping              = 0.0
                 taxes                 = 0.0
                 gross_sales           = 0.0
+                total_sales           = 0.0
+                returns               = 0.0
                 discounted_orders     = 0
                 discounts_value       = 0.0
                 canceled_orders       = 0
@@ -500,8 +492,10 @@ function Aggregate-Metrics($periodType) {
             $g.valid_orders++
             $g.net_sales += $ord.NetSales
             $g.gross_sales += $ord.GrossSales
+            $g.total_sales += $ord.TotalSales
             $g.shipping += $ord.Shipping
             $g.taxes += $ord.Taxes
+            $g.returns += $ord.Returns
             
             if ($ord.DiscountAmount -gt 0) {
                 $g.discounted_orders++
