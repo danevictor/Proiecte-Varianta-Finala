@@ -7,6 +7,62 @@ Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
 Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 Chart.defaults.font.family = "'Inter', sans-serif";
 
+// Mobile-Responsive Chart Defaults
+(function () {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        Chart.defaults.font.size = 10;
+        Chart.defaults.plugins.legend.labels = {
+            ...Chart.defaults.plugins.legend.labels,
+            boxWidth: 10,
+            padding: 8,
+            font: { size: 10 }
+        };
+        Chart.defaults.plugins.tooltip = {
+            ...Chart.defaults.plugins.tooltip,
+            bodyFont: { size: 11 },
+            titleFont: { size: 11 },
+            padding: 8,
+            displayColors: true,
+            boxWidth: 8,
+            boxHeight: 8
+        };
+    }
+
+    // Global plugin: abbreviate Y-axis tick labels on mobile
+    Chart.register({
+        id: 'mobileAxisHelper',
+        beforeInit(chart) {
+            if (window.innerWidth > 768) return;
+            const scales = chart.options.scales || {};
+            if (scales.y && scales.y.ticks) {
+                const origCb = scales.y.ticks.callback;
+                scales.y.ticks.callback = function (value) {
+                    if (typeof value === 'number') {
+                        if (Math.abs(value) >= 1000) {
+                            return Math.round(value / 1000) + 'K';
+                        }
+                        return value;
+                    }
+                    return origCb ? origCb.call(this, value) : value;
+                };
+                scales.y.ticks.maxTicksLimit = 5;
+            }
+            if (scales.x && !scales.x.ticks) {
+                scales.x.ticks = {};
+            }
+            if (scales.x) {
+                scales.x.ticks = {
+                    ...scales.x.ticks,
+                    maxRotation: 45,
+                    minRotation: 0,
+                    font: { size: 9 }
+                };
+            }
+        }
+    });
+})();
+
 // Color Palette
 const colors = {
     primary: '#6366f1',

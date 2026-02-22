@@ -612,7 +612,7 @@
         }
 
         /* ================================================
-           RESPONSIVE
+           RESPONSIVE — Comprehensive Mobile
            ================================================ */
         @media (max-width: 1024px) {
             .hero-inner {
@@ -668,6 +668,120 @@
 
             .hero-video {
                 max-width: 100%;
+            }
+
+            /* Hero title sizing */
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .hero-title .line-2 {
+                font-size: 28px;
+            }
+
+            .hero-subtitle {
+                font-size: 15px;
+            }
+
+            /* Project cards: smaller padding */
+            .project-card {
+                padding: 24px;
+            }
+
+            .project-card h3 {
+                font-size: 18px;
+            }
+
+            .project-card .card-desc {
+                font-size: 13px;
+            }
+
+            .project-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+
+            .card-top {
+                margin-bottom: 20px;
+            }
+
+            /* Section header */
+            .section-header {
+                margin-bottom: 40px;
+            }
+
+            .section-header p {
+                font-size: 14px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 30px 16px;
+                font-size: 12px;
+            }
+
+            /* Disable hover effects on touch */
+            .project-card:hover {
+                transform: none !important;
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-inner {
+                padding: 70px 16px 30px;
+                gap: 30px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-title .line-2 {
+                font-size: 22px;
+            }
+
+            .hero-subtitle {
+                font-size: 13px;
+            }
+
+            .hero-stats {
+                gap: 16px;
+            }
+
+            .stat-number {
+                font-size: 22px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+            }
+
+            .projects-section {
+                padding: 40px 14px 60px;
+            }
+
+            .section-header h2 {
+                font-size: 22px;
+            }
+
+            .project-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .project-card h3 {
+                font-size: 16px;
+            }
+
+            .status-badge {
+                font-size: 10px;
+                padding: 4px 10px;
             }
         }
     </style>

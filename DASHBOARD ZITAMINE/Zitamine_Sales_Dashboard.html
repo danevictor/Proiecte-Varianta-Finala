@@ -18,6 +18,12 @@
     <div class="bg-gradient"></div>
     <div class="bg-pattern"></div>
 
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Meniu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo">
@@ -823,83 +829,133 @@
 
 
 
-        <!-- Insights Section -->
+        <!-- Insights Section — Updated: 22 Feb 2026 (Mar 2025 – Feb 2026 Analysis) -->
         <section id="insights" class="section">
             <h2 class="section-title">
                 <span class="title-icon">💡</span>
-                Insights & Concluzii
+                Insights & Concluzii <span style="font-weight: 400; opacity: 0.7; font-size: 0.8em;">(Mar 2025 – Feb
+                    2026)</span>
             </h2>
+
+            <!-- Headline KPIs -->
+            <div class="kpi-grid" style="margin-bottom: 24px;">
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)); border-left: 3px solid #ef4444;">
+                    <div class="kpi-icon">📉</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #ef4444; font-size: 1.8rem;">-74%</span>
+                        <span class="kpi-label">Scădere Net Sales (256K → 66K RON)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)); border-left: 3px solid #f59e0b;">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #f59e0b; font-size: 1.8rem;">-76%</span>
+                        <span class="kpi-label">Scădere Clienți Noi (392 → 95/lună)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border-left: 3px solid #10b981;">
+                    <div class="kpi-icon">💎</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #10b981; font-size: 1.8rem;">+8.5%</span>
+                        <span class="kpi-label">Creștere CLTV (483 → 524 RON)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border-left: 3px solid #22d3ee;">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #22d3ee; font-size: 1.8rem;">64%</span>
+                        <span class="kpi-label">Vârf Subscripții din Revenue (Dec 2025)</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="insights-grid">
-                <div class="insight-card positive">
-                    <div class="insight-icon">✅</div>
-                    <h4>CLTV în Creștere Constantă</h4>
-                    <p>CLTV-ul a crescut de la <strong>1,087 RON</strong> (Jan 2025) la <strong>1,602 RON</strong> (Jan
-                        2026), o îmbunătățire de <strong>+47%</strong>. Aceasta indică o bază de clienți mai fidelă și
-                        strategii de retenție eficiente.</p>
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>Colapsul Achiziției de Clienți</h4>
+                    <p>Clienții noi au scăzut cu <strong>76%</strong> (de la 392 la 95/lună). Aceasta este <strong>cauza
+                            principală</strong> a declinului veniturilor. <strong>Punctul de inflexiune: August
+                            2025</strong> (-35% MoM).</p>
                 </div>
 
-                <div class="insight-card positive">
-                    <div class="insight-icon">✅</div>
-                    <h4>Vânzări Recurente Dominante</h4>
-                    <p>Vânzările recurente (<strong>1,903,657 RON</strong>) reprezintă <strong>72%</strong> din totalul
-                        vânzărilor. Modelul de abonament funcționează excelent.</p>
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>Conversia OTP → SUB Prăbușită</h4>
+                    <p>Conversia OTP→SUB a scăzut de la <strong>93 la 18 clienți/lună</strong> (<strong>-81%</strong>).
+                        Funnel-ul de upsell necesită revizuire urgentă, combinat cu lipsa de clienți OTP noi care intră
+                        în pipeline.</p>
                 </div>
 
-                <div class="insight-card warning">
-                    <div class="insight-icon">⚠️</div>
-                    <h4>Scădere Clienți Noi</h4>
-                    <p>Numărul de clienți noi a scăzut de la <strong>501/lună</strong> (Jan 2025) la
-                        <strong>98/lună</strong> (Jan 2026). Este necesară o strategie de achiziție mai agresivă.
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>YoY: Inversare Dramatică din Aug 2025</h4>
+                    <p>Primele 5 luni (Mar-Jul 2025) au fost <strong>peste 2024</strong> (+15% → +194%), dar din August
+                        totul s-a inversat: <strong>-50%</strong> (Aug) până la <strong>-74%</strong> (Feb 2026) YoY.
                     </p>
                 </div>
 
-                <div class="insight-card warning">
-                    <div class="insight-icon">⚠️</div>
-                    <h4>Rată Conversie OTP Scăzută</h4>
-                    <p>Doar <strong>5.53%</strong> din clienții OTP trec la abonament. Recomandare: Introduceți campanii
-                        de nurturing și oferte speciale pentru clienții OTP după 2 luni.</p>
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>CLTV în Creștere Constantă (+8.5%)</h4>
+                    <p>CLTV-ul a crescut de la <strong>483 → 524 RON</strong> pe 12 luni. Clienții fideli devin din ce
+                        în ce mai valoroși — problema nu e calitatea clienților, ci <strong>volumul</strong>.</p>
                 </div>
 
-                <div class="insight-card neutral">
-                    <div class="insight-icon">📊</div>
-                    <h4>SUB3 - Cel Mai Valoros Segment</h4>
-                    <p>Clienții cu abonament pe 3 luni au cel mai mare CLTV (<strong>>2,000 RON</strong>). Concentrați
-                        eforturile pe upgrade-uri de la SUB1 la SUB3.</p>
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>SUB Share Crește (57% → 64%)</h4>
+                    <p>Ponderea abonamentelor din revenue a crescut. <strong>SUB3 a avansat de la 14% la ~22%</strong>
+                        din vânzări. SUB6 a apărut din Oct 2025. Revenue-ul recurent = <strong>66.2%</strong> din total
+                        (1,218,651 RON).</p>
                 </div>
 
-                <div class="insight-card neutral">
-                    <div class="insight-icon">📊</div>
-                    <h4>Utilizare Discounturi Moderată</h4>
-                    <p><strong>17.7%</strong> din comenzi folosesc discount-uri (1,626 din 9,165). Aceasta indică o
-                        utilizare echilibrată, fără a eroda excesiv marjele.</p>
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>Churn în Scădere (-53%)</h4>
+                    <p>Churn-ul total a scăzut de la <strong>234 la 111/lună</strong>. Atenție: parte din scădere e
+                        datorată pool-ului mai mic de clienți activi. <strong>AOV stabil la ~252 RON</strong> — clienții
+                        nu cumpără mai puțin per comandă.</p>
                 </div>
             </div>
 
             <div class="recommendations-card">
-                <h3>🎯 Recomandări Strategice</h3>
+                <h3>🎯 Recomandări Strategice — Prioritate Imediată</h3>
                 <div class="recommendations-list">
                     <div class="recommendation">
                         <span class="rec-number">1</span>
                         <div class="rec-content">
-                            <h5>Intensificați Achizițiile</h5>
-                            <p>Investiți în campanii de awareness și lead generation pentru a compensa scăderea
-                                clienților noi.</p>
+                            <h5>🔴 Diagnosticați Colapsul Achiziției</h5>
+                            <p>Audit complet al canalelor de achiziție (Google Ads, Meta, TikTok, Klaviyo). <strong>Ce
+                                    s-a schimbat în August 2025?</strong> Buget, CPL, reach, landing pages —
+                                identificați cauza și acționați imediat.</p>
                         </div>
                     </div>
                     <div class="recommendation">
                         <span class="rec-number">2</span>
                         <div class="rec-content">
-                            <h5>Automatizați Nurturing OTP</h5>
-                            <p>Creați o secvență de 90 de zile pentru clienții OTP cu testimoniale și oferte pentru
-                                abonament.</p>
+                            <h5>🔄 Revigorați Conversion Funnel OTP → SUB</h5>
+                            <p>Revizie flows Klaviyo pentru conversie OTP→SUB. Oferte personalizate, trial periods,
+                                secvențe de nurturing. Review cu Ioana — conversia a căzut de la 93 la 18/lună.</p>
                         </div>
                     </div>
                     <div class="recommendation">
                         <span class="rec-number">3</span>
                         <div class="rec-content">
-                            <h5>Promovați SUB3</h5>
-                            <p>Oferiți upgrade gratuit la SUB3 pentru primele 100 de conversii lunare pentru a stimula
-                                acest segment valoros.</p>
+                            <h5>💎 Protejați Baza Recurentă</h5>
+                            <p>Engagement & loyalty pentru abonații existenți. Programul de loialitate poate preveni
+                                erodarea bazei de clienți recurenți (care acum susțin 66% din revenue).</p>
+                        </div>
+                    </div>
+                    <div class="recommendation">
+                        <span class="rec-number">4</span>
+                        <div class="rec-content">
+                            <h5>⭐ Promovați Agresiv SUB3</h5>
+                            <p>SUB3 a crescut de la 14% la 22% din vânzări. Promovați economia de 15-20% vs lunar în
+                                flows de onboarding. Upsell de la SUB1 → SUB3 în primele 3 luni.</p>
                         </div>
                     </div>
                 </div>
@@ -1098,6 +1154,41 @@
         });
     </script>
     <!-- END ZITAMINE PASSWORD PROTECTION -->
+
+    <!-- Mobile Menu JS -->
+    <script>
+        (function () {
+            const toggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (!toggle || !sidebar || !overlay) return;
+
+            function openMenu() {
+                toggle.classList.add('active');
+                sidebar.classList.add('open');
+                overlay.style.display = 'block';
+                requestAnimationFrame(() => overlay.classList.add('active'));
+            }
+
+            function closeMenu() {
+                toggle.classList.remove('active');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+
+            toggle.addEventListener('click', () => {
+                sidebar.classList.contains('open') ? closeMenu() : openMenu();
+            });
+
+            overlay.addEventListener('click', closeMenu);
+
+            // Close menu when nav item is clicked
+            sidebar.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', closeMenu);
+            });
+        })();
+    </script>
 </body>
 
 </html>

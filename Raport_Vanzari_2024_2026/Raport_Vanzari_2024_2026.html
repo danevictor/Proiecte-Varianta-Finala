@@ -420,6 +420,205 @@
             background: rgba(239, 68, 68, 0.15);
             color: #ef4444;
         }
+
+        /* ============================================
+           RESPONSIVE — Mobile Overhaul
+           ============================================ */
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                margin-bottom: 20px;
+                padding-bottom: 16px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .last-update {
+                font-size: 12px;
+            }
+
+            /* Tabs: horizontal scrollable strip */
+            .tabs {
+                display: flex;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 8px;
+                margin-bottom: 16px;
+                padding-bottom: 8px;
+                scrollbar-width: none;
+            }
+
+            .tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tab-btn {
+                flex-shrink: 0;
+                padding: 8px 14px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            /* Metrics grid: 2 cols */
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .card {
+                padding: 14px;
+                border-radius: 10px;
+            }
+
+            .card h3 {
+                font-size: 11px;
+                margin-bottom: 6px;
+            }
+
+            .card .value {
+                font-size: 20px;
+            }
+
+            .card .subtext {
+                font-size: 10px;
+            }
+
+            /* Charts: single column */
+            .charts-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+
+            .chart-container {
+                height: 260px;
+                padding: 14px;
+            }
+
+            /* Tables: single column, horizontal scroll */
+            .tables-row {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .table-container {
+                padding: 14px;
+                overflow-x: auto;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                white-space: nowrap;
+            }
+
+            th,
+            td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            /* Filter groups wrap */
+            .filter-group {
+                gap: 6px;
+            }
+
+            .btn-filter {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .nice-select {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .btn-toggle {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+
+            .btn-refresh {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            /* Date filters */
+            #dateFilters {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+
+            /* Disable hover effects on touch */
+            .btn-nice:hover,
+            .btn-filter:hover,
+            .btn-refresh:hover,
+            .btn-toggle:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .card {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 14px;
+            }
+
+            .card h3 {
+                margin: 0;
+                font-size: 10px;
+            }
+
+            .card .value {
+                font-size: 18px;
+                margin: 0;
+            }
+
+            .card .subtext {
+                display: none;
+            }
+
+            .chart-container {
+                height: 200px;
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .tab-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
     </style>
 </head>
 
