@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup Pachet Basic (Mobil) - Acordeon</title>
+    <style>
+        :root {
+            --primary-blue: #0E356A;
+            --primary-green: #3CA552;
+            --text-dark: #333333;
+            --text-gray: #777777;
+            --bg-light: #F7F7F7;
+            --border-light: #EEEEEE;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --light-blue-bg: #EAF2FA;
+            /* Culoare de background pt buton / card, din poze */
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-container {
+            width: 390px;
+            /* Latime iPhone standard */
+            background-color: white;
+            border-radius: 40px;
+            /* Margini mai mari de telefon */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 8px solid #2a2a2a;
+            position: relative;
+        }
+
+        /* Mockup Top Bar iOS */
+        .ios-top {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* Simulare Header browser / app */
+        .header-title-container {
+            text-align: center;
+            padding: 10px 20px 20px 20px;
+        }
+
+        .main-page-title {
+            color: var(--primary-blue);
+            font-size: 28px;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .package-card {
+            /* Fara border la Basic, doar border f subtil gris */
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            margin: 20px 15px 30px 15px;
+            padding: 30px 20px 20px 20px;
+            position: relative;
+            background: white;
+        }
+
+        .package-title {
+            color: var(--primary-blue);
+            text-align: center;
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .package-subtitle {
+            color: var(--text-gray);
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .products-list {
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            color: var(--primary-blue);
+            font-weight: 500;
+            font-size: 17px;
+            line-height: 1.3;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Iconita "?" de la numele produsului */
+        .info-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--text-gray);
+            border-radius: 50%;
+            color: var(--text-gray);
+            font-size: 10px;
+            flex-shrink: 0;
+            margin-left: 2px;
+        }
+
+        .product-qty {
+            color: var(--text-gray);
+            font-size: 15px;
+        }
+
+        /* Acordeon Design */
+        .v2-accordion-btn {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            width: fit-content;
+            margin-top: 4px;
+        }
+
+        .v2-accordion-btn .icon {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .v2-accordion-btn.active .icon {
+            transform: rotate(180deg);
+        }
+
+        .v2-reasons-content {
+            background-color: var(--light-blue-bg);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            display: none;
+        }
+
+        .v2-reasons-content.open {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .v2-reasons-content ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .v2-reasons-content li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .v2-reasons-content li:last-child {
+            margin-bottom: 0;
+        }
+
+        .v2-reasons-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .package-pricing {
+            background-color: var(--bg-light);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pricing-title {
+            color: var(--primary-blue);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .pricing-amount {
+            color: var(--primary-blue);
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .pricing-per-day {
+            color: var(--text-gray);
+            font-size: 15px;
+        }
+
+        /* Mockup pt footer/bottom nav bar safari */
+        .safari-bottom {
+            background: #F9F9F9;
+            border-top: 1px solid #CCC;
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: var(--primary-blue);
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone-container">
+        <!-- iOS Status Bar Mockup -->
+        <div class="ios-top">
+            <div>12:09</div>
+            <div style="display:flex; gap: 5px;">
+                <div style="font-size:10px;">📶</div>
+                <div style="font-size:10px;">🔋</div>
+            </div>
+        </div>
+
+        <div class="header-title-container">
+            <h1 class="main-page-title">Alege pachetul</h1>
+            <h1 class="main-page-title">potrivit pentru tine</h1>
+        </div>
+
+        <div class="package-card">
+            <h3 class="package-title">Pachet Basic</h3>
+            <p class="package-subtitle">(pentru 30 de zile)</p>
+
+            <div class="products-list">
+                <!-- Produs 1 (Deschis default) -->
+                <div class="product-item">
+                    <div class="product-name">
+                        Natural B-Complex (B1, B2, B3, B5, B6, B7, B9, B12)
+                        <span
+                            style="font-weight: normal; font-size: 14px; color: var(--text-gray); margin-left: auto;">1
+                            buc</span>
+                        <span class="info-icon">?</span>
+                    </div>
+
+                    <button class="v2-accordion-btn active" onclick="toggleAccordion(this)">
+                        <span>Vezi de ce ți-a fost recomandat</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="v2-reasons-content open">
+                        <ul>
+                            <li>Susține metabolismul energetic normal</li>
+                            <li>Contribuie la reducerea oboselii și extenuării</li>
+                            <li>Pentru funcționarea normală a sistemului nervos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Produs 2 -->
+                <div class="product-item">
+                    <div class="product-name">
+                        Magneziu Bisglicinat cu Piperină
+                        <span
+                            style="font-weight: normal; font-size: 14px; color: var(--text-gray); margin-left: auto;">1
+                            buc</span>
+                        <span class="info-icon">?</span>
+                    </div>
+
+                    <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                        <span>Vezi de ce ți-a fost recomandat</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="v2-reasons-content">
+                        <ul>
+                            <li>Ajută la relaxarea musculară și nervoasă</li>
+                            <li>Pentru un somn mai liniștit și odihnitor</li>
+                            <li>Formă extrem de asimilabilă datorită piperinei</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Produs 3 -->
+                <div class="product-item">
+                    <div class="product-name">
+                        Omega-3
+                        <span
+                            style="font-weight: normal; font-size: 14px; color: var(--text-gray); margin-left: auto;">1
+                            buc</span>
+                        <span class="info-icon">?</span>
+                    </div>
+
+                    <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                        <span>Vezi de ce ți-a fost recomandat</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="v2-reasons-content">
+                        <ul>
+                            <li>Menține sănătatea cardiovasculară și cerebrală</li>
+                            <li>Poate reduce stările de disconfort articular</li>
+                            <li>Pentru a susține puterea de concentrare pe parcursul zilei</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Produs 4 -->
+                <div class="product-item">
+                    <div class="product-name">
+                        Antiacid gastric natural 225mg
+                        <span
+                            style="font-weight: normal; font-size: 14px; color: var(--text-gray); margin-left: auto;">1
+                            buc</span>
+                        <span class="info-icon">?</span>
+                    </div>
+
+                    <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                        <span>Vezi de ce ți-a fost recomandat</span>
+                        <span class="icon">▼</span>
+                    </button>
+                    <div class="v2-reasons-content">
+                        <ul>
+                            <li>Reface echilibrul gastric</li>
+                            <li>Diminuează disconfortul rapid</li>
+                            <li>Complet natural pentru digestie</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="package-pricing">
+                <div class="pricing-title">Preț pentru 30 de zile</div>
+                <div class="pricing-amount">120 Lei</div>
+                <div class="pricing-per-day">4.00 Lei/zi</div>
+            </div>
+        </div>
+
+        <!-- Simulare tabbar Safari -->
+        <div class="safari-bottom">
+            <span>‹</span> <!-- Back -->
+            <span>›</span> <!-- Forward -->
+            <span>⇪</span> <!-- Share -->
+            <span>⧉</span> <!-- Tabs -->
+        </div>
+    </div>
+
+    <script>
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            btn.classList.toggle('active');
+            content.classList.toggle('open');
+        }
+    </script>
+</body>
+
+</html>
