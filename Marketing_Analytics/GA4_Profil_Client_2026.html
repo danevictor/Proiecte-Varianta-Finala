@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zitamine - Profil Client GA4 | 2025-2026</title>
+    <meta name="description" content="Analiza completa a profilului clientului Zitamine - comparatie 2025 vs 2026 - Google Analytics 4">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --border: #2a3050;
+            --text-primary: #f0f2f8;
+            --text-secondary: #8b95b0;
+            --text-muted: #5a6380;
+            --accent-1: #6366f1;
+            --accent-2: #8b5cf6;
+            --accent-3: #ec4899;
+            --accent-4: #14b8a6;
+            --accent-5: #f59e0b;
+            --accent-6: #3b82f6;
+            --gradient-hero: linear-gradient(135deg, #0a0e1a 0%, #1a1040 50%, #0a0e1a 100%);
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+
+        .hero {
+            background: var(--gradient-hero); padding: 60px 40px 40px; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%); border-radius: 50%;
+        }
+        .hero-content { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
+            padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 600;
+            color: var(--accent-1); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-size: 42px; font-weight: 800;
+            background: linear-gradient(135deg, #f0f2f8, #8b95b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+        }
+        .hero-subtitle { color: var(--text-secondary); font-size: 16px; }
+        .hero-meta { display: flex; gap: 30px; margin-top: 24px; flex-wrap: wrap; }
+        .hero-meta-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
+        .hero-meta-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-4); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px 40px; }
+
+        /* KPI */
+        .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 12px; }
+        .kpi-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 20px; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer;
+        }
+        .kpi-card:hover { transform: translateY(-2px); border-color: var(--accent-1); box-shadow: var(--shadow); }
+        .kpi-card.kpi-active { border-color: var(--accent-1); box-shadow: 0 4px 24px rgba(99,102,241,0.2); }
+        .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .kpi-card:nth-child(1)::before { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+        .kpi-card:nth-child(2)::before { background: linear-gradient(135deg, #ec4899, #f59e0b); }
+        .kpi-card:nth-child(3)::before { background: linear-gradient(135deg, #14b8a6, #3b82f6); }
+        .kpi-card:nth-child(4)::before { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .kpi-card:nth-child(5)::before { background: linear-gradient(135deg, #10b981, #06b6d4); }
+        .kpi-card::after {
+            content: '?'; position: absolute; top: 10px; right: 12px;
+            width: 20px; height: 20px; border-radius: 50%; background: rgba(99,102,241,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: var(--accent-1);
+        }
+        .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+        .kpi-value { font-size: 26px; font-weight: 800; line-height: 1.1; }
+        .kpi-row { display: flex; gap: 16px; margin-top: 8px; }
+        .kpi-year { font-size: 12px; color: var(--text-secondary); }
+        .kpi-year span { font-weight: 700; color: var(--text-primary); }
+        .kpi-explain-panel {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin 0.4s ease, padding 0.4s ease;
+            background: var(--bg-card); border: 1px solid transparent; border-radius: 14px;
+            margin-bottom: 28px; padding: 0 24px;
+        }
+        .kpi-explain-panel.open {
+            max-height: 200px; border-color: rgba(99,102,241,0.25);
+            padding: 18px 24px; margin-bottom: 28px;
+        }
+        .kpi-explain-panel .kep-title {
+            font-weight: 700; color: var(--accent-1); font-size: 13px; margin-bottom: 6px;
+        }
+        .kpi-explain-panel .kep-body {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.7;
+        }
+        .kpi-hint {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .kpi-hint span {
+            width: 16px; height: 16px; border-radius: 50%; background: rgba(99,102,241,0.15);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 700; color: var(--accent-1);
+        }
+
+        /* Sections */
+        .section { margin-bottom: 40px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .section-title { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .section-tag {
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--accent-4); background: rgba(20,184,166,0.1); padding: 4px 12px;
+            border-radius: 100px; border: 1px solid rgba(20,184,166,0.2);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .hero h1 { font-size: 28px; } .container { padding: 20px; } }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 24px; transition: all 0.3s;
+        }
+        .card:hover { border-color: rgba(99,102,241,0.3); box-shadow: var(--shadow); }
+        .card-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .chart-container { position: relative; width: 100%; max-height: 340px; }
+        .chart-container canvas { max-height: 340px; }
+        .chart-sm { max-height: 260px; }
+        .chart-sm canvas { max-height: 260px; }
+
+        /* Bars */
+        .bar-list { display: flex; flex-direction: column; gap: 10px; }
+        .bar-item { display: flex; align-items: center; gap: 12px; }
+        .bar-label { font-size: 13px; font-weight: 500; min-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bar-track { flex: 1; height: 28px; background: rgba(99,102,241,0.08); border-radius: 8px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: white; min-width: 40px; transition: width 1s ease; }
+        .bar-value { font-size: 13px; font-weight: 600; min-width: 70px; text-align: right; }
+
+        /* Tables */
+        .table-scroll { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        .data-table thead th { background: rgba(99,102,241,0.08); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        .data-table thead th:first-child { border-radius: 8px 0 0 0; }
+        .data-table thead th:last-child { border-radius: 0 8px 0 0; }
+        .data-table tbody td { padding: 10px 14px; border-bottom: 1px solid rgba(42,48,80,0.5); }
+        .data-table tbody tr:hover td { background: rgba(99,102,241,0.04); }
+        .data-table .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+        .data-table .hl { font-weight: 700; color: var(--accent-4); }
+
+        /* Insights */
+        .insight-box {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05));
+            border: 1px solid rgba(99,102,241,0.2); border-radius: 12px; padding: 20px; margin-top: 16px;
+        }
+        .insight-box h4 { font-size: 13px; font-weight: 700; color: var(--accent-1); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .insight-box p, .insight-box li { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+        .insight-box ul { padding-left: 16px; margin-top: 6px; }
+
+        /* Persona */
+        .persona-card {
+            background: linear-gradient(135deg, var(--bg-card), #1e1545);
+            border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; padding: 32px;
+            position: relative; overflow: hidden;
+        }
+        .persona-card::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
+        }
+        .persona-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 16px; }
+        .persona-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .persona-desc { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; line-height: 1.7; }
+        .persona-traits { display: flex; flex-wrap: wrap; gap: 8px; }
+        .persona-trait { background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--accent-1); }
+
+        /* YoY comparison mini */
+        .yoy { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+        .yoy-item { background: rgba(99,102,241,0.06); border-radius: 8px; padding: 10px 14px; min-width: 120px; }
+        .yoy-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .yoy-val { font-size: 16px; font-weight: 700; }
+        .yoy-25 { color: var(--accent-5); }
+        .yoy-26 { color: var(--accent-4); }
+
+        .footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
+        .delta-up { color: #10b981; font-size: 12px; font-weight: 600; }
+        .delta-down { color: #ef4444; font-size: 12px; font-weight: 600; }
+
+        /* Clickable source rows */
+        .src-row { cursor: pointer; transition: background 0.2s; }
+        .src-row:hover td { background: rgba(99,102,241,0.08) !important; }
+        .src-row td:first-child { position: relative; padding-left: 28px; }
+        .src-row td:first-child::before {
+            content: '\25B6'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            font-size: 9px; color: var(--accent-1); transition: transform 0.3s;
+        }
+        .src-row.open td:first-child::before { transform: translateY(-50%) rotate(90deg); }
+        .src-explain { display: none; }
+        .src-explain.open { display: table-row; }
+        .src-explain td {
+            background: rgba(99,102,241,0.04) !important;
+            border-left: 3px solid var(--accent-1);
+            padding: 14px 20px !important;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        .src-explain .ex-title {
+            font-weight: 700; color: var(--accent-1); font-size: 12px;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+        }
+        .src-explain .ex-body { color: var(--text-secondary); }
+        .src-explain .ex-tag {
+            display: inline-block; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2);
+            padding: 2px 10px; border-radius: 100px; font-size: 11px; font-weight: 500;
+            color: var(--accent-1); margin-top: 6px; margin-right: 6px;
+        }
+        .src-hint {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .src-hint span { color: var(--accent-1); font-size: 10px; }
+    </style>
+</head>
+<body>
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">Google Analytics 4 - Raport Complet</div>
+        <h1>Profilul Clientului Zitamine</h1>
+        <p class="hero-subtitle">Analiza completa a vizitatorilor si clientilor zitamine.ro - comparatie 2025 vs 2026 (YTD)</p>
+        <div class="hero-meta">
+            <div class="hero-meta-item"><span class="dot"></span> Property ID: 297495831</div>
+            <div class="hero-meta-item"><span class="dot"></span> 2025: 1 Ian - 31 Dec 2025</div>
+            <div class="hero-meta-item"><span class="dot"></span> 2026: 1 Ian - 14 Apr 2026</div>
+            <div class="hero-meta-item"><span class="dot"></span> Extras: 14 Aprilie 2026</div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- KPI STRIP -->
+    <div class="kpi-hint"><span>?</span> Click pe orice card pentru a vedea ce inseamna</div>
+    <div class="kpi-strip">
+        <div class="kpi-card" onclick="toggleKpi(0)">
+            <div class="kpi-label">Utilizatori Activi</div>
+            <div class="kpi-row">
+                <div><div class="kpi-year">2025:</div><div class="kpi-value">271,779</div></div>
+                <div><div class="kpi-year">2026 YTD:</div><div class="kpi-value" style="color:var(--accent-4)">57,840</div></div>
+            </div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(1)">
+            <div class="kpi-label">Sesiuni</div>
+            <div class="kpi-row">
+                <div><div class="kpi-year">2025:</div><div class="kpi-value">360,056</div></div>
+                <div><div class="kpi-year">2026 YTD:</div><div class="kpi-value" style="color:var(--accent-4)">76,357</div></div>
+            </div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(2)">
+            <div class="kpi-label">Revenue (GA4)</div>
+            <div class="kpi-row">
+                <div><div class="kpi-year">2025:</div><div class="kpi-value">986K <span style="font-size:12px">RON</span></div></div>
+                <div><div class="kpi-year">2026 YTD:</div><div class="kpi-value" style="color:var(--accent-4)">251K <span style="font-size:12px">RON</span></div></div>
+            </div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(3)">
+            <div class="kpi-label">Bounce Rate</div>
+            <div class="kpi-row">
+                <div><div class="kpi-year">2025:</div><div class="kpi-value" style="color:#ef4444">31%</div></div>
+                <div><div class="kpi-year">2026:</div><div class="kpi-value" style="color:#10b981">2%</div><div class="delta-up">-93%</div></div>
+            </div>
+        </div>
+        <div class="kpi-card" onclick="toggleKpi(4)">
+            <div class="kpi-label">Avg Session Duration</div>
+            <div class="kpi-row">
+                <div><div class="kpi-year">2025:</div><div class="kpi-value">2:59</div></div>
+                <div><div class="kpi-year">2026:</div><div class="kpi-value" style="color:var(--accent-4)">4:37</div><div class="delta-up">+54%</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="kpi-explain-panel" id="kep"></div>
+
+    <!-- ====== BUYER PERSONA ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#127919;</span> Buyer Persona - Clientul Zitamine 2025-2026</div>
+        </div>
+        <div class="grid-2">
+            <div class="persona-card">
+                <div class="persona-avatar">&#128105;</div>
+                <div class="persona-name">Elena, 45-54 ani</div>
+                <div class="persona-desc">
+                    Romanca din <strong>Bucuresti</strong>, acceseaza de pe <strong>mobil</strong>, vine prin <strong>Google Ads</strong> sau <strong>cautari organice</strong>.
+                    Interesata de <strong>longevitate</strong> si sanatate preventiva. Citeste blogul (magneziu, post intermitent, berberina), apoi exploreaza colectia de suplimente.
+                    In 2025 si 2026, profilul ramane <strong>consistent</strong> - aceeasi femeie 45+ din urban, pe mobil.
+                </div>
+                <div class="persona-traits">
+                    <span class="persona-trait">Femeie 45-54</span>
+                    <span class="persona-trait">Bucuresti / Timisoara</span>
+                    <span class="persona-trait">Mobile 88%</span>
+                    <span class="persona-trait">Google CPC #1</span>
+                    <span class="persona-trait">Longevitate</span>
+                    <span class="persona-trait">Romana</span>
+                    <span class="persona-trait">Blog-first journey</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">De ce acest profil? (date ambii ani)</div>
+                <div class="insight-box" style="margin-top:0">
+                    <h4>Dovezile din date</h4>
+                    <ul>
+                        <li><strong>2025</strong>: 81,690 femei vs 34,723 barbati (70/30) | <strong>2026</strong>: 14,303 F vs 7,747 M (65/35)</li>
+                        <li><strong>45-54 ani</strong> = #1 in ambii ani (39,278 in 2025; 8,454 in 2026)</li>
+                        <li><strong>65+</strong> = #2 surprinzator (40,187 in 2025; 5,464 in 2026)</li>
+                        <li><strong>Mobile</strong>: 88% sesiuni (315K din 360K in 2025; 67K din 76K in 2026)</li>
+                        <li><strong>Bucuresti</strong> domina: 66K users in 2025, 12K in 2026</li>
+                        <li>Revenue per user desktop <strong>19x</strong> mai mare decat mobile in 2026</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== DEMOGRAFIE ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128101;</span> Demografie</div>
+            <span class="section-tag">Varsta &amp; Gen - 2025 vs 2026</span>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Distributie pe Varsta (2025 vs 2026)</div>
+                <div class="chart-container"><canvas id="ageChart"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Distributie pe Gen</div>
+                <div class="grid-2" style="gap:12px; margin-bottom:16px;">
+                    <div>
+                        <div class="kpi-year" style="margin-bottom:4px;">2025 (useri cunoscuti)</div>
+                        <div class="chart-container chart-sm"><canvas id="gender25"></canvas></div>
+                    </div>
+                    <div>
+                        <div class="kpi-year" style="margin-bottom:4px;">2026 (useri cunoscuti)</div>
+                        <div class="chart-container chart-sm"><canvas id="gender26"></canvas></div>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <h4>Evolutie Gen</h4>
+                    <p>Raportul F:M a scazut usor de la <strong>2.35:1</strong> (2025) la <strong>1.85:1</strong> (2026), sugerand ca audienta devine putin mai echilibrata, probabil datorita campaniilor noi de longevitate care atrag si barbati.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== SURSE TRAFIC ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128225;</span> Surse de Trafic</div>
+            <span class="section-tag">De unde vin oamenii - 2025 vs 2026</span>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Channel Groups - Sesiuni 2025</div>
+                <div class="chart-container"><canvas id="ch25"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Channel Groups - Sesiuni 2026</div>
+                <div class="chart-container"><canvas id="ch26"></canvas></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <div class="card-title">Comparatie Channel Groups - Revenue 2025 vs 2026</div>
+            <div class="chart-container"><canvas id="chRevCompare"></canvas></div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <div class="card-title">Top Source / Medium - 2025 vs 2026</div>
+            <div class="src-hint"><span>&#9654;</span> Click pe orice sursa pentru a vedea explicatia</div>
+            <div class="table-scroll">
+                <table class="data-table" id="srcTable">
+                    <thead>
+                        <tr>
+                            <th>Source / Medium</th>
+                            <th>Ses 2025</th>
+                            <th>Rev 2025</th>
+                            <th>Ses 2026</th>
+                            <th>Rev 2026</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="insight-box" style="margin-top:16px;">
+            <h4>Key Changes 2025 vs 2026</h4>
+            <ul>
+                <li><strong>Paid Social scade masiv</strong>: de la 113K sesiuni (2025) la 9.8K (2026) - reducere buget Meta/TikTok</li>
+                <li><strong>Google CPC se mentine puternic</strong>: 92K (2025) -> 33K (2026 YTD, pe 3.5 luni) = pace comparabil</li>
+                <li><strong>Organic Search creste relativ</strong>: de la 21% la 25% din total sesiuni = SEO functioneaza</li>
+                <li><strong>Direct traffic = cel mai mare revenue</strong>: 288K RON (2025), 120K (2026) - clienti recurenti care vin direct</li>
+                <li><strong>Klaviyo</strong>: 12.5K sesiuni (2025) -> 1.7K (2026 YTD) mentine revenue/sesiune excelent (18K RON din 1.7K ses)</li>
+                <li><strong>ChatGPT</strong> a aparut ca sursa noua in 2026 (76 users) - canal emergent</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== CAMPANII ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128226;</span> Top Campanii 2026</div>
+        </div>
+        <div class="card">
+            <div class="table-scroll">
+                <table class="data-table" id="campTable"><thead>
+                    <tr><th>#</th><th>Campanie</th><th>Platforma</th><th>Sessions</th><th>Users</th><th>Revenue</th><th>Conversii</th></tr>
+                </thead><tbody></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== GEO ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#127758;</span> Geografie</div>
+            <span class="section-tag">Orase &amp; Tari</span>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Top 12 Orase - 2025 vs 2026</div>
+                <div class="chart-container"><canvas id="cityChart"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Top 10 Tari - 2025 vs 2026</div>
+                <div class="chart-container"><canvas id="countryChart"></canvas></div>
+            </div>
+        </div>
+        <div class="insight-box" style="margin-top:16px;">
+            <h4>Insights Geo</h4>
+            <ul>
+                <li><strong>86% din trafic e Romania</strong> in ambii ani - consistent</li>
+                <li><strong>Diaspora</strong>: Moldova (1,128 in 2026), Germania (845), UK (508), Italia (377)</li>
+                <li>Ierarhia oraselor ramane identica: <strong>Bucuresti > Timisoara > Cluj</strong></li>
+                <li>Surprise: <strong>Ploiesti</strong> (#4 in 2026) depaseste Iasi, iar <strong>Chisinau</strong> a intrat in top 15</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== DEVICE ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128241;</span> Device &amp; Comportament</div>
+        </div>
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-title">Device - Sesiuni 2025 vs 2026</div>
+                <div class="chart-container chart-sm"><canvas id="deviceChart"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">New vs Returning</div>
+                <div class="chart-container chart-sm"><canvas id="nvrChart"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Revenue per Device</div>
+                <div style="margin-top:16px;">
+                    <div style="margin-bottom:20px;">
+                        <div style="font-size:12px;color:var(--accent-5);font-weight:600;margin-bottom:4px;">2025</div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <div style="background:rgba(99,102,241,0.1);padding:10px 14px;border-radius:10px;flex:1;min-width:100px;">
+                                <div style="font-size:11px;color:var(--text-muted)">Mobile</div>
+                                <div style="font-weight:700;">728,097 RON</div>
+                                <div style="font-size:11px;color:var(--text-muted)">2.31 RON/user</div>
+                            </div>
+                            <div style="background:rgba(236,72,153,0.1);padding:10px 14px;border-radius:10px;flex:1;min-width:100px;">
+                                <div style="font-size:11px;color:var(--text-muted)">Desktop</div>
+                                <div style="font-weight:700;">248,796 RON</div>
+                                <div style="font-size:11px;color:var(--text-muted)">6.91 RON/ses</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--accent-4);font-weight:600;margin-bottom:4px;">2026</div>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <div style="background:rgba(99,102,241,0.1);padding:10px 14px;border-radius:10px;flex:1;min-width:100px;">
+                                <div style="font-size:11px;color:var(--text-muted)">Mobile</div>
+                                <div style="font-weight:700;">126,942 RON</div>
+                                <div style="font-size:11px;color:var(--text-muted)">2.50 RON/user</div>
+                            </div>
+                            <div style="background:rgba(236,72,153,0.1);padding:10px 14px;border-radius:10px;flex:1;min-width:100px;">
+                                <div style="font-size:11px;color:var(--text-muted)">Desktop</div>
+                                <div style="font-weight:700;">124,322 RON</div>
+                                <div style="font-size:11px;color:var(--text-muted)">19.1 RON/user</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="insight-box">
+                    <h4>Concluzie Device</h4>
+                    <p>Desktop revenue per user a crescut de la <strong>6.9 RON la 19.1 RON</strong> in 2026 - oamenii care ajung pe desktop sunt mult mai calificati si cumpara mai mult.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== TREND LUNAR ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128200;</span> Trend Lunar 2025-2026</div>
+        </div>
+        <div class="card">
+            <div class="chart-container" style="max-height:380px;"><canvas id="trendChart" style="max-height:380px;"></canvas></div>
+        </div>
+    </div>
+
+    <!-- ====== LANDING PAGES ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128279;</span> Top Landing Pages 2026</div>
+            <span class="section-tag">Unde intra oamenii pe site</span>
+        </div>
+        <div class="card">
+            <div class="table-scroll">
+                <table class="data-table" id="lpTable"><thead>
+                    <tr><th>#</th><th>Pagina</th><th>Sessions</th><th>Users</th><th>Revenue</th><th>Bounce</th></tr>
+                </thead><tbody></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== LIMBA ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#127760;</span> Limba browserului (2026)</div>
+        </div>
+        <div class="card" style="max-width:550px;">
+            <div class="chart-container chart-sm"><canvas id="langChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- ====== CONCLUZII ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#128161;</span> Concluzii Strategice 2025-2026</div>
+        </div>
+        <div class="grid-2">
+            <div class="insight-box">
+                <h4>Profilul Ideal (ICP) - confirmat pe 2 ani</h4>
+                <ul>
+                    <li><strong>Femeie 45-54 ani</strong> din Bucuresti, Timisoara sau Cluj</li>
+                    <li>Acceseaza de pe <strong>mobil</strong> dar converteste pe <strong>desktop</strong></li>
+                    <li>Vine prin <strong>Google Ads (PMax/Search)</strong> sau <strong>organic search</strong></li>
+                    <li>Interesata de: <strong>longevitate, magneziu, berberina, post intermitent</strong></li>
+                    <li>86% din Romania, diaspora activa in MD, DE, UK, IT</li>
+                    <li>Limba: romana (76%), engleza (20%)</li>
+                </ul>
+            </div>
+            <div class="insight-box">
+                <h4>Ce s-a schimbat 2025 vs 2026</h4>
+                <ul>
+                    <li><strong>Bounce rate: 31% -> 2%</strong> - imbunatatire masiva a calitatii traficului si UX</li>
+                    <li><strong>Session duration: 3 min -> 4.5 min</strong> - engagement crescut cu 54%</li>
+                    <li><strong>Paid Social scade</strong>, dar <strong>Organic Search creste</strong> ca % din total</li>
+                    <li><strong>Desktop revenue/user 3x</strong> mai mare in 2026 vs 2025</li>
+                    <li><strong>Blogul</strong> atrage constant organic gratuit - strategia de content functioneaza</li>
+                    <li><strong>Canale noi</strong>: ChatGPT (76 users), 2Performant affiliate creste</li>
+                    <li><strong>Klaviyo</strong>: ROI excelent - 10.9 RON/sesiune in 2026</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== RELEVANTA DATELOR ====== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title"><span style="font-size:24px">&#9888;&#65039;</span> Cat de relevante sunt aceste date?</div>
+            <span class="section-tag">Analiza critica</span>
+        </div>
+
+        <div class="grid-3">
+            <div class="card" style="border-color:rgba(16,185,129,0.3);">
+                <div class="card-title" style="color:#10b981;">&#9989; Date SOLIDE (fiabilitate 90%+)</div>
+                <ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:16px;">
+                    <li><strong>Device</strong> (mobil/desktop) — 100% acurat, fara sampling</li>
+                    <li><strong>Geografie</strong> (orase, tari) — foarte fiabil, bazat pe IP</li>
+                    <li><strong>Surse de trafic</strong> — excelent pentru a intelege <em>de unde vin</em> oamenii</li>
+                    <li><strong>Landing pages</strong> — ce pagini ii atrag, ce cauta</li>
+                    <li><strong>Comportament</strong> (bounce, durata sesiune) — solid</li>
+                    <li><strong>New vs Returning</strong> — bun ca trend general</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-color:rgba(245,158,11,0.3);">
+                <div class="card-title" style="color:#f59e0b;">&#9888;&#65039; Date cu REZERVE (a se interpreta cu atentie)</div>
+                <ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:16px;">
+                    <li><strong>Varsta si genul</strong> — doar ~40% din utilizatori au date demografice. In 2025, din 271K users, <strong>160K sunt "unknown"</strong>. Profilul de "femeie 45-54" e construit doar din userii logati in Google cu ad personalization activat.</li>
+                    <li><strong>Revenue GA4</strong> — poate diferi cu 20-40% de Shopify real (ad blockers, Safari ITP, sesiuni expirate). <strong>Shopify e adevarul.</strong></li>
+                    <li><strong>Conversii (189K)</strong> — contorizeaza <em>toate</em> conversion events (add to cart, purchase, begin checkout), NU doar comenzile.</li>
+                </ul>
+            </div>
+
+            <div class="card" style="border-color:rgba(239,68,68,0.3);">
+                <div class="card-title" style="color:#ef4444;">&#10060; Ce NU iti spune GA4</div>
+                <ul style="font-size:13px;color:var(--text-secondary);line-height:1.8;padding-left:16px;">
+                    <li><strong>Cine cumpara de fapt</strong> — GA4 arata vizitatori, nu cumparatori</li>
+                    <li><strong>Ce produse cumpara</strong> — nu vezi cosul si mixul de produse</li>
+                    <li><strong>Daca se aboneaza</strong> — nu se vede subscription behavior</li>
+                    <li><strong>Ce probleme de sanatate au</strong> — chestionarul de pe Shopify e infinit mai valoros</li>
+                    <li><strong>De ce cumpara</strong> — motivatia, nu doar sursa</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top:20px;">
+            <div class="insight-box" style="border-color:rgba(99,102,241,0.4);">
+                <h4>&#128161; Concluzie privind relevanta</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:10px;">
+                    <div>
+                        <div style="font-weight:700;color:var(--accent-4);font-size:13px;margin-bottom:8px;">GA4 iti raspunde la:</div>
+                        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                            "De unde vin oamenii pe site si cum se comporta acolo?"<br>
+                            Ideal pentru: <strong>strategie de marketing</strong> (pe ce canale investim, cum optimizam UX-ul pe mobil, ce articole de blog scriem, unde e gap-ul de conversie mobile vs desktop).
+                        </p>
+                    </div>
+                    <div>
+                        <div style="font-weight:700;color:#ef4444;font-size:13px;margin-bottom:8px;">GA4 NU iti raspunde la:</div>
+                        <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                            "Cine sunt clientii mei si de ce cumpara?"<br>
+                            Pentru profilul <strong>real de client</strong>, cele mai valoroase surse sunt: <strong>chestionarul Shopify</strong> (varsta reala, probleme de sanatate, obiective) si <strong>datele de comenzi Shopify</strong> (ce cumpara, cat cheltuie, daca raman abonati).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insight-box" style="margin-top:16px;border-color:rgba(139,92,246,0.3);background:linear-gradient(135deg, rgba(139,92,246,0.08), rgba(99,102,241,0.04));">
+            <h4>&#127919; Recomandare: Profil de client complet = 3 surse combinate</h4>
+            <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;">
+                <div style="flex:1;min-width:180px;background:rgba(99,102,241,0.08);padding:14px;border-radius:10px;">
+                    <div style="font-weight:700;font-size:13px;color:var(--accent-1);margin-bottom:4px;">1. GA4 (acest raport)</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Comportament pe site, surse de trafic, device, geografie, landing pages</div>
+                </div>
+                <div style="font-size:20px;display:flex;align-items:center;color:var(--text-muted);">+</div>
+                <div style="flex:1;min-width:180px;background:rgba(236,72,153,0.08);padding:14px;border-radius:10px;">
+                    <div style="font-weight:700;font-size:13px;color:var(--accent-3);margin-bottom:4px;">2. Chestionar Shopify</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Varsta reala auto-raportata, gen, probleme de sanatate, obiective wellness</div>
+                </div>
+                <div style="font-size:20px;display:flex;align-items:center;color:var(--text-muted);">+</div>
+                <div style="flex:1;min-width:180px;background:rgba(20,184,166,0.08);padding:14px;border-radius:10px;">
+                    <div style="font-weight:700;font-size:13px;color:var(--accent-4);margin-bottom:4px;">3. Date Shopify Orders</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Ce produse cumpara, AOV, frecventa, abonamente, retentie, cohort behavior</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    Zitamine - GA4 Customer Profile Report 2025-2026 | Generat automat pe 14 Aprilie 2026 | Property 297495831
+</div>
+
+<script>
+Chart.defaults.color = '#8b95b0';
+Chart.defaults.font.family = 'Inter, sans-serif';
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+const C = ['#6366f1','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#3b82f6','#ef4444','#10b981','#06b6d4','#f97316','#a855f7','#64748b'];
+
+// === KPI EXPLANATIONS ===
+const kpiExplains = [
+    {
+        title: 'Utilizatori Activi (Active Users)',
+        body: 'Numarul de persoane unice care au vizitat site-ul zitamine.ro in perioada selectata. Fiecare persoana e numarata o singura data, chiar daca a revenit de mai multe ori. 2025 a avut 271K users pe tot anul, iar 2026 are deja 57K in doar 3.5 luni — un ritm bun care sugereaza ca site-ul continua sa atraga audienta.'
+    },
+    {
+        title: 'Sesiuni (Sessions)',
+        body: 'O sesiune = o vizita pe site. Un user poate avea mai multe sesiuni (ex: vine azi, apoi revine peste 3 zile = 2 sesiuni). Media de 1.3 sesiuni/user (2026) inseamna ca majoritatea vizitatorilor vin o singura data. Cei care revin de mai multe ori sunt de obicei clientii recurenti sau cei in faza de cercetare inainte de a cumpara.'
+    },
+    {
+        title: 'Revenue (GA4)',
+        body: 'Venitul total inregistrat de GA4 din tranzactii pe site. ATENTIE: acest numar poate diferi de Shopify din cauza modului in care GA4 atribuie vanzarile (last-click vs. first-click, sesiuni neidentificate). Folositi-l ca indicator de tendinta, nu ca cifra exacta de vanzari. Shopify ramane sursa de adevar pentru revenue real.'
+    },
+    {
+        title: 'Bounce Rate',
+        body: 'Procentul de vizitatori care pleaca de pe site fara sa interactioneze deloc (nu dau scroll, nu dau click, nu navigheaza). 31% in 2025 insemna ca aproape 1 din 3 vizitatori pleca imediat. 2% in 2026 este o imbunatatire enorma — inseamna ca aproape toti vizitatorii interactioneaza cu site-ul. Cauza probabila: calitate mai buna a traficului si UX imbunatatit.'
+    },
+    {
+        title: 'Average Session Duration (Durata medie a sesiunii)',
+        body: 'Cat timp sta, in medie, un vizitator pe site intr-o sesiune. 2:59 (2025) -> 4:37 (2026) = oamenii petrec cu 54% mai mult timp pe site. Asta inseamna ca citesc articolele de blog, exploreaza produsele si se informeaza mai mult inainte de a lua o decizie. Un semn foarte bun de engagement si interes real.'
+    }
+];
+
+let activeKpi = -1;
+function toggleKpi(idx) {
+    const panel = document.getElementById('kep');
+    const cards = document.querySelectorAll('.kpi-card');
+
+    if (activeKpi === idx) {
+        // Close
+        panel.classList.remove('open');
+        cards[idx].classList.remove('kpi-active');
+        activeKpi = -1;
+        setTimeout(() => { panel.innerHTML = ''; }, 400);
+        return;
+    }
+
+    // Deactivate previous
+    if (activeKpi >= 0) cards[activeKpi].classList.remove('kpi-active');
+
+    // Activate new
+    activeKpi = idx;
+    cards[idx].classList.add('kpi-active');
+    const k = kpiExplains[idx];
+    panel.innerHTML = `<div class="kep-title">${k.title}</div><div class="kep-body">${k.body}</div>`;
+    panel.classList.add('open');
+}
+
+// === AGE ===
+new Chart(document.getElementById('ageChart'), {
+    type:'bar', data:{
+        labels:['18-24','25-34','35-44','45-54','55-64','65+'],
+        datasets:[
+            {label:'2025', data:[1976,9011,12096,39278,17098,40187], backgroundColor:'#f59e0b80', borderRadius:6, barPercentage:0.7},
+            {label:'2026', data:[414,2277,2715,8454,2838,5464], backgroundColor:'#6366f1', borderRadius:6, barPercentage:0.7}
+        ]
+    }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>v.toLocaleString()}},x:{grid:{display:false}}}}
+});
+
+// === GENDER ===
+new Chart(document.getElementById('gender25'), {
+    type:'doughnut', data:{labels:['Femei','Barbati'], datasets:[{data:[81690,34723], backgroundColor:['#ec4899','#6366f1'], borderWidth:0, spacing:4, borderRadius:4}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+});
+new Chart(document.getElementById('gender26'), {
+    type:'doughnut', data:{labels:['Femei','Barbati'], datasets:[{data:[14303,7747], backgroundColor:['#ec4899','#6366f1'], borderWidth:0, spacing:4, borderRadius:4}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{legend:{position:'bottom',labels:{font:{size:11}}}}}
+});
+
+// === CHANNELS ===
+const chLabels = ['Cross-network','Organic Search','Paid Search','Paid Social','Direct','Unassigned','Organic Social','Referral','Email'];
+new Chart(document.getElementById('ch25'), {
+    type:'bar', data:{labels:chLabels, datasets:[{data:[56363,74381,33031,113840,40795,16188,12036,2301,2669], backgroundColor:C, borderRadius:6, barPercentage:0.65}]},
+    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+        scales:{x:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},y:{grid:{display:false}}}}
+});
+new Chart(document.getElementById('ch26'), {
+    type:'bar', data:{labels:chLabels, datasets:[{data:[21128,18888,13049,9794,7077,3377,572,383,157], backgroundColor:C, borderRadius:6, barPercentage:0.65}]},
+    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+        scales:{x:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},y:{grid:{display:false}}}}
+});
+
+// === CHANNEL REVENUE COMPARE ===
+new Chart(document.getElementById('chRevCompare'), {
+    type:'bar', data:{
+        labels:['Cross-net','Organic S.','Paid Search','Paid Social','Direct','Unassigned','Org. Social','Referral','Email'],
+        datasets:[
+            {label:'2025 Revenue', data:[97881,48536,203570,186255,288304,83181,19071,12587,19392], backgroundColor:'#f59e0b80', borderRadius:6, barPercentage:0.7},
+            {label:'2026 Revenue', data:[32431,6553,27408,19901,120563,31757,3732,3216,1553], backgroundColor:'#6366f1', borderRadius:6, barPercentage:0.7}
+        ]
+    }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K RON'}},x:{grid:{display:false}}}}
+});
+
+// === SOURCE TABLE (with click-to-explain) ===
+const srcs = [
+    ['google / cpc', 92339, '320,462', 33602, '58,983',
+     'Google Ads - Reclame platite pe Google',
+     'Oameni care au dat click pe reclamele voastre platite din Google (Search, Performance Max, Shopping). CPC = Cost Per Click. Este cea mai mare sursa de trafic si revenue — inseamna ca campaniile Google Ads functioneaza bine.',
+     ['Reclame platite','Google Ads','Cost per Click','Search + PMax']],
+
+    ['google / organic', 73849, '42,157', 18493, '5,184',
+     'Cautari gratuite pe Google',
+     'Oameni care v-au gasit pe Google in mod natural (fara sa platiti). Au cautat lucruri gen "vitamine personalizate", "berberina beneficii", "cura magneziu" si au dat click pe rezultatele voastre organice. Blogul este principalul motor al acestui trafic.',
+     ['Trafic gratuit','SEO','Blog articles','Cautari naturale']],
+
+    ['(direct) / (none)', 40795, '288,304', 7077, '120,563',
+     'Acces direct pe site (fara sursa identificabila)',
+     'Oameni care au tastat direct zitamine.ro in browser, au folosit un bookmark, sau au venit dintr-o sursa pe care GA4 nu o poate identifica (ex: linkuri din aplicatii mobile, PDF-uri, WhatsApp). Revenue-ul mare sugereaza ca sunt clienti recurenti fideli care stiu deja brandul.',
+     ['URL direct','Bookmark','Clienti fideli','WhatsApp / SMS']],
+
+    ['facebook / paid', 74981, '99,438', 7050, '13,196',
+     'Reclame platite pe Facebook/Instagram (Meta Ads)',
+     'Oameni care au dat click pe reclamele voastre de pe Facebook si Instagram. "paid" inseamna ca vin din campanii platite Meta Ads. Include campaniile de Conversii, Remarketing, Buyer Persona etc.',
+     ['Meta Ads','Facebook Ads','Instagram Ads','Campanii platite']],
+
+    ['facebook / cpc', 23845, '66,114', 1906, '5,152',
+     'Alt tag de reclame Facebook (varianta CPC)',
+     'Tot trafic platit de pe Facebook, dar etichetat diferit in UTM-uri (cu medium=cpc in loc de paid). Diferenta vine din modul in care agentia de marketing a configurat link-urile de tracking. Practic, este tot Meta Ads.',
+     ['Meta Ads','UTM cpc','Acelasi lucru ca paid','Setup diferit']],
+
+    ['tiktok / paid', 9555, '12,771', 577, '1,073',
+     'Reclame platite pe TikTok',
+     'Oameni care au dat click pe reclamele voastre de pe TikTok Ads. Traficul a scazut semnificativ in 2026, probabil din cauza reducerii bugetului. Revenue-ul per sesiune este mic comparativ cu alte canale.',
+     ['TikTok Ads','Video ads','Reclame platite','Audienta tanara']],
+
+    ['Klaviyo / campaign', 8890, '51,675', 1285, '13,815',
+     'Email-uri de marketing trimise din Klaviyo (campanii)',
+     'Oameni care au dat click pe un link dintr-un email promotional trimis prin Klaviyo (ex: newsletter, oferte, reduceri saptamanale). "campaign" = email-uri trimise manual, nu automate. ROI-ul este excelent — 10.7 RON/sesiune!',
+     ['Email marketing','Newslettere','Campanii manuale','ROI excelent']],
+
+    ['Klaviyo / flow', 3564, '27,910', 405, '4,616',
+     'Email-uri automate din Klaviyo (flow-uri)',
+     'Trafic din email-urile automate Klaviyo (Welcome series, Abandoned Cart, Post-Purchase, Winback etc.). "flow" = email-uri care se trimit automat pe baza comportamentului clientului. Revenue per sesiune exceptonal (11.4 RON)!',
+     ['Email automat','Welcome series','Abandoned cart','Post-purchase']],
+
+    ['tiktok.com / referral', 5968, '4,390', 36, '0',
+     'Trafic organic de pe TikTok (nu reclame)',
+     'Oameni care au dat click pe un link din profilul vostru de TikTok sau din comentarii/bio. Nu este trafic platit, ci organic. In 2025 era semnificativ (6K sesiuni), in 2026 aproape inexistent — posibil s-a oprit postarea organica pe TikTok.',
+     ['TikTok organic','Link in bio','Trafic gratuit','Social media']],
+
+    ['ig / social', '-', '-', 179, '2,282',
+     'Trafic organic de pe Instagram',
+     'Oameni care au venit de pe Instagram (link in bio, stories, sau postari). "social" inseamna ca GA4 l-a clasificat ca trafic social organic (neplatit). Revenue decent (12.7 RON/sesiune) — audienta calificata.',
+     ['Instagram organic','Link in bio','Stories','Social organic']],
+
+    ['bing / organic', '-', '-', 168, '1,369',
+     'Cautari gratuite pe Bing (motorul de cautare Microsoft)',
+     'Oameni care v-au gasit pe Bing (motorul de cautare de la Microsoft, folosit si de Copilot/Edge). Este trafic organic gratuit, similar cu Google organic dar pe un motor de cautare mai mic. Revenue decent per sesiune.',
+     ['Bing Search','Microsoft','Trafic gratuit','SEO cross-engine']],
+
+    ['OrderlyEmails / email', 1383, '14,599', 149, '1,553',
+     'Email-uri tranzactionale Shopify (confirmare comanda, shipping)',
+     'Trafic din email-urile automate de tip tranzactional trimise de Shopify prin OrderlyEmails (confirmare comanda, update livrare, factura). Clientii dau click pe linkuri din aceste email-uri si revin pe site, de multe ori pentru a cumpara din nou.',
+     ['Email tranzactional','Confirmare comanda','Shipping updates','Shopify app']],
+
+    ['chatgpt.com', '-', '-', 79, '0',
+     'Trafic de pe ChatGPT (AI referral)',
+     'Oameni care au intrebat ChatGPT despre suplimente/vitamine si ChatGPT le-a recomandat sau mentionat zitamine.ro. Este un canal complet nou in 2026 — un semn ca AI-ul incepe sa trimita trafic catre site-uri. Momentan fara revenue direct, dar este un canal de awareness emerging.',
+     ['AI referral','ChatGPT','Canal nou 2026','Awareness']],
+];
+const stb = document.querySelector('#srcTable tbody');
+srcs.forEach((r, idx) => {
+    // Data row (clickable)
+    stb.innerHTML += `<tr class="src-row" data-idx="${idx}" onclick="toggleExplain(${idx})">
+        <td><strong>${r[0]}</strong></td>
+        <td class="num">${typeof r[1]==='number'?r[1].toLocaleString():r[1]}</td>
+        <td class="num">${r[2]} RON</td>
+        <td class="num">${typeof r[3]==='number'?r[3].toLocaleString():r[3]}</td>
+        <td class="num hl">${r[4]} RON</td>
+    </tr>`;
+    // Explanation row (hidden by default)
+    const tags = r[7].map(t => `<span class="ex-tag">${t}</span>`).join('');
+    stb.innerHTML += `<tr class="src-explain" id="ex-${idx}">
+        <td colspan="5">
+            <div class="ex-title">${r[5]}</div>
+            <div class="ex-body">${r[6]}</div>
+            <div style="margin-top:8px">${tags}</div>
+        </td>
+    </tr>`;
+});
+
+function toggleExplain(idx) {
+    const row = document.querySelector(`.src-row[data-idx="${idx}"]`);
+    const ex = document.getElementById('ex-' + idx);
+    row.classList.toggle('open');
+    ex.classList.toggle('open');
+}
+
+// === CAMPAIGNS ===
+const camps = [
+    ['ZPH - PMax - Longevity','Google',15517,10977,'15,984',30469],
+    ['ZPH - Search - Categorii','Google',7811,6999,'528',13617],
+    ['120230896086640376 (Meta)','Facebook',4395,3201,'11,828',15514],
+    ['ZPH - PMax - Rest Of Pachete','Google',4192,3580,'14,379',12324],
+    ['2Performant','Google',3331,3039,'488',4429],
+    ['ZPH - Search - Brand Protect','Google',1870,1363,'25,511',13591],
+    ['Saptamana Longevitatii -30%','Klaviyo',178,123,'3,745',1457],
+    ['difrnt. - Boost Posts','TikTok',419,289,'767',1737],
+    ['ZPH - Longevitate RMKT','Facebook',401,259,'252',1416],
+    ['ZPH - Martie 2026 Femei RMKT','Facebook',335,276,'1,772',1278],
+    ['ZPH - Esentiale Buyer Persona','Facebook',275,222,'1,065',895],
+];
+const ctb = document.querySelector('#campTable tbody');
+camps.forEach((r,i) => {
+    ctb.innerHTML += `<tr><td>${i+1}</td><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td class="num">${r[2].toLocaleString()}</td><td class="num">${r[3].toLocaleString()}</td><td class="num hl">${r[4]} RON</td><td class="num">${r[5].toLocaleString()}</td></tr>`;
+});
+
+// === CITIES ===
+const cityLabels = ['Bucuresti','Timisoara','Cluj','Ploiesti','Iasi','Brasov','Voluntari','Constanta','Oradea','Craiova','Sibiu','Baia Mare'];
+new Chart(document.getElementById('cityChart'), {
+    type:'bar', data:{labels:cityLabels, datasets:[
+        {label:'2025', data:[66338,17148,17146,9716,9333,8297,10969,7435,5466,4319,3201,2665], backgroundColor:'#f59e0b80', borderRadius:6, barPercentage:0.7},
+        {label:'2026', data:[12210,3895,3087,2219,1982,1838,1658,1383,1297,918,647,568], backgroundColor:'#6366f1', borderRadius:6, barPercentage:0.7}
+    ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},x:{grid:{display:false},ticks:{maxRotation:45}}}}
+});
+
+// === COUNTRIES ===
+new Chart(document.getElementById('countryChart'), {
+    type:'bar', data:{labels:['Romania','SUA','China','Moldova','Germania','UK','Italia','Austria','Franta','Spania'], datasets:[
+        {label:'2025', data:[235506,7122,3422,6033,4201,3031,1964,1538,1149,1066], backgroundColor:'#f59e0b80', borderRadius:6, barPercentage:0.7},
+        {label:'2026', data:[49112,1911,1268,1128,845,508,377,275,234,220], backgroundColor:'#6366f1', borderRadius:6, barPercentage:0.7}
+    ]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{x:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},y:{grid:{display:false}}}}
+});
+
+// === DEVICE ===
+new Chart(document.getElementById('deviceChart'), {
+    type:'bar', data:{labels:['Mobile','Desktop','Tablet'], datasets:[
+        {label:'2025', data:[315522,35972,3673], backgroundColor:'#f59e0b80', borderRadius:6},
+        {label:'2026', data:[67158,8769,567], backgroundColor:'#6366f1', borderRadius:6}
+    ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},x:{grid:{display:false}}}}
+});
+
+// === NvR ===
+new Chart(document.getElementById('nvrChart'), {
+    type:'bar', data:{labels:['New','Returning'], datasets:[
+        {label:'2025 Users', data:[266045,44141], backgroundColor:'#f59e0b80', borderRadius:6},
+        {label:'2026 Users', data:[54305,9685], backgroundColor:'#6366f1', borderRadius:6}
+    ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},x:{grid:{display:false}}}}
+});
+
+// === MONTHLY TREND ===
+new Chart(document.getElementById('trendChart'), {
+    type:'line', data:{
+        labels:['Ian 25','Feb 25','Mar 25','Apr 25','Mai 25','Iun 25','Iul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Ian 26','Feb 26','Mar 26','Apr 26'],
+        datasets:[{
+            label:'Utilizatori',data:[42161,44753,42277,20507,18017,14019,16576,14153,21632,19224,14416,19179,21912,16189,13547,8196],
+            borderColor:'#6366f1',backgroundColor:'#6366f120',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#6366f1',borderWidth:2.5
+        },{
+            label:'Sesiuni',data:[53162,56521,52232,24842,21530,17311,21444,18563,27658,25310,17833,24342,28513,19449,17803,9709],
+            borderColor:'#14b8a6',backgroundColor:'#14b8a610',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#14b8a6',borderWidth:2.5
+        },{
+            label:'Revenue (RON)',data:[141249,119967,117536,117244,94076,69924,69281,54826,49684,59405,51258,42019,49246,49786,115006,37444],
+            borderColor:'#ec4899',tension:0.4,pointRadius:4,pointBackgroundColor:'#ec4899',borderWidth:2.5,yAxisID:'y1'
+        }]
+    }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+        scales:{y:{grid:{color:'#2a305030'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}},
+            y1:{position:'right',grid:{display:false},ticks:{callback:v=>(v/1000).toFixed(0)+'K RON'}},
+            x:{grid:{display:false},ticks:{maxRotation:45}}}}
+});
+
+// === LANDING ===
+const lps = [
+    ['/collections/all?filter=Longevitate',10874,7373,'3,320','1%'],
+    ['/ (Homepage)',4702,3656,'43,700','1%'],
+    ['/blog/cat-dureaza-o-cura-cu-magneziu',2685,2492,'-','1%'],
+    ['/blog/beneficiile-postului-longevitate',2602,2327,'5,753','0%'],
+    ['/blog/melatonina-doza-contraindicatii',1716,1489,'-','1%'],
+    ['/blog/berberina-beneficii (Ads)',1309,1204,'-','1%'],
+    ['/blog/cand-se-ia-probioticul',1094,996,'-','1%'],
+    ['/blog/tratament-insomnie',1046,945,'-','2%'],
+    ['/blog/cand-se-ia-silimarina',924,848,'-','1%'],
+    ['/blog/alimente-colesterol',837,749,'-','1%'],
+    ['/blog/omega-3-beneficii (Ads)',799,743,'-','1%'],
+    ['/blog/invinge-oboseala-5-vitamine',762,717,'-','1%'],
+    ['/collections/all',603,503,'2,227','3%'],
+    ['/products/pachet-oboseala-stres',559,517,'3,911','0%'],
+    ['/products/berberina-500mg',499,454,'77','0%'],
+];
+const ltb = document.querySelector('#lpTable tbody');
+lps.forEach((r,i) => {
+    ltb.innerHTML += `<tr><td>${i+1}</td><td>${r[0]}</td><td class="num">${r[1].toLocaleString()}</td><td class="num">${r[2].toLocaleString()}</td><td class="num ${r[3]!=='-'?'hl':''}">${r[3]!=='-'?r[3]+' RON':'-'}</td><td class="num">${r[4]}</td></tr>`;
+});
+
+// === LANGUAGE ===
+new Chart(document.getElementById('langChart'), {
+    type:'doughnut', data:{
+        labels:['Romana','Engleza','Maghiara','Rusa','Italiana','Germana','Spaniola','Franceza','Altele'],
+        datasets:[{data:[43610,11695,630,439,432,263,228,150,130], backgroundColor:C, borderWidth:0, spacing:3, borderRadius:4}]
+    }, options:{responsive:true, maintainAspectRatio:false, cutout:'55%', plugins:{legend:{position:'right',labels:{font:{size:11}}}}}
+});
+</script>
+</body>
+</html>

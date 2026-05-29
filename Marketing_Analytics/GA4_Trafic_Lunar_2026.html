@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zitamine - Surse de Trafic Lunare 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0a0e1a; --card: #1a1f35; --border: #2a3050;
+            --t1: #f0f2f8; --t2: #8b95b0; --t3: #5a6380;
+            --a1: #6366f1; --a2: #8b5cf6; --a3: #ec4899; --a4: #14b8a6; --a5: #f59e0b; --a6: #3b82f6;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--t1); }
+
+        /* Slide container */
+        .slides { max-width:1100px; margin:0 auto; padding:30px; }
+
+        /* Navigation */
+        .nav { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:30px; position:sticky; top:0; z-index:100; background:var(--bg); padding:16px 0; }
+        .nav-btn {
+            padding:10px 24px; border-radius:100px; border:1px solid var(--border); background:var(--card);
+            color:var(--t2); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.3s;
+            font-family:'Inter',sans-serif;
+        }
+        .nav-btn:hover { border-color:var(--a1); color:var(--t1); }
+        .nav-btn.active { background:var(--a1); border-color:var(--a1); color:#fff; box-shadow:0 4px 20px rgba(99,102,241,0.3); }
+        .nav-arrow {
+            width:36px; height:36px; border-radius:50%; border:1px solid var(--border); background:var(--card);
+            color:var(--t2); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:all 0.3s; font-family:'Inter',sans-serif;
+        }
+        .nav-arrow:hover { border-color:var(--a1); color:var(--t1); }
+
+        /* Slide */
+        .slide { display:none; animation: fadeIn 0.4s ease; }
+        .slide.active { display:block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Header */
+        .slide-header {
+            background: linear-gradient(135deg, var(--card), #1e1545);
+            border:1px solid rgba(139,92,246,0.3); border-radius:20px; padding:32px;
+            margin-bottom:24px; position:relative; overflow:hidden;
+        }
+        .slide-header::before {
+            content:''; position:absolute; top:0; right:0; width:250px; height:250px;
+            background:radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+        }
+        .slide-month { font-size:36px; font-weight:800; margin-bottom:4px; position:relative; z-index:1; }
+        .slide-period { font-size:14px; color:var(--t2); position:relative; z-index:1; }
+        .slide-kpis { display:flex; gap:20px; margin-top:20px; flex-wrap:wrap; position:relative; z-index:1; }
+        .sk { background:rgba(99,102,241,0.08); padding:12px 18px; border-radius:12px; min-width:130px; }
+        .sk-label { font-size:11px; color:var(--t3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px; }
+        .sk-val { font-size:22px; font-weight:800; }
+
+        /* Cards */
+        .card {
+            background:var(--card); border:1px solid var(--border); border-radius:16px;
+            padding:24px; margin-bottom:20px; transition:all 0.3s;
+        }
+        .card:hover { border-color:rgba(99,102,241,0.3); }
+        .card-title { font-size:13px; font-weight:600; color:var(--t2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px; }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        @media(max-width:800px) { .grid-2{grid-template-columns:1fr;} }
+
+        .chart-box { position:relative; width:100%; max-height:300px; }
+        .chart-box canvas { max-height:300px; }
+
+        /* Source bars */
+        .src-bars { display:flex; flex-direction:column; gap:8px; }
+        .src-bar { display:flex; align-items:center; gap:10px; }
+        .src-name { font-size:12px; font-weight:500; min-width:130px; color:var(--t1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .src-track { flex:1; height:24px; background:rgba(99,102,241,0.06); border-radius:6px; overflow:hidden; position:relative; }
+        .src-fill { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:8px; font-size:11px; font-weight:600; color:white; min-width:30px; }
+        .src-num { font-size:12px; font-weight:600; min-width:55px; text-align:right; color:var(--t2); }
+
+        /* Insight */
+        .insight {
+            background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.04));
+            border:1px solid rgba(99,102,241,0.2); border-radius:12px; padding:18px; margin-top:16px;
+        }
+        .insight h4 { font-size:12px; font-weight:700; color:var(--a1); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+        .insight p, .insight li { font-size:13px; color:var(--t2); line-height:1.7; }
+        .insight ul { padding-left:16px; margin-top:4px; }
+
+        .footer { text-align:center; padding:40px; color:var(--t3); font-size:12px; border-top:1px solid var(--border); margin-top:40px; }
+    </style>
+</head>
+<body>
+<div class="slides">
+    <div style="text-align:center;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--a1);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Google Analytics 4 - Zitamine.ro</div>
+        <h1 style="font-size:32px;font-weight:800;background:linear-gradient(135deg,#f0f2f8,#8b95b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">De unde ne vine traficul?</h1>
+        <p style="color:var(--t2);font-size:14px;margin-top:4px;">Analiza lunara a surselor de trafic - 2026</p>
+    </div>
+
+    <div class="nav">
+        <button class="nav-arrow" onclick="prev()">&#9664;</button>
+        <button class="nav-btn active" onclick="go(0)">Ian</button>
+        <button class="nav-btn" onclick="go(1)">Feb</button>
+        <button class="nav-btn" onclick="go(2)">Mar</button>
+        <button class="nav-btn" onclick="go(3)">Apr</button>
+        <button class="nav-arrow" onclick="next()">&#9654;</button>
+    </div>
+
+    <!-- ===================== IANUARIE ===================== -->
+    <div class="slide active" id="s0">
+        <div class="slide-header">
+            <div class="slide-month">Ianuarie 2026</div>
+            <div class="slide-period">1 Ian - 31 Ian 2026 (31 zile)</div>
+            <div class="slide-kpis">
+                <div class="sk"><div class="sk-label">Users</div><div class="sk-val">21,912</div></div>
+                <div class="sk"><div class="sk-label">Sesiuni</div><div class="sk-val">28,513</div></div>
+                <div class="sk"><div class="sk-label">Revenue</div><div class="sk-val">49,246 <span style="font-size:12px">RON</span></div></div>
+                <div class="sk"><div class="sk-label">Bounce</div><div class="sk-val" style="color:#10b981">4%</div></div>
+                <div class="sk"><div class="sk-label">Avg Dur.</div><div class="sk-val">2:23</div></div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Canale de trafic - Sesiuni</div>
+                <div class="chart-box"><canvas id="ch0"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Top surse - Sesiuni</div>
+                <div class="src-bars" id="sb0"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Revenue per canal</div>
+            <div class="chart-box"><canvas id="rv0"></canvas></div>
+        </div>
+        <div class="insight">
+            <h4>Ce s-a intamplat in ianuarie?</h4>
+            <ul>
+                <li><strong>Luna cea mai activa</strong> din 2026 — 28.5K sesiuni, cel mai mare trafic</li>
+                <li><strong>Cross-network (#1)</strong> cu 8.6K sesiuni — Google PMax Longevity (7.2K ses) domina</li>
+                <li><strong>Paid Social puternic</strong>: 4.1K sesiuni din Meta Ads + TikTok Boost Posts (342 ses)</li>
+                <li><strong>Klaviyo campaigns</strong>: "Saptamana Longevitatii -30%" a generat 3,745 RON din 169 sesiuni!</li>
+                <li><strong>ChatGPT</strong> deja prezent: 43 sesiuni — canal emergent</li>
+                <li><strong>Revenue modest</strong> (49K) — dar traficul mare sugereaza luna de research/awareness dupa sarbatori</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===================== FEBRUARIE ===================== -->
+    <div class="slide" id="s1">
+        <div class="slide-header">
+            <div class="slide-month">Februarie 2026</div>
+            <div class="slide-period">1 Feb - 28 Feb 2026 (28 zile)</div>
+            <div class="slide-kpis">
+                <div class="sk"><div class="sk-label">Users</div><div class="sk-val">16,189</div></div>
+                <div class="sk"><div class="sk-label">Sesiuni</div><div class="sk-val">19,449</div></div>
+                <div class="sk"><div class="sk-label">Revenue</div><div class="sk-val">49,786 <span style="font-size:12px">RON</span></div></div>
+                <div class="sk"><div class="sk-label">Bounce</div><div class="sk-val" style="color:#10b981">2%</div></div>
+                <div class="sk"><div class="sk-label">Avg Dur.</div><div class="sk-val">4:21</div></div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Canale de trafic - Sesiuni</div>
+                <div class="chart-box"><canvas id="ch1"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Top surse - Sesiuni</div>
+                <div class="src-bars" id="sb1"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Revenue per canal</div>
+            <div class="chart-box"><canvas id="rv1"></canvas></div>
+        </div>
+        <div class="insight">
+            <h4>Ce s-a intamplat in februarie?</h4>
+            <ul>
+                <li><strong>Trafic scade -32%</strong> (28.5K → 19.4K), dar revenue <strong>ramane stabil</strong> (49.8K) — conversie mai buna!</li>
+                <li><strong>Session duration 2x</strong> fata de ianuarie: 4:21 vs 2:23 — oamenii stau mai mult</li>
+                <li><strong>Direct traffic explodeaza</strong> ca revenue: 18,424 RON din doar 1,994 sesiuni (9.24 RON/ses!)</li>
+                <li><strong>Brand Protect creste</strong>: 708 ses, 4,723 RON — brandul Zitamine e cautat activ</li>
+                <li><strong>Display apare</strong>: 170 sesiuni (campanie noua in februarie)</li>
+                <li><strong>Klaviyo "#discount NMN"</strong>: 69 sesiuni → 1,830 RON — email cu conversie excelenta</li>
+                <li><strong>TikTok scade</strong> de la 346 la 75 sesiuni — posibil pauza de campanie</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===================== MARTIE ===================== -->
+    <div class="slide" id="s2">
+        <div class="slide-header" style="border-color:rgba(20,184,166,0.4);">
+            <div class="slide-month">Martie 2026 <span style="font-size:16px;color:#10b981;">&#9733; BEST MONTH</span></div>
+            <div class="slide-period">1 Mar - 31 Mar 2026 (31 zile)</div>
+            <div class="slide-kpis">
+                <div class="sk"><div class="sk-label">Users</div><div class="sk-val">13,547</div></div>
+                <div class="sk"><div class="sk-label">Sesiuni</div><div class="sk-val">17,803</div></div>
+                <div class="sk"><div class="sk-label">Revenue</div><div class="sk-val" style="color:#10b981">115,006 <span style="font-size:12px">RON</span></div></div>
+                <div class="sk"><div class="sk-label">Bounce</div><div class="sk-val" style="color:#10b981">2%</div></div>
+                <div class="sk"><div class="sk-label">Avg Dur.</div><div class="sk-val">7:51</div></div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Canale de trafic - Sesiuni</div>
+                <div class="chart-box"><canvas id="ch2"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Top surse - Sesiuni</div>
+                <div class="src-bars" id="sb2"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Revenue per canal</div>
+            <div class="chart-box"><canvas id="rv2"></canvas></div>
+        </div>
+        <div class="insight">
+            <h4>Ce s-a intamplat in martie? (luna record!)</h4>
+            <ul>
+                <li><strong>REVENUE RECORD: 115K RON</strong> — de 2.3x fata de ianuarie/februarie, cu mai putin trafic!</li>
+                <li><strong>Direct = 70K RON</strong> din doar 1,483 sesiuni (47.16 RON/ses!) — clienti fideli care cumpara mult</li>
+                <li><strong>Organic Search devine #1</strong> in sesiuni (5,527) — SEO da roade, blogul atrage</li>
+                <li><strong>Paid Search: 13.6K RON</strong> din 2,108 sesiuni — Brand Protect genereaza 12.4K RON singur</li>
+                <li><strong>Meta Ads diversificate</strong>: campanii Femei RMKT (332 ses), Imunitate (163), Health Interests (131)</li>
+                <li><strong>2Performant affiliate explodeaza</strong>: 1,132 sesiuni — canal de afiliere creste</li>
+                <li><strong>Avg session: 7:51</strong> — de 3x fata de ianuarie. Engagement exceptional</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ===================== APRILIE ===================== -->
+    <div class="slide" id="s3">
+        <div class="slide-header">
+            <div class="slide-month">Aprilie 2026 <span style="font-size:14px;color:var(--t3);">(partial: 1-14)</span></div>
+            <div class="slide-period">1 Apr - 14 Apr 2026 (14 zile)</div>
+            <div class="slide-kpis">
+                <div class="sk"><div class="sk-label">Users</div><div class="sk-val">8,231</div></div>
+                <div class="sk"><div class="sk-label">Sesiuni</div><div class="sk-val">9,742</div></div>
+                <div class="sk"><div class="sk-label">Revenue</div><div class="sk-val">38,196 <span style="font-size:12px">RON</span></div></div>
+                <div class="sk"><div class="sk-label">Bounce</div><div class="sk-val" style="color:#10b981">2%</div></div>
+                <div class="sk"><div class="sk-label">Avg Dur.</div><div class="sk-val">6:09</div></div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Canale de trafic - Sesiuni</div>
+                <div class="chart-box"><canvas id="ch3"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Top surse - Sesiuni</div>
+                <div class="src-bars" id="sb3"></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Revenue per canal</div>
+            <div class="chart-box"><canvas id="rv3"></canvas></div>
+        </div>
+        <div class="insight">
+            <h4>Ce se intampla in aprilie? (prima jumatate)</h4>
+            <ul>
+                <li><strong>Pace bun</strong>: 9.7K sesiuni in 14 zile → proiectat ~21K pe luna intreaga</li>
+                <li><strong>Organic Search = #1</strong> (3.2K sesiuni) — continua trendul crescator din martie</li>
+                <li><strong>Paid Search pe #2</strong> (2K ses), Cross-network pe #3 (1.8K) — Google ramane dominanta</li>
+                <li><strong>Direct = 24.7K RON</strong> din 1K sesiuni — confirma pattern-ul de clienti fideli</li>
+                <li><strong>Paid Social scade</strong> la 937 sesiuni — buget redus pe Meta in aprilie</li>
+                <li><strong>2Performant explodeaza</strong>: 1,394 sesiuni — devine al doilea canal dupa organic!</li>
+                <li><strong>Campanie noua</strong>: "Summer Ready RMKT" (81 ses) — prima campanie de vara</li>
+                <li><strong>Instagram organic</strong> creste: 54 sesiuni, 345 RON — cel mai bun ROI social organic</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    Zitamine - Surse de Trafic Lunare 2026 | GA4 Property 297495831 | Generat 14 Aprilie 2026
+</div>
+
+<script>
+Chart.defaults.color='#8b95b0';
+Chart.defaults.font.family='Inter,sans-serif';
+Chart.defaults.plugins.legend.display=false;
+const CL=['#6366f1','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#3b82f6','#ef4444','#10b981','#06b6d4','#f97316','#a855f7','#64748b'];
+
+// Channel data per month [label, sessions]
+const chData = [
+    // Jan
+    [['Cross-net',8584],['Paid Search',6167],['Organic S.',5336],['Paid Social',4124],['Direct',2519],['Unassigned',990],['Org Social',157],['Referral',107],['Paid Other',97],['Email',57]],
+    // Feb
+    [['Cross-net',6152],['Organic S.',4851],['Paid Search',2767],['Paid Social',2198],['Direct',1994],['Unassigned',847],['Display',170],['Org Social',147],['Referral',106],['Email',31]],
+    // Mar
+    [['Organic S.',5527],['Cross-net',4467],['Paid Social',2474],['Paid Search',2108],['Direct',1483],['Unassigned',1076],['Org Social',136],['Referral',127],['Paid Other',85],['Email',62]],
+    // Apr
+    [['Organic S.',3158],['Paid Search',2057],['Cross-net',1849],['Direct',1041],['Paid Social',937],['Unassigned',565],['Org Social',133],['Referral',44],['Paid Other',30],['Email',7]],
+];
+
+// Revenue per channel
+const rvData = [
+    [['Cross-net',12699],['Direct',8255],['Paid Social',5986],['Paid Search',5496],['Unassigned',12293],['Organic S.',1864],['Org Social',1328],['Org Shop',1046],['Paid Other',280]],
+    [['Direct',18424],['Cross-net',7266],['Unassigned',10476],['Paid Search',5123],['Paid Social',3253],['Paid Other',1282],['Organic S.',1435],['Org Social',837],['Referral',828]],
+    [['Direct',69936],['Paid Search',13583],['Cross-net',10285],['Paid Social',9449],['Unassigned',4660],['Organic S.',2028],['Referral',2075],['Org Shop',1646],['Org Social',1091]],
+    [['Direct',24700],['Unassigned',4329],['Paid Search',3206],['Cross-net',2181],['Paid Social',1213],['Organic S.',1226],['Email',552],['Org Social',476],['Referral',313]],
+];
+
+// Source bars data
+const srcData = [
+    [['google / cpc',14374],['google / organic',5193],['facebook / paid',3634],['(direct)',2519],['Klaviyo / campaign',401],['tiktok / paid',346],['Klaviyo / flow',108],['facebook / paid_social',105],['ig / social',53],['chatgpt.com',43]],
+    [['google / cpc',8852],['google / organic',4781],['facebook / paid',2077],['(direct)',1994],['Klaviyo / campaign',297],['Klaviyo / flow',125],['tiktok / paid',75],['m.facebook.com',66],['bing / organic',44],['ig / social',29]],
+    [['google / cpc',6500],['google / organic',5415],['(direct)',1483],['facebook / cpc',1313],['facebook / paid',1014],['Klaviyo / campaign',435],['Klaviyo / flow',132],['tiktok / paid',118],['bing / organic',67],['ig / social',44]],
+    [['google / cpc',3833],['google / organic',3124],['(direct)',1041],['facebook / cpc',592],['facebook / paid',298],['Klaviyo / campaign',154],['ig / social',54],['Klaviyo / flow',39],['tiktok / paid',37],['l.instagram.com',30]],
+];
+
+// Render charts
+function renderMonth(i) {
+    // Channel chart
+    new Chart(document.getElementById('ch'+i), {
+        type:'bar', data:{
+            labels:chData[i].map(c=>c[0]),
+            datasets:[{data:chData[i].map(c=>c[1]), backgroundColor:CL, borderRadius:6, barPercentage:0.65}]
+        }, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+            scales:{x:{grid:{color:'#2a305020'},ticks:{callback:v=>(v/1000).toFixed(1)+'K'}},y:{grid:{display:false}}}}
+    });
+
+    // Revenue chart
+    new Chart(document.getElementById('rv'+i), {
+        type:'bar', data:{
+            labels:rvData[i].map(c=>c[0]),
+            datasets:[{data:rvData[i].map(c=>c[1]), backgroundColor:CL, borderRadius:6, barPercentage:0.6}]
+        }, options:{responsive:true, maintainAspectRatio:false,
+            scales:{y:{grid:{color:'#2a305020'},ticks:{callback:v=>(v/1000).toFixed(0)+'K RON'}},x:{grid:{display:false},ticks:{maxRotation:45}}}}
+    });
+
+    // Source bars
+    const max = srcData[i][0][1];
+    const el = document.getElementById('sb'+i);
+    srcData[i].forEach((s,j) => {
+        const pct = (s[1]/max*100).toFixed(1);
+        el.innerHTML += `<div class="src-bar">
+            <div class="src-name">${s[0]}</div>
+            <div class="src-track"><div class="src-fill" style="width:${pct}%;background:${CL[j%CL.length]}">${pct>15?s[1].toLocaleString():''}</div></div>
+            <div class="src-num">${s[1].toLocaleString()}</div>
+        </div>`;
+    });
+}
+
+for(let i=0;i<4;i++) renderMonth(i);
+
+// Navigation
+let cur=0;
+function go(i) {
+    document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('s'+i).classList.add('active');
+    document.querySelectorAll('.nav-btn')[i].classList.add('active');
+    cur=i;
+}
+function next() { go(Math.min(cur+1,3)); }
+function prev() { go(Math.max(cur-1,0)); }
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+    if(e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); next(); }
+    if(e.key==='ArrowLeft') { e.preventDefault(); prev(); }
+});
+</script>
+</body>
+</html>

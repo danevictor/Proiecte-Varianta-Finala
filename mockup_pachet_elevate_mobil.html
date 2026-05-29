@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup Pachet Elevate - Mobil vs Web</title>
+    <style>
+        :root {
+            --primary-blue: #0E356A;
+            --primary-green: #3CA552;
+            --text-dark: #333333;
+            --text-gray: #777777;
+            --bg-light: #F7F7F7;
+            --border-light: #EEEEEE;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --light-blue-bg: #EAF2FA;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            /* Spatiu intre mobile si web */
+            flex-wrap: wrap;
+        }
+
+        .section-title {
+            width: 100%;
+            text-align: center;
+            color: var(--primary-blue);
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* ----- CONTAINER MOBIL ----- */
+        .phone-container {
+            width: 390px;
+            background-color: white;
+            border-radius: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 8px solid #2a2a2a;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .phone-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ios-top {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* ----- CONTAINER WEB (DESKTOP) ----- */
+        .web-container {
+            width: 800px;
+            /* Latime mai mare pt web */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            position: relative;
+            flex-shrink: 0;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        .web-label {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .browser-top {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .b-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .b-dot.red {
+            background-color: #ff5f56;
+        }
+
+        .b-dot.yellow {
+            background-color: #ffbd2e;
+        }
+
+        .b-dot.green {
+            background-color: #27c93f;
+        }
+
+        .browser-url {
+            background-color: white;
+            border-radius: 6px;
+            padding: 5px 15px;
+            font-size: 12px;
+            color: #666;
+            flex: 1;
+            border: 1px solid #dfdfdf;
+        }
+
+        .web-content {
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* ----- ELEMENTE COMUNE & PACKAGE CARD ----- */
+        .package-card {
+            border: 2px solid var(--primary-blue);
+            border-radius: 16px;
+            position: relative;
+            background: white;
+        }
+
+        .phone-container .package-card {
+            margin: 0 15px 30px 15px;
+            padding: 30px 20px 20px 20px;
+        }
+
+        .web-container .package-card {
+            width: 100%;
+            max-width: 450px;
+            /* Pe web cardul nu e neaparat cat tot ecranul */
+            padding: 40px 30px 30px 30px;
+        }
+
+        .package-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-green);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .package-title {
+            color: var(--primary-blue);
+            text-align: center;
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .web-container .package-title {
+            font-size: 28px;
+        }
+
+        .package-subtitle {
+            color: var(--text-gray);
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .products-list {
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            color: var(--primary-blue);
+            font-weight: 500;
+            font-size: 17px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 14px;
+            height: 14px;
+            border: 1px solid var(--text-gray);
+            border-radius: 50%;
+            color: var(--text-gray);
+            font-size: 10px;
+            flex-shrink: 0;
+            margin-left: 2px;
+            cursor: pointer;
+        }
+
+        /* Acordeon */
+        .v2-accordion-btn {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            width: fit-content;
+            margin-top: 4px;
+            transition: opacity 0.2s;
+        }
+
+        .v2-accordion-btn:hover {
+            opacity: 0.8;
+        }
+
+        .v2-accordion-btn .icon {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .v2-accordion-btn.active .icon {
+            transform: rotate(180deg);
+        }
+
+        .v2-reasons-content {
+            background-color: var(--light-blue-bg);
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-dark);
+            display: none;
+        }
+
+        .v2-reasons-content.open {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .v2-reasons-content ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .v2-reasons-content li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .v2-reasons-content li:last-child {
+            margin-bottom: 0;
+        }
+
+        .v2-reasons-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        .package-pricing {
+            background-color: var(--bg-light);
+            border-radius: 16px;
+            padding: 24px 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pricing-title {
+            color: var(--primary-blue);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .pricing-amount {
+            color: var(--primary-blue);
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .pricing-per-day {
+            color: var(--text-gray);
+            font-size: 15px;
+        }
+
+        .pricing-disclaimer {
+            font-size: 15px;
+            color: var(--text-gray);
+            line-height: 1.5;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        /* HOVER EFECT PENTRU WEB (Desktop) */
+        /* Pe web putem folosi si hover in loc de click, dar pastram click pt consecventa UX. Vom adauga doar efecte de tranzitie. */
+        .web-container .product-item:hover {
+            background-color: #fafbfc;
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: -10px;
+            margin-right: -10px;
+            transition: all 0.2s ease;
+        }
+
+        .qty-label {
+            font-weight: normal;
+            font-size: 14px;
+            color: var(--text-gray);
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CONTAINER MOBIL -->
+    <div style="position: relative; margin-top: 40px;">
+        <div class="phone-label">Design Mobil</div>
+        <div class="phone-container">
+            <div class="ios-top">
+                <div>12:09</div>
+                <div style="display:flex; gap: 5px;">
+                    <div style="font-size:10px;">📶</div>
+                    <div style="font-size:10px;">🔋</div>
+                </div>
+            </div>
+            <div style="height: 40px;"></div>
+
+            <!-- CARD RECOMANDARE -->
+            <div class="package-card">
+                <div class="package-badge">Recomandat</div>
+                <h3 class="package-title">Pachet Elevate</h3>
+                <p class="package-subtitle">(pentru 30 de zile)</p>
+
+                <div class="products-list">
+                    <!-- Prod 1 -->
+                    <div class="product-item">
+                        <div class="product-name">
+                            Natural B-Complex <br />(B1, B2, B3, B5, B6, B7, B9, B12)
+                            <span class="qty-label">1 buc</span>
+                            <span class="info-icon">?</span>
+                        </div>
+                        <button class="v2-accordion-btn active" onclick="toggleAccordion(this)">
+                            <span>Vezi de ce ți-a fost recomandat</span>
+                            <span class="icon">▼</span>
+                        </button>
+                        <div class="v2-reasons-content open">
+                            <ul>
+                                <li>Susține metabolismul energetic normal</li>
+                                <li>Contribuie la reducerea oboselii și extenuării</li>
+                                <li>Pentru funcționarea normală a sistemului nervos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Prod 2 -->
+                    <div class="product-item">
+                        <div class="product-name">
+                            Magneziu Bisglicinat cu Piperină
+                            <span class="qty-label">1 buc</span>
+                            <span class="info-icon">?</span>
+                        </div>
+                        <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                            <span>Vezi de ce ți-a fost recomandat</span>
+                            <span class="icon">▼</span>
+                        </button>
+                        <div class="v2-reasons-content">
+                            <ul>
+                                <li>Ajută la relaxarea musculară și nervoasă</li>
+                                <li>Pentru un somn mai liniștit și odihnitor</li>
+                                <li>Formă extrem de asimilabilă datorită piperinei</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Prod 3 -->
+                    <div class="product-item">
+                        <div class="product-name">
+                            Omega-3
+                            <span class="qty-label">2 buc</span>
+                            <span class="info-icon">?</span>
+                        </div>
+                        <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                            <span>Vezi de ce ți-a fost recomandat</span>
+                            <span class="icon">▼</span>
+                        </button>
+                        <div class="v2-reasons-content">
+                            <ul>
+                                <li>Menține sănătatea cardiovasculară și cerebrală</li>
+                                <li>Poate reduce stările de disconfort articular</li>
+                                <li>Pentru a susține puterea de concentrare pe parcursul zilei</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Prod 4 -->
+                    <div class="product-item">
+                        <div class="product-name">
+                            Vitamina D3 2000 UI
+                            <span class="qty-label">1 buc</span>
+                            <span class="info-icon">?</span>
+                        </div>
+                        <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                            <span>Vezi de ce ți-a fost recomandat</span>
+                            <span class="icon">▼</span>
+                        </button>
+                        <div class="v2-reasons-content">
+                            <ul>
+                                <li>Susține formarea și menținerea unui sistem osos puternic</li>
+                                <li>Sprijină funcționarea optimă a imunității, mai ales în sezoanele reci</li>
+                                <li>Esențială pentru starea generală de bine a organismului</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Prod 5 -->
+                    <div class="product-item">
+                        <div class="product-name">
+                            Antiacid gastric natural 225mg
+                            <span class="qty-label">1 buc</span>
+                            <span class="info-icon">?</span>
+                        </div>
+                        <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                            <span>Vezi de ce ți-a fost recomandat</span>
+                            <span class="icon">▼</span>
+                        </button>
+                        <div class="v2-reasons-content">
+                            <ul>
+                                <li>Reface echilibrul gastric</li>
+                                <li>Diminuează disconfortul rapid</li>
+                                <li>Complet natural pentru digestie</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="package-pricing">
+                    <div class="pricing-title">Preț pentru 30 de zile</div>
+                    <div class="pricing-amount">180 Lei</div>
+                    <div class="pricing-per-day">6.00 Lei/zi</div>
+                </div>
+                <p class="pricing-disclaimer">Selectează varianta de abonament pentru o reducere de până la 15%.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CONTAINER WEB (DESKTOP) -->
+    <div style="position: relative; margin-top: 40px;">
+        <div class="web-label">Design Web (Desktop)</div>
+        <div class="web-container">
+            <!-- Mockup Browser -->
+            <div class="browser-top">
+                <div class="browser-dots">
+                    <div class="b-dot red"></div>
+                    <div class="b-dot yellow"></div>
+                    <div class="b-dot green"></div>
+                </div>
+                <div class="browser-url">zitamine.ro/chestionar/rezultate</div>
+            </div>
+
+            <div class="web-content">
+                <!-- CARD RECOMANDARE -->
+                <div class="package-card">
+                    <div class="package-badge">Recomandat</div>
+                    <h3 class="package-title">Pachet Elevate</h3>
+                    <p class="package-subtitle">(pentru 30 de zile)</p>
+
+                    <div class="products-list">
+                        <!-- Prod 1 -->
+                        <div class="product-item">
+                            <div class="product-name">
+                                Natural B-Complex (B1, B2, B3...)
+                                <span class="qty-label">1 buc</span>
+                                <span class="info-icon">?</span>
+                            </div>
+                            <button class="v2-accordion-btn active" onclick="toggleAccordion(this)">
+                                <span>Vezi de ce ți-a fost recomandat</span>
+                                <span class="icon">▼</span>
+                            </button>
+                            <div class="v2-reasons-content open">
+                                <ul>
+                                    <li>Susține metabolismul energetic normal</li>
+                                    <li>Contribuie la reducerea oboselii și extenuării</li>
+                                    <li>Pentru funcționarea normală a sistemului nervos</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Prod 2 -->
+                        <div class="product-item">
+                            <div class="product-name">
+                                Magneziu Bisglicinat cu Piperină
+                                <span class="qty-label">1 buc</span>
+                                <span class="info-icon">?</span>
+                            </div>
+                            <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                                <span>Vezi de ce ți-a fost recomandat</span>
+                                <span class="icon">▼</span>
+                            </button>
+                            <div class="v2-reasons-content">
+                                <ul>
+                                    <li>Ajută la relaxarea musculară și nervoasă</li>
+                                    <li>Pentru un somn mai liniștit și odihnitor</li>
+                                    <li>Formă extrem de asimilabilă datorită piperinei</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Prod 3 -->
+                        <div class="product-item">
+                            <div class="product-name">
+                                Omega-3
+                                <span class="qty-label">2 buc</span>
+                                <span class="info-icon">?</span>
+                            </div>
+                            <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                                <span>Vezi de ce ți-a fost recomandat</span>
+                                <span class="icon">▼</span>
+                            </button>
+                            <div class="v2-reasons-content">
+                                <ul>
+                                    <li>Menține sănătatea cardiovasculară și cerebrală</li>
+                                    <li>Poate reduce stările de disconfort articular</li>
+                                    <li>Pentru a susține puterea de concentrare pe parcursul zilei</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Prod 4 -->
+                        <div class="product-item">
+                            <div class="product-name">
+                                Vitamina D3 2000 UI
+                                <span class="qty-label">1 buc</span>
+                                <span class="info-icon">?</span>
+                            </div>
+                            <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                                <span>Vezi de ce ți-a fost recomandat</span>
+                                <span class="icon">▼</span>
+                            </button>
+                            <div class="v2-reasons-content">
+                                <ul>
+                                    <li>Susține formarea și menținerea unui sistem osos puternic</li>
+                                    <li>Sprijină funcționarea optimă a imunității, mai ales în sezoanele reci</li>
+                                    <li>Esențială pentru starea generală de bine a organismului</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Prod 5 -->
+                        <div class="product-item">
+                            <div class="product-name">
+                                Antiacid gastric natural 225mg
+                                <span class="qty-label">1 buc</span>
+                                <span class="info-icon">?</span>
+                            </div>
+                            <button class="v2-accordion-btn" onclick="toggleAccordion(this)">
+                                <span>Vezi de ce ți-a fost recomandat</span>
+                                <span class="icon">▼</span>
+                            </button>
+                            <div class="v2-reasons-content">
+                                <ul>
+                                    <li>Reface echilibrul gastric</li>
+                                    <li>Diminuează disconfortul rapid</li>
+                                    <li>Complet natural pentru digestie</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="package-pricing">
+                        <div class="pricing-title">Preț pentru 30 de zile</div>
+                        <div class="pricing-amount">180 Lei</div>
+                        <div class="pricing-per-day">6.00 Lei/zi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            btn.classList.toggle('active');
+            content.classList.toggle('open');
+        }
+    </script>
+</body>
+
+</html>

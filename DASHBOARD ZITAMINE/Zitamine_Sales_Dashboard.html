@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zitamine Dashboard | Sales Analytics 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Meniu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <img src="logo-zitamine.webp" alt="Zitamine Logo" class="logo-image">
+        </div>
+        <nav class="nav-menu">
+            <a href="#overview" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Overview</span>
+            </a>
+            <a href="#sales" class="nav-item">
+                <span class="nav-icon">💰</span>
+                <span>Sales Metrics</span>
+            </a>
+            <a href="#customers" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span>Customers</span>
+            </a>
+            <a href="#cohorts" class="nav-item">
+                <span class="nav-icon">📦</span>
+                <span>Cohorts</span>
+            </a>
+            <a href="#conversions" class="nav-item">
+                <span class="nav-icon">🔄</span>
+                <span>Conversions</span>
+            </a>
+            <a href="#insights" class="nav-item">
+                <span class="nav-icon">💡</span>
+                <span>Insights</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div id="context-help" class="context-help-box">
+                <span class="help-icon">💡</span>
+                <p class="help-text">Treci cu mouse-ul peste elementele ℹ️ pentru explicații.</p>
+            </div>
+            <span id="sidebarPeriod" class="period-badge">Jan 2025 - Jan 2026</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>Sales Analytics Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <!-- Custom Date Range Picker -->
+                <div class="date-picker-wrapper" id="datePickerWrapper">
+                    <button class="date-picker-trigger" id="datePickerTrigger">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        <span id="datePickerLabel">Ian 2025 — Mar 2026</span>
+                        <svg class="date-picker-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="date-picker-dropdown" id="datePickerDropdown">
+                        <div class="date-picker-presets">
+                            <button class="preset-btn" data-preset="1m">Luna Trecută</button>
+                            <button class="preset-btn" data-preset="6m">Ultimele 6 Luni</button>
+                            <button class="preset-btn" data-preset="all">Până în prezent</button>
+                        </div>
+                        <div class="date-picker-panels">
+                            <div class="date-panel">
+                                <div class="panel-label">De la</div>
+                                <div class="year-nav">
+                                    <button class="year-arrow" id="startYearPrev">‹</button>
+                                    <span class="year-display" id="startYearDisplay">2025</span>
+                                    <button class="year-arrow" id="startYearNext">›</button>
+                                </div>
+                                <div class="month-grid" id="startMonthGrid"></div>
+                            </div>
+                            <div class="panel-divider"></div>
+                            <div class="date-panel">
+                                <div class="panel-label">Până la</div>
+                                <div class="year-nav">
+                                    <button class="year-arrow" id="endYearPrev">‹</button>
+                                    <span class="year-display" id="endYearDisplay">2026</span>
+                                    <button class="year-arrow" id="endYearNext">›</button>
+                                </div>
+                                <div class="month-grid" id="endMonthGrid"></div>
+                            </div>
+                        </div>
+                        <div class="date-picker-footer">
+                            <button class="apply-btn" id="datePickerApply">Aplică</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Hidden inputs for charts.js compatibility -->
+                <input type="hidden" id="startDate">
+                <input type="hidden" id="endDate">
+                <div class="last-update">
+                    <span class="update-dot"></span>
+                    <span id="lastUpdatedText">Actualizat: ...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI Cards Section -->
+        <section id="overview" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">📊</span>
+                Key Performance Indicators
+            </h2>
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-gradient-1"
+                    data-tooltip="Formula: Suma totală a vânzărilor 'Net Sales' (după refund-uri) din perioada selectată.">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="2646159">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">Total Vânzări ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>+12.3%</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M7 17l5-5 5 5M7 7l5 5 5-5" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-2"
+                    data-tooltip="Formula: Numărul total de comenzi valide (neanulate) din perioada selectată.">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="9165">0</span>
+                        <span class="kpi-label">Total Comenzi ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>+8.7%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-3"
+                    data-tooltip="Percentage of online store visits (sessions) that resulted in a sale. (Conversion rate = sessions that completed checkout / sessions). Date importate din Shopify.">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" id="kpi-conversion-rate">0</span>
+                        <span class="kpi-unit">%</span>
+                        <span class="kpi-label">Conversion Rate ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-neutral">
+                        <span>-</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-4"
+                    data-tooltip="Online store visits with completed purchases relative to visits that reached checkout. (Checkout conversion rate = sessions that completed checkout / sessions that reached checkout). Date importate din Shopify.">
+                    <div class="kpi-icon">🛒</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" id="kpi-checkout-rate">0</span>
+                        <span class="kpi-unit">%</span>
+                        <span class="kpi-label">Checkout Conversion ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-neutral">
+                        <span>-</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-3"
+                    data-tooltip="Formula: Suma Clienților Noi + Clienților Recurenți (Interacțiuni Active). Noi = Prima comandă ever. Recurenți = Comenzi ulterioare.">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="4387">0</span>
+                        <span class="kpi-label">Active Users (Interacțiuni) ℹ️</span>
+                    </div>
+                    <div class="kpi-breakdown">
+                        <span>🆕 3,137 noi</span>
+                        <span>🔄 2,189 recurenți</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-4" data-tooltip="Formula: Total Vânzări / Total Comenzi Valide.">
+                    <div class="kpi-icon">🎯</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="288.72">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">AOV (Valoare Medie) ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>0%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-5"
+                    data-tooltip="Formula: Vânzări Totale Cumulative / Număr Total Clienți Unici (de la începuturi).">
+                    <div class="kpi-icon">💎</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="892.33">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">CLTV Mediu ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>+47% YoY</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-6"
+                    data-tooltip="Formula: Total Comenzi Cumulative / Total Clienți Unici. ⚠️ Aceasta este o metrică ALL TIME (cumulativă de la începuturi), nu e limitată la perioada selectată.">
+                    <div class="kpi-icon">🔁</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="2.09">0</span>
+                        <span class="kpi-label">Frecvență Medie (ALL TIME) ℹ️</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-5"
+                    data-tooltip="CLT (Customer Lifetime) = Durata medie de viață a unui client exprimată în luni. Formula: 1 / Rata de Churn medie (rolling 3 luni). Arată câte luni rămâne un client activ, în medie.">
+                    <div class="kpi-icon">⏳</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" id="kpi-clt">0</span>
+                        <span class="kpi-unit">luni</span>
+                        <span class="kpi-label">CLT (Customer Lifetime) ℹ️</span>
+                    </div>
+                    <div class="kpi-trend trend-neutral">
+                        <span>-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sales Evolution Section -->
+        <section id="sales" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">💰</span>
+                Vânzări & Valoare pe Comandă
+            </h2>
+            <div class="charts-grid">
+
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="AOV (Average Order Value) = Valoarea medie a unei comenzi în fiecare lună. Arată cât cheltuie în medie un client per tranzacție.">
+                        <h3>Evoluția AOV ℹ️</h3>
+                        <div class="view-toggle-group" data-target="aovChart">
+                            <button class="view-toggle-opt active" data-view="daily">📅 Pe Zi</button>
+                            <button class="view-toggle-opt" data-view="monthly">📊 Lunar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="aovChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="CLTV (Customer Lifetime Value) = Valoarea totală acumulată a unui client mediu de la începutul relației până în luna respectivă.">
+                        <h3>Evoluție CLTV ℹ️</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cltvChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="CLT (Customer Lifetime) = Durata medie de viață a unui client (în luni), calculată ca 1 / Rata de Churn medie pe 3 luni (rolling average). O valoare mai mare = clienți mai fideli.">
+                        <h3>CLT (Durată Medie Client) ℹ️</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cltTotalChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="CLT pe Cohorte = Durata de viață estimată (luni) per tip de client (OTP, SUB1, SUB3). Calculat ca 1 / Rata de Churn per cohortă (rolling average 3 luni).">
+                        <h3>CLT pe Cohorte (Durată Viață) ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span>
+                                OTP</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span>
+                                SUB1</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #818cf8;"></span>
+                                SUB3</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cohortLifetimeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="CLTV pe Cohorte = Valoarea medie per client activ (Revenue / Clienți Activi) per tip de abonament, în fiecare lună. Compară profitabilitatea între OTP, SUB1 și SUB3.">
+                        <h3>CLTV pe Cohorte (Valoare/Client) ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span>
+                                OTP</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span>
+                                SUB1</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #818cf8;"></span>
+                                SUB3</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cltvCohortChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Customers Section -->
+        <section id="customers" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">👥</span>
+                Clienți Noi vs. Recurenți
+            </h2>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header"
+                        data-tooltip="Comparație între numărul de clienți noi (prima comandă) și cei recurenți (comenzi repetate) în fiecare lună.">
+                        <h3>Clienți Noi vs. Recurenți (Lunar) ℹ️</h3>
+                        <div class="view-toggle-group" data-target="customersChart">
+                            <button class="view-toggle-opt active" data-view="daily">📅 Pe Zi</button>
+                            <button class="view-toggle-opt" data-view="monthly">📊 Lunar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="customersChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Graficul arată evoluția lunară a vânzărilor, împărțite în 'Noi' (prima comandă) și 'Recurente' (comenzi ulterioare).">
+                        <h3>Vânzări Totale vs. Tipuri Clienți ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot new"></span> Vânzări Noi</span>
+                            <span class="legend-item"><span class="legend-dot recurring"></span> Vânzări
+                                Recurente</span>
+                        </div>
+                        <div class="view-toggle-group" data-target="salesChart">
+                            <button class="view-toggle-opt active" data-view="daily">📅 Pe Zi</button>
+                            <button class="view-toggle-opt" data-view="monthly">📊 Lunar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cohort Sales Section -->
+        <section id="cohorts" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">📦</span>
+                Vânzări & Clienți pe Cohorte
+            </h2>
+            <div class="charts-grid">
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Analiza performanței pe tipuri de oferte: OTP (o singură dată), SUB1 (Abonament lunar), SUB3 (Abonament 3 luni).">
+                        <h3>Evoluția Vânzărilor (RON) pe Tip Abonament ℹ️</h3>
+                        <div class="chart-header-right">
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    OTP</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #22d3ee;"></span>
+                                    SUB1</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    SUB3</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                    SUB6</span>
+                            </div>
+                            <div class="view-toggle-group" data-target="cohortSalesChart">
+                                <button class="view-toggle-opt active" data-view="daily">📅 Pe Zi</button>
+                                <button class="view-toggle-opt" data-view="monthly">📊 Lunar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cohortSalesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Active Clients by Cohort -->
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Numărul de clienți activi (care au plasat cel puțin o comandă) în fiecare lună, segmentați pe tipul de ofertă inițială.">
+                        <h3>Număr Clienți Activi pe Cohortă (Lunar) ℹ️</h3>
+                        <div class="chart-header-right">
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: rgba(99, 102, 241, 0.5);"></span>
+                                    OTP Clienți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: rgba(34, 211, 238, 0.5);"></span>
+                                    SUB1 Clienți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: rgba(16, 185, 129, 0.5);"></span>
+                                    SUB3 Clienți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: rgba(245, 158, 11, 0.5);"></span>
+                                    SUB6 Clienți</span>
+                            </div>
+                            <div class="view-toggle-group" data-target="cohortCustomersChart">
+                                <button class="view-toggle-opt active" data-view="daily">📅 Pe Zi</button>
+                                <button class="view-toggle-opt" data-view="monthly">📊 Lunar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cohortCustomersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cohort KPIs -->
+            <div class="kpi-grid" style="margin-top: 24px;">
+                <div class="kpi-card kpi-gradient-1"
+                    data-tooltip="Vânzări totale generate de clienții din cohorta OTP (One Time Purchase).">
+                    <div class="kpi-icon">🛒</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="1151990">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">Total Vânzări OTP</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>43.8%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-2"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament lunar (SUB1).">
+                    <div class="kpi-icon">📅</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="988684">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">Total Vânzări SUB1</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>37.6%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-3"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament pe 3 luni (SUB3).">
+                    <div class="kpi-icon">⭐</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="488335">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">Total Vânzări SUB3</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>18.5%</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card kpi-gradient-4"
+                    data-tooltip="Vânzări totale generate de clienții cu abonament pe 6 luni (SUB6).">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" data-value="2750">0</span>
+                        <span class="kpi-unit">RON</span>
+                        <span class="kpi-label">Total Vânzări SUB6</span>
+                    </div>
+                    <div class="kpi-trend trend-up">
+                        <span>0.1%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conversions Section -->
+        <section id="conversions" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">🔄</span>
+                Funnel & Conversii <span id="conversionPeriod"
+                    style="font-weight: 400; opacity: 0.7; font-size: 0.9em;"></span>
+            </h2>
+            <div class="conversion-grid">
+                <div class="conversion-card" id="card-otp-sub"
+                    data-tooltip="Conversia clienților care au început cu o comandă simplă (OTP) și au trecut ulterior la un abonament.">
+                    <div class="conversion-header">
+                        <h3>OTP → Abonament</h3>
+                        <span class="conversion-badge" id="otp-sub-total">0 conversii</span>
+                    </div>
+                    <div class="conversion-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Rată Medie</span>
+                            <span class="stat-value" id="otp-sub-rate">0.00%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Perioadă</span>
+                            <span class="stat-value" id="otp-sub-period">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Best Month</span>
+                            <span class="stat-value" id="otp-sub-best-short" style="color: #10b981;">- (-)</span>
+                        </div>
+                    </div>
+                    <div class="conversion-progress">
+                        <div class="progress-bar" id="otp-sub-progress" style="--progress: 0%"></div>
+                    </div>
+                    <div class="monthly-breakdown">
+                        <span class="month-best" id="otp-sub-best-long">📈 Peak: - (0 conversii)</span>
+                        <span class="month-worst" id="otp-sub-worst-long">📉 Min: - (0 conversii)</span>
+                    </div>
+                </div>
+
+                <div class="conversion-card" id="card-sub-up"
+                    data-tooltip="Upgrade-uri: Clienți care au trecut de la abonament lunar (SUB1) la cel trimestrial (SUB3) pentru o valoare mai mare pe termen lung.">
+                    <div class="conversion-header">
+                        <h3>SUB1 → SUB3 Upgrade</h3>
+                        <span class="conversion-badge secondary" id="sub-up-total">0 upgrade-uri</span>
+                    </div>
+                    <div class="conversion-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Rată Medie</span>
+                            <span class="stat-value" id="sub-up-rate">0.00%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Perioadă</span>
+                            <span class="stat-value" id="sub-up-period">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Best Month</span>
+                            <span class="stat-value" id="sub-up-best-short" style="color: #10b981;">- (-)</span>
+                        </div>
+                    </div>
+                    <div class="conversion-progress">
+                        <div class="progress-bar secondary" id="sub-up-progress" style="--progress: 0%"></div>
+                    </div>
+                    <div class="monthly-breakdown">
+                        <span class="month-best" id="sub-up-best-long">📈 Peak: - (0 upgrade-uri)</span>
+                        <span class="month-worst" id="sub-up-worst-long">📉 Min: - (0 upgrade-uri)</span>
+                    </div>
+                </div>
+
+                <div class="conversion-card" id="card-down" style="border-left: 3px solid #ef4444;"
+                    data-tooltip="Downgrade-uri: Clienți care au renunțat la abonament (trecând la OTP) sau au ales un plan inferior.">
+                    <div class="conversion-header">
+                        <h3>📉 Downgrade-uri</h3>
+                        <span class="conversion-badge" id="down-total"
+                            style="background: linear-gradient(135deg, #ef4444, #dc2626);">0 total</span>
+                    </div>
+                    <div class="conversion-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">SUB1 → OTP</span>
+                            <span class="stat-value" id="down-sub1-otp" style="color: #ef4444;">0 downgrades</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">SUB3 → OTP</span>
+                            <span class="stat-value" id="down-sub3-otp" style="color: #ef4444;">0 downgrades</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Worst Month</span>
+                            <span class="stat-value" id="down-worst-short" style="color: #f59e0b;">- (-)</span>
+                        </div>
+                    </div>
+                    <div class="monthly-breakdown" style="margin-top: 12px;">
+                        <span class="month-worst" id="down-worst-long">📉 Peak: - (0 downgrades)</span>
+                        <span class="month-best" id="down-best-long">📈 Min: - (0 downgrades)</span>
+                    </div>
+                </div>
+
+                <div class="chart-card large">
+                    <div class="chart-header"
+                        data-tooltip="Evoluția lunară a numărului de conversii pozitive (Upsell și Cross-sell).">
+                        <h3>Evoluția Conversiilor Lunare ℹ️</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="legend-dot" style="background: #8b5cf6;"></span>
+                                OTP→SUB</span>
+                            <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                SUB1→SUB3</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="conversionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Churn / Dropout Section (NEW) -->
+            <section id="churn" class="section">
+                <h2 class="section-title">
+                    <span class="title-icon">📉</span>
+                    Churn Total & Rata de Renunțare
+                </h2>
+                <div class="charts-grid">
+                    <div class="chart-card large">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3>Rata de Churn Lunară (%) ℹ️</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span>
+                                    Total Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Rata Churn</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="churnChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-gradient-4"
+                        data-tooltip="Formula: (Total Clienți Pierduți / Total Clienți Activi Unici) * 100.">
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="kpi-churn-rate">0%</span>
+                            <span class="kpi-label">Rata Medie de Renunțare <span id="churn-rate-period"
+                                    style="font-weight: normal; font-size: 0.85em; opacity: 0.8;"></span> ℹ️</span>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-gradient-2"
+                        data-tooltip="Formula: Număr total de clienți care au depășit perioada maximă de inactivitate (3 luni pt OTP/SUB1, 6 luni pt SUB3).">
+                        <div class="kpi-content">
+                            <span class="kpi-value" id="kpi-churn-count">0</span>
+                            <span class="kpi-label">Total Clienți Pierduți <span id="churn-period"
+                                    style="font-weight: normal; font-size: 0.85em; opacity: 0.8;"></span> ℹ️</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Churn & Downgrade Analysis Section -->
+            <section id="churn-analysis" class="section">
+                <h2 class="section-title">
+                    <span class="title-icon">📉</span>
+                    Rata de Churn pe Cohorte
+                </h2>
+
+                <div class="grid-2-cols" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <!-- OTP Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn OTP</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnOtpChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB1 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB1</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #22d3ee;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub1Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB3 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB3</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub3Chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SUB6 Churn -->
+                    <div class="chart-container">
+                        <div class="chart-header"
+                            data-tooltip="Rata de renunțare se calculează raportând clienții pierduți la numărul de clienți ACTIVI din acea lună. Formula: (Clienți Pierduți / Clienți Activi) * 100. Notă: O rată mai mare poate apărea și dacă scade baza de clienți activi, chiar dacă numărul de pierderi absolute scade.">
+                            <h3 class="chart-title">Churn SUB6</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>
+                                    Activi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot"
+                                        style="background: #991b1b; border-radius: 50%; width: 8px; height: 8px;"></span>
+                                    Rata %</span>
+                            </div>
+                        </div>
+                        <div class="chart-body" style="height: 250px;">
+                            <canvas id="churnSub6Chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Growth & Retention Analysis Section (NEW) -->
+            <section id="growth-analysis" class="section">
+                <h2 class="section-title">
+                    <span class="title-icon">🌱</span>
+                    Creștere Netă Clienți
+                </h2>
+                <div class="charts-grid">
+                    <!-- Net Growth Chart -->
+                    <div class="chart-card large">
+                        <div class="chart-header"
+                            data-tooltip="Evoluția bătăliei dintre achiziție și retenție. Barele verzi = Clienți Noi, Barele Roșii = Clienți Pierduți. Linia Albastră = Creșterea Netă (Pozitivă = Creștere reală).">
+                            <h3>Evoluție Netă (Clienți Noi vs Pierduți) ℹ️</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>
+                                    Noi</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>
+                                    Pierduți</span>
+                                <span class="legend-item"><span class="legend-dot" style="background: #6366f1;"></span>
+                                    Net</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="netGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+
+                </div>
+            </section>
+
+            <!-- Monthly Conversion Table -->
+            <div class="chart-card" style="margin-top: 24px;">
+                <div class="chart-header"
+                    data-tooltip="Tabel detaliat cu numărul exact de conversii și modificări de abonament pe fiecare lună.">
+                    <h3>📊 Conversii Lunare Detaliate ℹ️</h3>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table
+                        style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.2);">
+                                <th style="text-align: left; padding: 12px; color: rgba(255,255,255,0.6);">Luna</th>
+                                <th style="text-align: center; padding: 12px; color: #8b5cf6;">OTP→SUB</th>
+                                <th style="text-align: center; padding: 12px; color: #f59e0b;">SUB1→SUB3</th>
+                                <th style="text-align: center; padding: 12px; color: #ef4444;">Downgrade*</th>
+                                <th style="text-align: center; padding: 12px; color: rgba(255,255,255,0.6);">Net</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Ian 2025</td>
+                                <td style="text-align: center; padding: 10px;">2</td>
+                                <td style="text-align: center; padding: 10px;">0</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">2</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">0</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Feb 2025</td>
+                                <td style="text-align: center; padding: 10px;">20</td>
+                                <td style="text-align: center; padding: 10px;">4</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">4</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+20</td>
+                            </tr>
+                            <tr
+                                style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(16, 185, 129, 0.1);">
+                                <td style="padding: 10px;">Mar 2025 🏆</td>
+                                <td style="text-align: center; padding: 10px; font-weight: 600; color: #10b981;">28</td>
+                                <td style="text-align: center; padding: 10px;">6</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">17</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+17</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Apr 2025 ⚠️</td>
+                                <td style="text-align: center; padding: 10px;">17</td>
+                                <td style="text-align: center; padding: 10px;">6</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444; font-weight: 600;">20</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+3</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Mai 2025</td>
+                                <td style="text-align: center; padding: 10px;">19</td>
+                                <td style="text-align: center; padding: 10px; font-weight: 600; color: #10b981;">10</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">12</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+17</td>
+                            </tr>
+                            <tr
+                                style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(239, 68, 68, 0.05);">
+                                <td style="padding: 10px;">Iun 2025</td>
+                                <td style="text-align: center; padding: 10px;">15</td>
+                                <td style="text-align: center; padding: 10px;">2</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444; font-weight: 600;">16</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+1</td>
+                            </tr>
+                            <tr
+                                style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(239, 68, 68, 0.05);">
+                                <td style="padding: 10px;">Iul 2025</td>
+                                <td style="text-align: center; padding: 10px;">16</td>
+                                <td style="text-align: center; padding: 10px;">4</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444; font-weight: 600;">13</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+7</td>
+                            </tr>
+                            <tr
+                                style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(239, 68, 68, 0.08);">
+                                <td style="padding: 10px;">Aug 2025</td>
+                                <td style="text-align: center; padding: 10px;">12</td>
+                                <td style="text-align: center; padding: 10px;">1</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">10</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+3</td>
+                            </tr>
+                            <tr
+                                style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(239, 68, 68, 0.05);">
+                                <td style="padding: 10px;">Sep 2025</td>
+                                <td style="text-align: center; padding: 10px;">16</td>
+                                <td style="text-align: center; padding: 10px;">3</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">7</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+12</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Oct 2025</td>
+                                <td style="text-align: center; padding: 10px;">13</td>
+                                <td style="text-align: center; padding: 10px;">3</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">8</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+8</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Nov 2025</td>
+                                <td style="text-align: center; padding: 10px;">13</td>
+                                <td style="text-align: center; padding: 10px;">6</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444; font-weight: 600;">16</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+3</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Dec 2025</td>
+                                <td style="text-align: center; padding: 10px;">12</td>
+                                <td style="text-align: center; padding: 10px;">4</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">8</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+8</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <td style="padding: 10px;">Ian 2026</td>
+                                <td style="text-align: center; padding: 10px;">3</td>
+                                <td style="text-align: center; padding: 10px;">1</td>
+                                <td style="text-align: center; padding: 10px; color: #ef4444;">1</td>
+                                <td style="text-align: center; padding: 10px; color: #10b981;">+3</td>
+                            </tr>
+                            <tr style="background: rgba(99, 102, 241, 0.15); font-weight: 600;">
+                                <td style="padding: 12px;">TOTAL</td>
+                                <td style="text-align: center; padding: 12px; color: #8b5cf6;">186</td>
+                                <td style="text-align: center; padding: 12px; color: #f59e0b;">50</td>
+                                <td style="text-align: center; padding: 12px; color: #ef4444;">131</td>
+                                <td style="text-align: center; padding: 12px; color: #10b981;">+105</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 12px; font-style: italic;">
+                    Date exacte din export CSV Cohort Tracking (5,364 clienți). Downgrade = SUB1→OTP (101) + SUB3→OTP
+                    (30). Net = (OTP→SUB + SUB1→SUB3) - Downgrades.
+                </p>
+            </div>
+        </section>
+
+
+
+        <!-- Insights Section — Updated: 22 Feb 2026 (Mar 2025 – Feb 2026 Analysis) -->
+        <section id="insights" class="section">
+            <h2 class="section-title">
+                <span class="title-icon">💡</span>
+                Insights & Concluzii <span style="font-weight: 400; opacity: 0.7; font-size: 0.8em;">(Mar 2025 – Feb
+                    2026)</span>
+            </h2>
+
+            <!-- Headline KPIs -->
+            <div class="kpi-grid" style="margin-bottom: 24px;">
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)); border-left: 3px solid #ef4444;">
+                    <div class="kpi-icon">📉</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #ef4444; font-size: 1.8rem;">-74%</span>
+                        <span class="kpi-label">Scădere Net Sales (256K → 66K RON)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05)); border-left: 3px solid #f59e0b;">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #f59e0b; font-size: 1.8rem;">-76%</span>
+                        <span class="kpi-label">Scădere Clienți Noi (392 → 95/lună)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border-left: 3px solid #10b981;">
+                    <div class="kpi-icon">💎</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #10b981; font-size: 1.8rem;">+8.5%</span>
+                        <span class="kpi-label">Creștere CLTV (483 → 524 RON)</span>
+                    </div>
+                </div>
+                <div class="kpi-card"
+                    style="background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05)); border-left: 3px solid #22d3ee;">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-content">
+                        <span class="kpi-value" style="color: #22d3ee; font-size: 1.8rem;">64%</span>
+                        <span class="kpi-label">Vârf Subscripții din Revenue (Dec 2025)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>Colapsul Achiziției de Clienți</h4>
+                    <p>Clienții noi au scăzut cu <strong>76%</strong> (de la 392 la 95/lună). Aceasta este <strong>cauza
+                            principală</strong> a declinului veniturilor. <strong>Punctul de inflexiune: August
+                            2025</strong> (-35% MoM).</p>
+                </div>
+
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>Conversia OTP → SUB Prăbușită</h4>
+                    <p>Conversia OTP→SUB a scăzut de la <strong>93 la 18 clienți/lună</strong> (<strong>-81%</strong>).
+                        Funnel-ul de upsell necesită revizuire urgentă, combinat cu lipsa de clienți OTP noi care intră
+                        în pipeline.</p>
+                </div>
+
+                <div class="insight-card" style="border-left: 3px solid #ef4444;">
+                    <div class="insight-icon">🔴</div>
+                    <h4>YoY: Inversare Dramatică din Aug 2025</h4>
+                    <p>Primele 5 luni (Mar-Jul 2025) au fost <strong>peste 2024</strong> (+15% → +194%), dar din August
+                        totul s-a inversat: <strong>-50%</strong> (Aug) până la <strong>-74%</strong> (Feb 2026) YoY.
+                    </p>
+                </div>
+
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>CLTV în Creștere Constantă (+8.5%)</h4>
+                    <p>CLTV-ul a crescut de la <strong>483 → 524 RON</strong> pe 12 luni. Clienții fideli devin din ce
+                        în ce mai valoroși — problema nu e calitatea clienților, ci <strong>volumul</strong>.</p>
+                </div>
+
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>SUB Share Crește (57% → 64%)</h4>
+                    <p>Ponderea abonamentelor din revenue a crescut. <strong>SUB3 a avansat de la 14% la ~22%</strong>
+                        din vânzări. SUB6 a apărut din Oct 2025. Revenue-ul recurent = <strong>66.2%</strong> din total
+                        (1,218,651 RON).</p>
+                </div>
+
+                <div class="insight-card positive">
+                    <div class="insight-icon">✅</div>
+                    <h4>Churn în Scădere (-53%)</h4>
+                    <p>Churn-ul total a scăzut de la <strong>234 la 111/lună</strong>. Atenție: parte din scădere e
+                        datorată pool-ului mai mic de clienți activi. <strong>AOV stabil la ~252 RON</strong> — clienții
+                        nu cumpără mai puțin per comandă.</p>
+                </div>
+            </div>
+
+            <div class="recommendations-card">
+                <h3>🎯 Recomandări Strategice — Prioritate Imediată</h3>
+                <div class="recommendations-list">
+                    <div class="recommendation">
+                        <span class="rec-number">1</span>
+                        <div class="rec-content">
+                            <h5>🔴 Diagnosticați Colapsul Achiziției</h5>
+                            <p>Audit complet al canalelor de achiziție (Google Ads, Meta, TikTok, Klaviyo). <strong>Ce
+                                    s-a schimbat în August 2025?</strong> Buget, CPL, reach, landing pages —
+                                identificați cauza și acționați imediat.</p>
+                        </div>
+                    </div>
+                    <div class="recommendation">
+                        <span class="rec-number">2</span>
+                        <div class="rec-content">
+                            <h5>🔄 Revigorați Conversion Funnel OTP → SUB</h5>
+                            <p>Revizie flows Klaviyo pentru conversie OTP→SUB. Oferte personalizate, trial periods,
+                                secvențe de nurturing. Review cu Ioana — conversia a căzut de la 93 la 18/lună.</p>
+                        </div>
+                    </div>
+                    <div class="recommendation">
+                        <span class="rec-number">3</span>
+                        <div class="rec-content">
+                            <h5>💎 Protejați Baza Recurentă</h5>
+                            <p>Engagement & loyalty pentru abonații existenți. Programul de loialitate poate preveni
+                                erodarea bazei de clienți recurenți (care acum susțin 66% din revenue).</p>
+                        </div>
+                    </div>
+                    <div class="recommendation">
+                        <span class="rec-number">4</span>
+                        <div class="rec-content">
+                            <h5>⭐ Promovați Agresiv SUB3</h5>
+                            <p>SUB3 a crescut de la 14% la 22% din vânzări. Promovați economia de 15-20% vs lunar în
+                                flows de onboarding. Upsell de la SUB1 → SUB3 în primele 3 luni.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>Zitamine Analytics Dashboard • Date: Jan 2025 - Jan 2026 • Generat cu 💊 de Antigravity</p>
+        </footer>
+    </main>
+
+    <!-- Load Data Script (Adjust path if needed) -->
+    <script src="dashboard_data.js"></script>
+    <script src="charts.js"></script>
+    <!-- ZITAMINE PASSWORD PROTECTION -->
+    <!-- ZITAMINE PREMIUM PASSWORD PROTECTION -->
+    <style>
+        :root {
+            --lock-primary: #6366f1;
+            --lock-bg-dark: #0f0f1a;
+            --lock-text: #ffffff;
+        }
+
+        #zitamine-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 80% 50% at 50% 50%, #1e1e2e, #0f0f1a);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483647 !important;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            backdrop-filter: blur(10px);
+        }
+
+        #zitamine-lock-card {
+            background: rgba(23, 23, 35, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: lockFadeInUp 0.6s ease-out;
+        }
+
+        @keyframes lockFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #zitamine-lock-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.5));
+        }
+
+        #zitamine-lock-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            /* Fallback */
+        }
+
+        #zitamine-lock-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        #z-password {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #z-password:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        #z-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #z-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        #z-error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+
+    <div id="zitamine-lock-screen">
+        <div id="zitamine-lock-card">
+            <div id="zitamine-lock-icon">💊</div>
+            <h2 id="zitamine-lock-title">Zitamine Protected Area</h2>
+            <p id="zitamine-lock-desc">Acest material este confidențial și destinat exclusiv echipei interne Zitamine.
+            </p>
+
+            <input type="password" id="z-password" placeholder="Introduceți parola de acces..." autocomplete="off">
+            <button id="z-button" onclick="checkZitaminePassword()">Validare Acces 🔓</button>
+            <p id="z-error">Parola introdusă este incorectă.</p>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_HASH_P = "DavidSinclair1!2@3#4$";
+        function checkZitaminePassword() {
+            const input = document.getElementById('z-password').value;
+            if (input === TARGET_HASH_P) {
+                const screen = document.getElementById('zitamine-lock-screen');
+                screen.style.transition = "opacity 0.5s ease";
+                screen.style.opacity = "0";
+                setTimeout(() => { screen.style.display = 'none'; }, 500);
+                sessionStorage.setItem('zitamine_access', 'granted');
+            } else {
+                const err = document.getElementById('z-error');
+                err.style.display = 'block';
+                err.style.animation = 'none';
+                err.offsetHeight; /* trigger reflow */
+                err.style.animation = 'shake 0.4s ease-in-out';
+            }
+        }
+
+        // Check on load
+        if (sessionStorage.getItem('zitamine_access') === 'granted') {
+            document.getElementById('zitamine-lock-screen').style.display = 'none';
+        }
+
+        // Enter key support
+        document.getElementById('z-password').addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkZitaminePassword();
+            }
+        });
+    </script>
+    <!-- END ZITAMINE PASSWORD PROTECTION -->
+
+    <!-- Mobile Menu JS -->
+    <script>
+        (function () {
+            const toggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (!toggle || !sidebar || !overlay) return;
+
+            function openMenu() {
+                toggle.classList.add('active');
+                sidebar.classList.add('open');
+                overlay.style.display = 'block';
+                requestAnimationFrame(() => overlay.classList.add('active'));
+            }
+
+            function closeMenu() {
+                toggle.classList.remove('active');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+
+            toggle.addEventListener('click', () => {
+                sidebar.classList.contains('open') ? closeMenu() : openMenu();
+            });
+
+            overlay.addEventListener('click', closeMenu);
+
+            // Close menu when nav item is clicked + update active state
+            sidebar.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function () {
+                    closeMenu();
+                    sidebar.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        })();
+
+        // Sidebar active state on scroll
+        (function () {
+            const sections = document.querySelectorAll('section[id]');
+            const navItems = document.querySelectorAll('.nav-item');
+            if (!sections.length || !navItems.length) return;
+
+            const mainContent = document.querySelector('.main-content');
+            const scrollTarget = mainContent || window;
+
+            function onScroll() {
+                let current = '';
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                if (!current) return;
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    const href = item.getAttribute('href');
+                    if (href && href === '#' + current) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        })();
+    </script>
+</body>
+
+</html>

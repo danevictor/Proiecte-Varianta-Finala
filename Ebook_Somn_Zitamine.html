@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zitamine - E-book Sănătatea Somnului</title>
+  <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #041E35;
+      --navy-light: #0A2E4A;
+      --blue: #4CA7F8;
+      --blue-light: rgba(76,167,248,0.08);
+      --amber: #FA9C19;
+      --bg-alt: #F7F7F9;
+      --border: #EBEBEB;
+      --text-secondary: rgba(4, 30, 53, 0.7);
+    }
+
+    @font-face {
+      font-family: 'Tiempos Headline';
+      src: url('../Projects/TiemposHeadline-Regular.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Satoshi', sans-serif;
+      color: var(--navy);
+      background: #eef2f6;
+      margin: 0;
+      padding: 40px 0;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Tiempos Headline', 'Times New Roman', serif;
+      font-weight: 400;
+      color: var(--navy);
+      margin-top: 0;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      background: #ffffff;
+      box-shadow: 0 10px 40px rgba(4, 30, 53, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-image: radial-gradient(circle at top right, var(--blue-light) 0%, transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(250, 156, 25, 0.03) 0%, transparent 40%);
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+        gap: 0;
+      }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    .page-header {
+      padding: 30mm 25mm 10mm;
+    }
+    
+    .page-content {
+      padding: 0 25mm;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .page-footer {
+      padding: 15mm 0 20mm;
+      font-size: 11px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      margin: 0 25mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-img {
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .text-highlight {
+      color: var(--amber);
+      font-style: italic;
+    }
+    
+    .text-blue { color: var(--blue); }
+
+    /* PAGINA 1 */
+    .p1-title {
+      font-size: 34px;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+    
+    .p1-title strong {
+      font-weight: 800;
+      font-family: 'Satoshi', sans-serif;
+    }
+    
+    .p1-subtitle {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+    }
+
+    .p1-fact-box {
+      background: var(--navy);
+      color: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      margin: 30px 0;
+      font-size: 15px;
+      line-height: 1.6;
+      border-left: 6px solid var(--amber);
+    }
+
+    .p1-text {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+    }
+    
+    .p1-list {
+      margin-top: 10px;
+      padding-left: 0;
+      list-style: none;
+    }
+    
+    .p1-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+    
+    .p1-list li::before {
+      content: '•';
+      color: var(--blue);
+      font-size: 24px;
+      position: absolute;
+      left: 0;
+      top: -4px;
+    }
+
+    .p1-scenario {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .scenario-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(4,30,53,0.03);
+    }
+    
+    .scenario-card.normal { border-top: 4px solid var(--blue); }
+    .scenario-card.cronic { border-top: 4px solid var(--amber); }
+    
+    .scenario-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    
+    .scenario-normal-title { color: var(--blue); }
+    .scenario-cronic-title { color: var(--amber); }
+    
+    .scenario-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* PAGINA 2 */
+    .p2-title-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .p2-number-huge {
+      font-size: 80px;
+      font-family: 'Tiempos Headline', serif;
+      color: var(--navy);
+      line-height: 1;
+      text-shadow: 2px 2px 0px var(--blue-light);
+    }
+    
+    .p2-title {
+      font-size: 26px;
+      line-height: 1.2;
+    }
+    
+    .p2-subtitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .step-card {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(4,30,53,0.03);
+    }
+    
+    .step-card.full-width {
+      grid-column: 1 / -1;
+      background: var(--navy);
+      background-image: radial-gradient(circle at top right, var(--navy-light) 0%, transparent 80%);
+      color: white;
+      border: none;
+    }
+    
+    .step-number {
+      font-family: 'Tiempos Headline', serif;
+      font-size: 18px;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+    
+    .step-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: var(--navy);
+      letter-spacing: 0.5px;
+    }
+    
+    .step-card.full-width .step-title {
+      color: var(--amber);
+    }
+    
+    .step-desc {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    
+    .step-card.full-width .step-desc {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .protocol-box {
+      margin-top: 10px;
+      padding-left: 0;
+      list-style: none;
+    }
+    
+    .protocol-box li {
+      font-size: 12.5px;
+      margin-bottom: 6px;
+      position: relative;
+      padding-left: 16px;
+      line-height: 1.4;
+      color: rgba(255,255,255,0.9);
+    }
+    
+    .protocol-box li::before {
+      content: '✔';
+      color: var(--amber);
+      position: absolute;
+      left: 0;
+      font-size: 11px;
+      top: 1px;
+    }
+    
+    .p2-conclusion {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--navy);
+      text-align: center;
+      margin-top: auto;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- PAGINA 1 -->
+  <div class="page">
+    <div class="page-header">
+      <h1 class="p1-title">Majoritatea oamenilor nu dorm BINE din cauza unui nivel <strong>PREA MARE</strong> de cortizol seara.</h1>
+      <div class="p1-subtitle">7 pași pentru un somn profund <span class="text-highlight">ȘI</span> recuperare reală</div>
+    </div>
+    
+    <div class="page-content">
+      <p class="p1-text">
+        Calitatea somnului tău este afectată de mai mulți factori, principalii fiind: <b>un nivel crescut de stres</b>, <b>anxietatea</b>, <b>burnoutul</b> și <b>ritmul alert</b> din timpul zilei.
+      </p>
+      
+      <p class="p1-text">
+        Toate acestea mențin cortizolul ridicat, iar corpul tău rămâne blocat în modul de supraviețuire şi nu reușește să intre în faza de recuperare care ar trebui să se instaleze la finalul zilei.
+      </p>
+
+      <div class="p1-fact-box">
+        <b>8 din 10 persoane</b> au declarat în cadrul consultațiilor medicale de la Zitamine că stresul crescut din timpul zilei le afectează calitatea somnului.
+      </div>
+
+      <p class="p1-text">
+        <span class="text-blue" style="font-weight: 700;">Ce se întâmplă de fapt:</span> stresul constant menține cortizolul ridicat seara, iar organismul nu mai intră în starea necesară pentru somn profund.
+      </p>
+
+      <div class="p1-scenario">
+        <div class="scenario-card normal">
+          <div class="scenario-title scenario-normal-title">În mod normal</div>
+          <div class="scenario-text">Cortizolul scade seara, iar corpul se relaxează.</div>
+        </div>
+        <div class="scenario-card cronic">
+          <div class="scenario-title scenario-cronic-title">În stres cronic</div>
+          <div class="scenario-text">Cortizolul rămâne ridicat, somnul este superficial și fragmentat.</div>
+        </div>
+      </div>
+
+      <ul class="p1-list">
+        <li>Te trezești obosit chiar dacă dormi suficient.</li>
+        <li>Adormi greu sau nu îți poți liniști gândurile seara.</li>
+        <li>Te trezești în timpul nopții.</li>
+      </ul>
+
+      <p class="p1-text" style="font-weight: 600; font-size: 18px; margin-top: auto; padding-top: 20px;">
+        Îți sună cunoscut?<br>
+        <span style="font-weight: 400; font-size: 16px; color: var(--navy);">Cum poți îmbunătăți acest proces? Vezi pe pagina următoare.</span>
+      </p>
+    </div>
+
+    <div class="page-footer">
+      <div>
+        <img src="DASHBOARD ZITAMINE/logo-zitamine.webp" alt="Zitamine Logo" class="logo-img" style="margin-bottom: 8px;"><br>
+        <strong style="color: var(--navy);">www.ZITAMINE.RO</strong>
+      </div>
+      <div style="text-align: right; max-width: 320px; line-height: 1.4;">
+        Protocol bazat pe știință pentru reglarea ritmului circadian, optimizarea nivelului de cortizol și îmbunătățirea somnului profund.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PAGINA 2 -->
+  <div class="page">
+    <div class="page-header" style="padding-bottom: 5mm;">
+      <div class="p2-title-area">
+        <div class="p2-number-huge">7</div>
+        <div>
+          <h2 class="p2-title">pași pentru un somn profund</h2>
+          <div class="p2-subtitle"><span class="text-highlight">ȘI</span> recuperare reală</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" style="padding-top: 0;">
+      <div class="steps-grid">
+        
+        <!-- Pas 1 -->
+        <div class="step-card">
+          <div class="step-number">1.</div>
+          <div class="step-title">Expune-te la lumină naturală dimineața</div>
+          <div class="step-desc">
+            Expune-te la lumină timp de 10–15 minute în prima oră după trezire. Lumina naturală activează centrul ritmului circadian, sincronizând secreția de cortizol dimineața și favorizând scăderea lui naturală seara.
+          </div>
+        </div>
+
+        <!-- Pas 2 -->
+        <div class="step-card">
+          <div class="step-number">2.</div>
+          <div class="step-title">Optimizează temperatura</div>
+          <div class="step-desc">
+            Menține temperatura camerei la 18–20°C și evită supraîncălzirea. Pentru a intra în starea de somn, corpul trebuie să își scadă temperatura, iar un mediu prea cald împiedică acest proces fiziologic și poate fragmenta somnul.
+          </div>
+        </div>
+
+        <!-- Pas 3 -->
+        <div class="step-card">
+          <div class="step-number">3.</div>
+          <div class="step-title">Fă exerciții de respirație lentă</div>
+          <div class="step-desc">
+            Practică respirație controlată: inspiră 4 sec., expiră 6 sec., timp de 5–10 min. înainte de somn. Activează sistemul nervos parasimpatic, reduce bătăile inimii și nivelul de cortizol, facilitând relaxarea.
+          </div>
+        </div>
+
+        <!-- Pas 4 -->
+        <div class="step-card">
+          <div class="step-number">4.</div>
+          <div class="step-title">Evită stimulii după ora 14:00</div>
+          <div class="step-desc">
+            Nu consuma cafea, ceai negru/verde sau energizante. Cofeina blochează receptorii de adenozină, iar stimulii cresc activitatea sistemului nervos simpatic, menținând cortizolul ridicat.
+          </div>
+        </div>
+
+        <!-- Pas 5 -->
+        <div class="step-card">
+          <div class="step-number">5.</div>
+          <div class="step-title">Creează-ți o rutină de somn</div>
+          <div class="step-desc">
+            Mergi la culcare și trezește-te la aceeași oră zilnic. Consistența orei de somn stabilizează secreția de melatonină și cortizol, îmbunătățește latența adormirii și crește proporția de somn profund.
+          </div>
+        </div>
+
+        <!-- Pas 6 -->
+        <div class="step-card">
+          <div class="step-number">6.</div>
+          <div class="step-title">Redu lumina artificială</div>
+          <div class="step-desc">
+            Evită ecranele (telefon, TV, laptop) și lumina puternică cu 1–2 ore înainte de somn. Lumina albastră inhibă secreția de melatonină și menține cortizolul crescut.
+          </div>
+        </div>
+
+        <!-- Pas 7 -->
+        <div class="step-card full-width">
+          <div class="step-number" style="color: white; opacity: 0.8;">7.</div>
+          <div class="step-title">Alege suplimente eficiente, validate științific</div>
+          <div class="step-desc" style="margin-bottom: 6px;">
+            O rutină corect aleasă de suplimente poate sprijini reglarea sistemului nervos, reducerea stresului și îmbunătățirea calității somnului. Protocolul de bază poate cuprinde:
+          </div>
+          <ul class="protocol-box">
+            <li><strong>Magneziu bisglicinat cu Piperină</strong> — relaxează sistemul nervos și muscular, reduce activitatea neuronală.</li>
+            <li><strong>Ashwagandha (KSM-66®)</strong> — adaptogen care reduce nivelul de cortizol și ameliorează răspunsul la stres.</li>
+            <li><strong>L-Theanină</strong> — crește activitatea undelor alfa cerebrale, inducând calmul fără sedare.</li>
+            <li><strong>Melatonină</strong> — reglează ritmul circadian și facilitează adormirea rapidă.</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="p2-conclusion">
+        Un protocol personalizat de suplimente alimentare<br>
+        poate susține reglarea nivelului de cortizol și îmbunătățirea calității somnului.
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <div>
+        <img src="DASHBOARD ZITAMINE/logo-zitamine.webp" alt="Zitamine Logo" class="logo-img" style="margin-bottom: 8px;"><br>
+        <strong style="color: var(--navy);">www.ZITAMINE.RO</strong>
+      </div>
+      <div style="text-align: right; max-width: 320px; line-height: 1.4;">
+        Protocol bazat pe știință pentru reglarea ritmului circadian, optimizarea sistemului nervos și îmbunătățirea somnului profund.
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

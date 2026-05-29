@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abonament Comparatie — 1392×260</title>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body { margin:0; padding:40px; background:#111; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; font-family:'Satoshi',sans-serif; }
+
+  .banner {
+    width:1392px; height:260px; position:relative; overflow:hidden;
+    background: linear-gradient(155deg, #1C2F42 0%, #253D52 35%, #1A2E40 70%, #162636 100%);
+    font-family:'Satoshi',sans-serif; color:#fff;
+  }
+  .banner::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 35% 65% at 95% 30%, rgba(250,156,25,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 35% 65% at 5% 70%, rgba(76,167,248,0.08) 0%, transparent 55%);
+    z-index:1;
+  }
+
+  .deco-line-top { position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent 5%, #FA9C19 50%, transparent 95%); z-index:3; }
+  .deco-line-bottom { position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent 10%, #4CA7F8 50%, transparent 90%); z-index:3; }
+
+  .banner-content {
+    position:relative; z-index:5; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 40px; box-sizing:border-box; gap:25px;
+  }
+
+  /* LEFT SIDE: Text + CTA */
+  .left-col {
+    display:flex; flex-direction:column; justify-content:center;
+    width:320px; flex-shrink:0;
+  }
+  .banner-logo { font-size:18px; font-weight:700; letter-spacing:2px; text-transform:lowercase; color:rgba(255,255,255,0.50); margin-bottom:12px; }
+  .banner-logo .dot-accent { display:inline-block; width:5px; height:5px; background:#FA9C19; border-radius:50%; margin-left:2px; vertical-align:super; }
+  
+  .banner-title { font-size:26px; font-weight:800; line-height:1.15; margin-bottom:10px; }
+  .banner-title em { font-style:normal; color:#FA9C19; }
+  
+  .banner-cta {
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 26px; width:fit-content;
+    background:#FA9C19; color:#041E35; font-size:13px; font-weight:800;
+    letter-spacing:1px; text-transform:uppercase; border-radius:10px; border:none; text-decoration:none;
+    box-shadow:0 4px 16px rgba(250,156,25,0.25); margin-bottom:8px; margin-top: 10px;
+  }
+  .banner-cta .arrow { font-size:13px; }
+  .social-proof { font-size:11px; color:rgba(255,255,255,0.40); font-weight:500; }
+  .social-proof strong { color:rgba(255,255,255,0.70); }
+
+  /* RIGHT SIDE (Tables side-by-side) */
+  .tables-wrap {
+    flex-grow:1; display:flex; justify-content:space-between; gap:25px;
+  }
+  
+  .compare-wrap { flex:1; display:flex; flex-direction:column; }
+  
+  .compare-header { display:grid; grid-template-columns:100px 1fr 1.2fr; gap:4px; margin-bottom:4px; }
+  .compare-header .ch { padding:6px 6px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+  .compare-header .ch-label { text-align:left; color:rgba(255,255,255,0.35); }
+  .compare-header .ch-single { text-align:center; color:rgba(255,255,255,0.45); background:rgba(255,255,255,0.04); border-radius:6px 6px 0 0; }
+  .compare-header .ch-abo { text-align:center; color:#FA9C19; background:rgba(250,156,25,0.10); border:1.5px solid rgba(250,156,25,0.22); border-bottom:none; border-radius:6px 6px 0 0; }
+  
+  .compare-rows { display:flex; flex-direction:column; gap:2px; }
+  .compare-row { display:grid; grid-template-columns:100px 1fr 1.2fr; gap:4px; align-items:stretch; }
+  
+  .compare-row .cell { padding:8px 8px; font-size:11px; font-weight:500; display:flex; align-items:center; }
+  .compare-row .cell-label { text-align:left; color:rgba(255,255,255,0.80); font-weight:600; font-size:11px; line-height:1.15; }
+  .compare-row .cell-single { text-align:center; background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.45); font-size:11px; justify-content:center;}
+  .compare-row .cell-abo { text-align:center; background:rgba(250,156,25,0.05); border-left:1.5px solid rgba(250,156,25,0.22); border-right:1.5px solid rgba(250,156,25,0.22); color:#fff; font-weight:600; font-size:11px; justify-content:center;}
+  
+  .compare-row + .compare-row { border-top:1px solid rgba(255,255,255,0.04); padding-top:2px; }
+  
+  .compare-row:last-child .cell-single { border-radius:0 0 6px 6px; }
+  .compare-row:last-child .cell-abo { border-bottom:1.5px solid rgba(250,156,25,0.22); border-radius:0 0 6px 6px; }
+  .compare-row.row-highlight .cell-abo { background:rgba(250,156,25,0.12); }
+
+  .icon-yes { color:#4ADE80; font-size:12px; margin-right:3px; }
+  .icon-no { color:rgba(255,255,255,0.20); font-size:12px; margin-right:3px; }
+  .highlight-text { color:#FA9C19; font-weight:700; }
+  .subtle { font-size:9px; color:rgba(255,255,255,0.30); display:block; margin-top:2px; }
+
+  .banner-footer { position:absolute; bottom:6px; right:12px; z-index:5; }
+  .banner-footer span { font-size:10px; color:rgba(255,255,255,0.15); letter-spacing:2px; font-weight:500; }
+
+  .download-section { margin-top:25px; text-align:center; }
+  .btn-download { padding:14px 34px; background:#FA9C19; color:#041E35; border:none; border-radius:10px; cursor:pointer; font-size:16px; font-weight:700; font-family:'Satoshi',sans-serif; }
+  .btn-download:hover { background:#e08b15; }
+</style>
+</head>
+<body>
+<div class="banner" id="banner-export">
+  <div class="deco-line-top"></div>
+  <div class="deco-line-bottom"></div>
+
+  <div class="banner-footer"><span>zitamine.ro</span></div>
+
+  <div class="banner-content">
+    
+    <!-- LEFT SIDE: Text + CTA -->
+    <div class="left-col">
+      <div class="banner-logo">zitamine<span class="dot-accent"></span></div>
+      <div class="banner-title">De ce să alegi <em>Abonamentul</em> Zitamine?</div>
+      <div class="social-proof">Peste <strong>6.000+</strong> clienți <br>au ales abonamentul.</div>
+      
+      <button class="banner-cta">Începe Abonamentul <span class="arrow">→</span></button>
+    </div>
+
+    <!-- RIGHT SIDE: Two Tables Side-By-Side -->
+    <div class="tables-wrap">
+      
+      <!-- Table Part 1 (Rows 1-4) -->
+      <div class="compare-wrap">
+        <div class="compare-header">
+          <div class="ch ch-label">Beneficiu</div>
+          <div class="ch ch-single">O comandă</div>
+          <div class="ch ch-abo">Abonament</div>
+        </div>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="cell cell-label">Preț / lună</div>
+            <div class="cell cell-single">Standard</div>
+            <div class="cell cell-abo"><span class="highlight-text">Până la 30% redus</span></div>
+          </div>
+          <div class="compare-row">
+            <div class="cell cell-label">Transport</div>
+            <div class="cell cell-single">12 lei</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> Gratuit mereu</div>
+          </div>
+          <div class="compare-row">
+            <div class="cell cell-label">Livrare auto.</div>
+            <div class="cell cell-single"><span class="icon-no">✗</span> Nu</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> Da, automat</div>
+          </div>
+          <div class="compare-row">
+            <div class="cell cell-label">Flexibilitate</div>
+            <div class="cell cell-single">—</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> Pauză, skip, anulare</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Part 2 (Rows 5-8) -->
+      <div class="compare-wrap">
+        <div class="compare-header">
+          <div class="ch ch-label">Beneficiu</div>
+          <div class="ch ch-single">O comandă</div>
+          <div class="ch ch-abo">Abonament</div>
+        </div>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="cell cell-label">Frecvență</div>
+            <div class="cell cell-single">—</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> L / 45 / 3 luni</div>
+          </div>
+          <div class="compare-row">
+            <div class="cell cell-label">Formule medicale</div>
+            <div class="cell cell-single"><span class="icon-yes">✓</span> Da</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> Da</div>
+          </div>
+          <div class="compare-row">
+            <div class="cell cell-label">Plicuri zilnice</div>
+            <div class="cell cell-single"><span class="icon-yes">✓</span> Da</div>
+            <div class="cell cell-abo"><span class="icon-yes">✓</span> Da</div>
+          </div>
+          <div class="compare-row row-highlight">
+            <div class="cell cell-label">Consultație Medicală</div>
+            <div class="cell cell-single"><span class="icon-no">✗</span> Nu</div>
+            <div class="cell cell-abo"><span class="highlight-text"><span class="icon-yes">✓</span> Gratuit</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<div class="download-section">
+  <button class="btn-download" onclick="downloadPNG()">⬇ Download PNG 1392×260</button>
+  <div class="download-hint">Tabel Comparativ — format ultra-wide (2 coloane tabel)</div>
+</div>
+<script>
+function downloadPNG() {
+  html2canvas(document.getElementById('banner-export'), {
+    width:1392, height:260, scale:1, useCORS:true, backgroundColor:'#1E2D3D', logging:false
+  }).then(c => { const a=document.createElement('a'); a.download='Zitamine-Tabel-1392x260.png'; a.href=c.toDataURL('image/png'); a.click(); });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temp
+*.log
+*.tmp
+*.bak
+
+# Sensitive Scripts (Contains/Requires Tokens)
+**/debug_tags.ps1
+
+# Checkpoints
+.git_backup
+
+# Credentials & Sensitive Data
+secrets.json
+.env
+credentials.json
+token.json
+ga4_token.json
+Marketing_Analytics/ga4_token.json
+Marketing_Analytics/credentials.json
+google_data.json
+meta_data.json
+klaviyo_data.json
+
+# Database scripts with credentials
+Marketing_Analytics/explore_db.py
+
+# Large data files (exceed GitHub 100MB limit)
+Raport_Vanzari_2024_2026/quiz_data_cache.json
+
+# Cache files
+__pycache__/
+*.pyc
+
+# Debug/test scripts (removed in audit)
+DASHBOARD ZITAMINE/test_manual.py
+DASHBOARD ZITAMINE/unique_tags.txt
+Marketing_Analytics/db_output.txt
+Marketing_Analytics/inspect_data.py
+Marketing_Analytics/test_klaviyo.py
+Marketing_Analytics/test_meta.py
+Marketing_Analytics/test_reporting.py
+Marketing_Analytics/generate_ppt.py
+Marketing_Analytics/generate_profil_ppt.py
+Marketing_Analytics/google_ads_script.js
+Marketing_Analytics/ga4_customer_profile.json
+Marketing_Analytics/ga4_monthly_traffic_2026.json
+Marketing_Analytics/ga4_monthly_traffic_extended.json
+Marketing_Analytics/quiz_profile_2025_2026.json
+Raport_Vanzari_2024_2026/analyze_quiz_js.py
+Raport_Vanzari_2024_2026/boundary_check.py
+Raport_Vanzari_2024_2026/check_names.py
+Raport_Vanzari_2024_2026/check_report_data.py
+Raport_Vanzari_2024_2026/compare_categories.py
+Raport_Vanzari_2024_2026/daily_update.bat
+Raport_Vanzari_2024_2026/debug_churn.py
+Raport_Vanzari_2024_2026/debug_sub6_parsing.ps1
+Raport_Vanzari_2024_2026/debug_weekly_data.ps1
+Raport_Vanzari_2024_2026/deep_diagnostic.py
+Raport_Vanzari_2024_2026/diagnose_discrepancies.py
+Raport_Vanzari_2024_2026/fetch_quiz_demographics.py
+Raport_Vanzari_2024_2026/fetch_quiz_questions.py
+Raport_Vanzari_2024_2026/fetch_quiz_sample.py
+Raport_Vanzari_2024_2026/find_products.py
+Raport_Vanzari_2024_2026/list_week_orders.ps1
+Raport_Vanzari_2024_2026/quiz_demographics.py
+Raport_Vanzari_2024_2026/quiz_fast_analysis.py
+Raport_Vanzari_2024_2026/quiz_profile_analysis.py
+Raport_Vanzari_2024_2026/setup_daily_task.ps1
+Raport_Vanzari_2024_2026/setup_schedule.ps1
+Raport_Vanzari_2024_2026/test_analytics.py
+Raport_Vanzari_2024_2026/test_quiz_api.py
+Raport_Vanzari_2024_2026/verify_new_totals.py
+Raport_Vanzari_2024_2026/verify_shopify_totals.py
+Raport_Vanzari_2024_2026/Activitate_Clienti_Zitamine_v2.xlsx
+Raport_Vanzari_2024_2026/Clasificare_Produse.xlsx.tmp.xlsx
+Raport_Vanzari_2024_2026/quiz_analysis_results.json
+Raport_Vanzari_2024_2026/quiz_js_source.js
+Raport_Vanzari_2024_2026/quiz_output.txt
+Raport_Vanzari_2024_2026/quiz_output_full.txt
+Raport_Vanzari_2024_2026/quiz_result_sample.json
+
+# Old Klaviyo one-off scripts
+cleanup_data.py
+convert_to_word.py
+dump_flow.py
+export_pngs.py
+extract_all_emails.py
+extract_flow_logic.py
+extract_flow_logic_2.py
+fix_md_emails.py
+generate_reports.py
+generator_html_preview.py
+inject_emails.py
+master_fix.py
+master_fix_2.py
+reinject_SUB.py
+reinject_emails.py
+test_klaviyo_structure.py
+emails_clean.json
+emails_full_text.json
+flow_dump.txt

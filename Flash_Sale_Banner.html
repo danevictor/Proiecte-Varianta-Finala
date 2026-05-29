@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zitamine Flash Sale Banner - 1080×1080</title>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    padding: 40px;
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Satoshi', sans-serif;
+  }
+
+  /* ── BANNER 1080×1080 ── */
+  .banner {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    /* Slate profund — între navy și gri, ca bannerele existente */
+    background: linear-gradient(155deg, #1C2F42 0%, #253D52 35%, #1A2E40 70%, #162636 100%);
+    font-family: 'Satoshi', sans-serif;
+    color: #fff;
+  }
+
+  /* Ambient glow */
+  .banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 55% 50% at 80% 12%, rgba(250,156,25,0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 45% 45% at 12% 85%, rgba(76,167,248,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 30% 30% at 50% 55%, rgba(255,255,255,0.02) 0%, transparent 100%);
+    z-index: 1;
+  }
+
+  /* Deco */
+  .deco-circle-1 {
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(250,156,25,0.10);
+    top: -70px; right: -90px;
+    z-index: 2;
+  }
+  .deco-circle-2 {
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(76,167,248,0.07);
+    bottom: -50px; left: -70px;
+    z-index: 2;
+  }
+  .deco-circle-3 {
+    position: absolute;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(250,156,25,0.05) 0%, transparent 70%);
+    top: 180px; left: 55px;
+    z-index: 2;
+  }
+  .deco-line-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, transparent 5%, #FA9C19 50%, transparent 95%);
+    z-index: 3;
+  }
+  .deco-line-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent 10%, #4CA7F8 50%, transparent 90%);
+    z-index: 3;
+  }
+  .dots-pattern {
+    position: absolute;
+    bottom: 65px; right: 70px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px; z-index: 2; opacity: 0.12;
+  }
+  .dots-pattern .dot { width: 5px; height: 5px; background: #FA9C19; border-radius: 50%; }
+  .dots-pattern-left {
+    position: absolute;
+    top: 100px; left: 70px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px; z-index: 2; opacity: 0.08;
+  }
+  .dots-pattern-left .dot { width: 4px; height: 4px; background: #4CA7F8; border-radius: 50%; }
+
+  /* ── Content ── */
+  .banner-content {
+    position: relative;
+    z-index: 5;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 55px 80px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  /* Logo */
+  .banner-logo {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.50);
+    margin-bottom: 34px;
+  }
+  .banner-logo .dot-accent {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: #FA9C19;
+    border-radius: 50%;
+    margin-left: 2px;
+    vertical-align: super;
+  }
+
+  /* Flash badge */
+  .flash-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 36px;
+    border-radius: 50px;
+    background: rgba(250,156,25,0.10);
+    border: 1.5px solid rgba(250,156,25,0.28);
+    backdrop-filter: blur(4px);
+    margin-bottom: 26px;
+  }
+  .flash-badge .lightning { font-size: 20px; }
+  .flash-badge span {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #FA9C19;
+  }
+
+  /* Headline */
+  .headline-extra {
+    font-size: 30px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .discount-main {
+    font-size: 140px;
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -5px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .discount-main .percent {
+    font-size: 60px;
+    vertical-align: top;
+    margin-left: 4px;
+    letter-spacing: 0;
+    color: #FA9C19;
+  }
+  .discount-sub {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 24px;
+  }
+
+  /* Subtitle */
+  .banner-subtitle {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 28px;
+  }
+  .banner-subtitle strong {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* ── Offer cards ── */
+  .offers-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 28px;
+    width: 100%;
+    max-width: 720px;
+  }
+  .offer-card {
+    flex: 1;
+    padding: 24px 16px;
+    border-radius: 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .offer-card.monthly {
+    background: rgba(76,167,248,0.10);
+    border: 1.5px solid rgba(76,167,248,0.22);
+  }
+  .offer-card.quarterly {
+    background: rgba(250,156,25,0.10);
+    border: 2px solid rgba(250,156,25,0.32);
+  }
+  .offer-card.quarterly::before {
+    content: '★ BEST DEAL';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: #FA9C19;
+    color: #041E35;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    padding: 5px 0;
+  }
+  .offer-card.quarterly .offer-inner { margin-top: 12px; }
+  .offer-percent {
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .offer-card.monthly .offer-percent { color: #4CA7F8; }
+  .offer-card.quarterly .offer-percent { color: #FA9C19; }
+  .offer-percent-sign { font-size: 28px; vertical-align: top; }
+  .offer-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 6px;
+  }
+  .offer-type {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* Date pill */
+  .date-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 28px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
+    margin-bottom: 30px;
+  }
+  .date-pill .cal-icon { font-size: 16px; }
+  .date-pill span {
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 1px;
+  }
+
+  /* CTA */
+  .banner-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 58px;
+    background: #FA9C19;
+    color: #041E35;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 50px;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 6px 28px rgba(250,156,25,0.25);
+  }
+  .banner-cta .arrow { font-size: 18px; }
+
+  /* Footer */
+  .banner-footer {
+    position: absolute;
+    bottom: 26px;
+    left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+  }
+  .banner-footer span {
+    font-size: 15px;
+    color: rgba(255,255,255,0.22);
+    letter-spacing: 2px;
+    font-weight: 500;
+  }
+
+  /* ── Download ── */
+  .download-section {
+    margin-top: 30px;
+    text-align: center;
+  }
+  .btn-download {
+    padding: 14px 36px;
+    background: #FA9C19;
+    color: #041E35;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Satoshi', sans-serif;
+    transition: all 0.3s;
+  }
+  .btn-download:hover {
+    background: #e08b15;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(250,156,25,0.4);
+  }
+  .download-hint {
+    margin-top: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── Preview scale ── */
+  @media (max-width: 1200px) {
+    .banner { width: 540px; height: 540px; }
+    .banner-content { padding: 28px 40px; }
+    .banner-logo { font-size: 13px; margin-bottom: 17px; letter-spacing: 2px; }
+    .banner-logo .dot-accent { width: 4px; height: 4px; }
+    .flash-badge { padding: 6px 18px; margin-bottom: 13px; gap: 6px; }
+    .flash-badge .lightning { font-size: 10px; }
+    .flash-badge span { font-size: 8px; letter-spacing: 3px; }
+    .headline-extra { font-size: 15px; margin-bottom: 2px; letter-spacing: 2px; }
+    .discount-main { font-size: 70px; letter-spacing: -3px; margin-bottom: 2px; }
+    .discount-main .percent { font-size: 30px; }
+    .discount-sub { font-size: 13px; letter-spacing: 3px; margin-bottom: 12px; }
+    .banner-subtitle { font-size: 14px; margin-bottom: 14px; }
+    .offers-row { gap: 12px; margin-bottom: 14px; max-width: 370px; }
+    .offer-card { padding: 12px 8px; border-radius: 10px; }
+    .offer-card.quarterly::before { font-size: 6px; padding: 2px 0; letter-spacing: 1px; }
+    .offer-card.quarterly .offer-inner { margin-top: 6px; }
+    .offer-percent { font-size: 26px; margin-bottom: 2px; }
+    .offer-percent-sign { font-size: 14px; }
+    .offer-label { font-size: 7px; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .offer-type { font-size: 8px; }
+    .date-pill { padding: 5px 14px; margin-bottom: 15px; gap: 5px; }
+    .date-pill .cal-icon { font-size: 9px; }
+    .date-pill span { font-size: 9px; }
+    .banner-cta { padding: 11px 29px; font-size: 10px; }
+    .banner-cta .arrow { font-size: 10px; }
+    .banner-footer span { font-size: 8px; }
+    .banner-footer { bottom: 13px; }
+    .deco-circle-1 { width: 200px; height: 200px; top: -35px; right: -45px; }
+    .deco-circle-2 { width: 140px; height: 140px; bottom: -25px; left: -35px; }
+    .deco-circle-3 { width: 80px; height: 80px; top: 90px; left: 28px; }
+    .deco-line-top, .deco-line-bottom { height: 2px; }
+    .dots-pattern { bottom: 30px; right: 35px; gap: 6px; }
+    .dots-pattern .dot { width: 3px; height: 3px; }
+    .dots-pattern-left { top: 50px; left: 35px; gap: 6px; }
+    .dots-pattern-left .dot { width: 2px; height: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="banner" id="banner-export">
+  <div class="deco-line-top"></div>
+  <div class="deco-line-bottom"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-circle-3"></div>
+  <div class="dots-pattern">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+  <div class="dots-pattern-left">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <div class="banner-content">
+    <div class="banner-logo">zitamine<span class="dot-accent"></span></div>
+
+    <div class="flash-badge">
+      <span class="lightning">⚡</span>
+      <span>Flash Sale</span>
+    </div>
+
+    <div class="headline-extra">extra</div>
+    <div class="discount-main">15<span class="percent">%</span></div>
+    <div class="discount-sub">reducere</div>
+
+    <div class="banner-subtitle">la orice <strong>abonament nou</strong></div>
+
+    <div class="offers-row">
+      <div class="offer-card monthly">
+        <div class="offer-inner">
+          <div class="offer-label">Reducere</div>
+          <div class="offer-percent">20<span class="offer-percent-sign">%</span></div>
+          <div class="offer-type">Abonament Lunar</div>
+        </div>
+      </div>
+      <div class="offer-card quarterly">
+        <div class="offer-inner">
+          <div class="offer-label">Reducere</div>
+          <div class="offer-percent">30<span class="offer-percent-sign">%</span></div>
+          <div class="offer-type">Abonament 3 Luni</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="date-pill">
+      <span class="cal-icon">📅</span>
+      <span>22 – 23 Aprilie</span>
+    </div>
+
+    <div class="banner-cta">Profită Acum <span class="arrow">→</span></div>
+  </div>
+
+  <div class="banner-footer"><span>zitamine.ro</span></div>
+</div>
+
+<div class="download-section">
+  <button class="btn-download" onclick="downloadPNG()">⬇ Download PNG 1080×1080</button>
+  <div class="download-hint">Fișierul se va salva ca Zitamine-Flash-Sale.png</div>
+</div>
+
+<script>
+function downloadPNG() {
+  const el = document.getElementById('banner-export');
+  html2canvas(el, {
+    width: 1080, height: 1080, scale: 1,
+    useCORS: true, backgroundColor: '#1E2D3D', logging: false
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'Zitamine-Flash-Sale-1080x1080.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }).catch(err => {
+    console.error('Export error:', err);
+    alert('Eroare la export.');
+  });
+}
+</script>
+
+</body>
+</html>

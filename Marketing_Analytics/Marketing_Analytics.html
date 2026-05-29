@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Analytics — Antigravity</title>
+    <meta name="description"
+        content="Dashboard centralizat pentru analiza campaniilor Google Ads, Meta Ads și Klaviyo.">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="ads_data.js?v=20260525103211"></script>
+</head>
+
+<body>
+
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">📊</div>
+
+        <button class="nav-btn active" data-tab="overview" data-label="Overview" onclick="switchTab('overview', this)">
+            <span class="nav-icon">🌐</span>
+        </button>
+        <div class="sidebar-divider"></div>
+        <button class="nav-btn" data-tab="meta" data-label="Meta Ads" onclick="switchTab('meta', this)">
+            <span class="nav-icon">🔵</span>
+        </button>
+        <button class="nav-btn" data-tab="google" data-label="Google Ads" onclick="switchTab('google', this)">
+            <span class="nav-icon">🔴</span>
+        </button>
+        <button class="nav-btn" data-tab="klaviyo" data-label="Klaviyo Email" onclick="switchTab('klaviyo', this)">
+            <span class="nav-icon">📧</span>
+        </button>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1 id="page-title">📊 Overview Cross-Canal</h1>
+                <p class="subtitle" id="page-subtitle">Se încarcă...</p>
+            </div>
+            <div class="header-actions">
+                <div class="period-picker" id="period-picker">
+                    <div class="period-presets">
+                        <button class="filter-btn" onclick="setPeriod('3m', this)">3L</button>
+                        <button class="filter-btn" onclick="setPeriod('6m', this)">6L</button>
+                        <button class="filter-btn" onclick="setPeriod('12m', this)">12L</button>
+                        <button class="filter-btn active" onclick="setPeriod('all', this)">Total</button>
+                    </div>
+                    <div class="period-dropdowns">
+                        <label class="period-label">De la</label>
+                        <select id="period-start" class="period-select" onchange="applyCustomPeriod()"></select>
+                        <label class="period-label">Până la</label>
+                        <select id="period-end" class="period-select" onchange="applyCustomPeriod()"></select>
+                    </div>
+                </div>
+                <div class="update-pill">
+                    <div class="live-dot"></div>
+                    <span id="last-update">Actualizat: —</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+       TAB: OVERVIEW
+  ═══════════════════════════════════════════════ -->
+        <section class="tab-section active" id="tab-overview">
+
+            <div class="channel-header">
+                <div class="channel-icon-wrap overview">🌐</div>
+                <div>
+                    <div class="channel-title">Overview Cross-Canal</div>
+                    <div class="channel-subtitle" id="overview-period">Performanța cumulativă a tuturor canalelor</div>
+                </div>
+            </div>
+
+            <!-- Channel summary cards -->
+            <div class="channel-cards-grid mb-32" id="channel-cards"></div>
+
+            <!-- Top KPIs -->
+            <div class="kpi-grid mb-32" id="overview-kpis"></div>
+
+            <!-- Charts -->
+            <div class="charts-row mb-32">
+                <div class="chart-card">
+                    <div class="chart-title">Spend vs Revenue lunar</div>
+                    <div class="chart-sub">Toate canalele combinate</div>
+                    <div class="chart-wrap"><canvas id="overviewTrendChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Distribuție spend per canal</div>
+                    <div class="chart-sub">Procent din buget total</div>
+                    <div class="chart-wrap"><canvas id="spendDistChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="charts-row equal mb-32">
+                <div class="chart-card">
+                    <div class="chart-title">ROAS lunar per canal</div>
+                    <div class="chart-sub">Evoluție comparativă</div>
+                    <div class="chart-wrap"><canvas id="roasCompareChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Revenue atribuit per canal</div>
+                    <div class="chart-sub" id="overview-revenue-period">Revenue atribuit per canal</div>
+                    <div class="chart-wrap"><canvas id="revenueBarChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Ecomm KPIs Overview -->
+            <div class="ecomm-overview-wrap" id="overview-ecomm-tables"></div>
+
+            <!-- Insights -->
+            <div class="section-title">💡 Insights cheie</div>
+            <div class="insights-list mb-32" id="overview-insights"></div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════════════
+       TAB: META ADS
+  ═══════════════════════════════════════════════ -->
+        <section class="tab-section" id="tab-meta">
+
+            <div class="channel-header">
+                <div class="channel-icon-wrap meta">🔵</div>
+                <div>
+                    <div class="channel-title">Meta Ads</div>
+                    <div class="channel-subtitle" id="meta-period">Facebook & Instagram</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid mb-32" id="meta-kpis"></div>
+
+            <!-- Meta Ads Ecomm Overview Table -->
+            <div class="ecomm-overview-wrap" id="meta-ecomm-table"></div>
+
+            <div class="charts-row mb-32">
+                <div class="chart-card">
+                    <div class="chart-title">Spend vs Revenue lunar</div>
+                    <div class="chart-sub" id="meta-chart-period">Meta Ads — Spend vs Revenue</div>
+                    <div class="chart-wrap"><canvas id="metaTrendChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">ROAS lunar</div>
+                    <div class="chart-sub">Evoluție return on ad spend</div>
+                    <div class="chart-wrap"><canvas id="metaROASChart"></canvas></div>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="section-title" style="margin-bottom:0">📋 Campanii Meta Ads</div>
+                <div class="filter-bar" id="meta-status-filter">
+                    <button class="filter-btn active" onclick="setStatusFilter('meta','all',this)">Toate</button>
+                    <button class="filter-btn" onclick="setStatusFilter('meta','active',this)">🟢 Active</button>
+                    <button class="filter-btn" onclick="setStatusFilter('meta','paused',this)">⏸ Pauzate</button>
+                </div>
+            </div>
+            <div style="margin-bottom:16px;display:flex;gap:8px;align-items:center">
+                <button class="compare-btn" id="meta-compare-btn" onclick="toggleCompareMode('meta')"
+                    style="display:none">⚖️ Compară selectate</button>
+                <span class="compare-hint" id="meta-compare-hint"
+                    style="display:none;font-size:12px;color:rgba(255,255,255,0.4)">Selectează 2 campanii pentru
+                    comparare</span>
+            </div>
+            <div class="campaigns-list" id="meta-campaigns"></div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════════════
+       TAB: GOOGLE ADS
+  ═══════════════════════════════════════════════ -->
+        <section class="tab-section" id="tab-google">
+
+            <div class="channel-header">
+                <div class="channel-icon-wrap google">🔴</div>
+                <div>
+                    <div class="channel-title">Google Ads</div>
+                    <div class="channel-subtitle" id="google-period">Search, Shopping & Display</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid mb-32" id="google-kpis"></div>
+
+            <!-- Google Ads Ecomm Overview Table -->
+            <div class="ecomm-overview-wrap" id="google-ecomm-table"></div>
+
+            <div class="charts-row mb-32">
+                <div class="chart-card">
+                    <div class="chart-title">Spend vs Revenue lunar</div>
+                    <div class="chart-sub" id="google-chart-period">Google Ads — Spend vs Revenue</div>
+                    <div class="chart-wrap"><canvas id="googleTrendChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">ROAS lunar</div>
+                    <div class="chart-sub">Evoluție return on ad spend</div>
+                    <div class="chart-wrap"><canvas id="googleROASChart"></canvas></div>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="section-title" style="margin-bottom:0">📋 Campanii Google Ads</div>
+                <div class="filter-bar" id="google-status-filter">
+                    <button class="filter-btn active" onclick="setStatusFilter('google','all',this)">Toate</button>
+                    <button class="filter-btn" onclick="setStatusFilter('google','active',this)">🟢 Active</button>
+                    <button class="filter-btn" onclick="setStatusFilter('google','paused',this)">⏸ Pauzate</button>
+                </div>
+            </div>
+            <div style="margin-bottom:16px;display:flex;gap:8px;align-items:center">
+                <button class="compare-btn" id="google-compare-btn" onclick="toggleCompareMode('google')"
+                    style="display:none">⚖️ Compară selectate</button>
+                <span class="compare-hint" id="google-compare-hint"
+                    style="display:none;font-size:12px;color:rgba(255,255,255,0.4)">Selectează 2 campanii pentru
+                    comparare</span>
+            </div>
+            <div class="campaigns-list" id="google-campaigns"></div>
+
+        </section>
+
+        <!-- ═══════════════════════════════════════════════
+       TAB: KLAVIYO
+  ═══════════════════════════════════════════════ -->
+        <section class="tab-section" id="tab-klaviyo">
+
+            <div class="channel-header">
+                <div class="channel-icon-wrap klaviyo">📧</div>
+                <div>
+                    <div class="channel-title">Klaviyo — Email Marketing</div>
+                    <div class="channel-subtitle" id="klaviyo-period">Flows & Campaigns</div>
+                </div>
+            </div>
+
+            <div class="kpi-grid mb-32" id="klaviyo-kpis"></div>
+
+            <div class="charts-row mb-32">
+                <div class="chart-card">
+                    <div class="chart-title">Revenue email lunar</div>
+                    <div class="chart-sub" id="klaviyo-chart-period">Klaviyo — Revenue lunar</div>
+                    <div class="chart-wrap"><canvas id="klaviyoRevenueChart"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">Emailuri trimise lunar</div>
+                    <div class="chart-sub">Volum de trimiteri per lună</div>
+                    <div class="chart-wrap"><canvas id="klaviyoSendsChart"></canvas></div>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="section-title" style="margin-bottom:0">⚡ Flows</div>
+                <div class="filter-bar" id="klaviyo-flow-filter">
+                    <button class="filter-btn active" onclick="setFlowFilter('all',this)">Toate</button>
+                    <button class="filter-btn" onclick="setFlowFilter('LIVE',this)">🟢 Live</button>
+                    <button class="filter-btn" onclick="setFlowFilter('DRAFT',this)">⏸ Draft</button>
+                    <button class="filter-btn" onclick="setFlowFilter('MANUAL',this)">🛠 Manual</button>
+                </div>
+            </div>
+            <div class="flows-grid mb-32" id="klaviyo-flows"></div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="section-title" style="margin-bottom:0">📨 Campanii Email Trimise</div>
+            </div>
+            <div class="campaigns-list" id="klaviyo-campaigns"></div>
+
+        </section>
+
+        <!-- COMPARISON MODAL -->
+        <div class="compare-modal-overlay" id="compare-modal" style="display:none"
+            onclick="if(event.target===this)closeCompare()">
+            <div class="compare-modal">
+                <div class="compare-modal-header">
+                    <h3>⚖️ Comparare Campanii</h3>
+                    <button class="compare-close" onclick="closeCompare()">✕</button>
+                </div>
+                <div class="compare-body" id="compare-body"></div>
+            </div>
+        </div>
+
+        <div style="height:60px"></div>
+    </main>
+
+    <script>
+        // ============================================================
+        // DASHBOARD LOGIC — No TikTok, Real Data
+        // ============================================================
+
+        Chart.defaults.color = 'rgba(255,255,255,0.5)';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+        Chart.defaults.font = { family: "'Inter', sans-serif", size: 12 };
+
+        let currentPeriod = 'all';
+        let customRange = { start: null, end: null };
+        let allAvailableMonths = [];
+        let charts = {};
+
+        // ─── COLLECT ALL AVAILABLE MONTHS ────────────────────────────
+        function collectAllMonths() {
+            const monthSet = new Set();
+            [ADS_DATA.meta.monthlyTrend, ADS_DATA.google.monthlyTrend, ADS_DATA.klaviyo.monthlyTrend].forEach(arr => {
+                (arr || []).forEach(m => monthSet.add(m.month));
+            });
+            const monthOrder = {'Ian':1,'Feb':2,'Mar':3,'Apr':4,'Mai':5,'Iun':6,'Iul':7,'Aug':8,'Sep':9,'Oct':10,'Nov':11,'Dec':12};
+            allAvailableMonths = [...monthSet].sort((a, b) => {
+                const [mA, yA] = a.split(' ');
+                const [mB, yB] = b.split(' ');
+                return (parseInt(yA) * 100 + (monthOrder[mA] || 0)) - (parseInt(yB) * 100 + (monthOrder[mB] || 0));
+            });
+        }
+
+        function populateDropdowns() {
+            const startSel = document.getElementById('period-start');
+            const endSel = document.getElementById('period-end');
+            if (!startSel || !endSel || allAvailableMonths.length === 0) return;
+            startSel.innerHTML = allAvailableMonths.map((m, i) =>
+                `<option value="${i}"${i === 0 ? ' selected' : ''}>${m}</option>`
+            ).join('');
+            endSel.innerHTML = allAvailableMonths.map((m, i) =>
+                `<option value="${i}"${i === allAvailableMonths.length - 1 ? ' selected' : ''}>${m}</option>`
+            ).join('');
+        }
+
+        function syncDropdownsToFilter() {
+            const startSel = document.getElementById('period-start');
+            const endSel = document.getElementById('period-end');
+            if (!startSel || !endSel || allAvailableMonths.length === 0) return;
+            if (currentPeriod === 'custom') return;
+            if (currentPeriod === 'all') {
+                startSel.value = '0';
+                endSel.value = String(allAvailableMonths.length - 1);
+            } else {
+                const n = currentPeriod === '3m' ? 3 : currentPeriod === '6m' ? 6 : 12;
+                const endIdx = allAvailableMonths.length - 1;
+                const startIdx = Math.max(0, endIdx - n + 1);
+                startSel.value = String(startIdx);
+                endSel.value = String(endIdx);
+            }
+        }
+
+        // ─── PERIOD LABEL HELPER ─────────────────────────────────────
+        function getPeriodLabel(monthlyData) {
+            const filtered = filterMonths(monthlyData);
+            if (!filtered || filtered.length === 0) return '';
+            return `${filtered[0].month} – ${filtered[filtered.length - 1].month}`;
+        }
+
+        function updateAllPeriodLabels() {
+            const metaMonths = ADS_DATA.meta.monthlyTrend;
+            const googMonths = ADS_DATA.google.monthlyTrend;
+            const klavMonths = ADS_DATA.klaviyo.monthlyTrend;
+            const allMonths = [metaMonths, googMonths, klavMonths].sort((a,b) => b.length - a.length)[0];
+            const overviewLabel = getPeriodLabel(allMonths);
+            const metaLabel = getPeriodLabel(metaMonths);
+            const googLabel = getPeriodLabel(googMonths);
+            const klavLabel = getPeriodLabel(klavMonths);
+
+            const activeTab = document.querySelector('.nav-btn.active');
+            const tab = activeTab ? activeTab.dataset.tab : 'overview';
+            const tabTitles = {
+                overview: ['📊 Overview Cross-Canal', `Toate canalele · ${overviewLabel}`],
+                meta: ['🔵 Meta Ads', `Facebook & Instagram · ${metaLabel}`],
+                google: ['🔴 Google Ads', `Search, Shopping & Display · ${googLabel}`],
+                klaviyo: ['📧 Klaviyo Email', `Flows & Campaigns · ${klavLabel}`]
+            };
+            document.getElementById('page-title').textContent = tabTitles[tab][0];
+            document.getElementById('page-subtitle').textContent = tabTitles[tab][1] + ' · Date reale API';
+
+            const el = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+            el('overview-period', `Performanța cumulativă a tuturor canalelor · ${overviewLabel}`);
+            el('overview-revenue-period', `Revenue atribuit per canal · ${overviewLabel}`);
+            el('meta-period', `Facebook & Instagram · ${metaLabel}`);
+            el('meta-chart-period', `Meta Ads — ${metaLabel}`);
+            el('google-period', `Search, Shopping & Display · ${googLabel}`);
+            el('google-chart-period', `Google Ads — ${googLabel}`);
+            el('klaviyo-period', `Flows & Campaigns · ${klavLabel}`);
+            el('klaviyo-chart-period', `Klaviyo — ${klavLabel}`);
+
+            const lastUpdates = [ADS_DATA.meta.lastUpdated, ADS_DATA.google.lastUpdated, ADS_DATA.klaviyo.lastUpdated].filter(Boolean);
+            if (lastUpdates.length > 0) {
+                el('last-update', `Actualizat: ${lastUpdates.sort().pop()}`);
+            }
+        }
+
+        // ─── TAB SWITCHING ───────────────────────────────────────────
+        function switchTab(tab, btn) {
+            document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            btn.classList.add('active');
+            updateAllPeriodLabels();
+        }
+
+        // ─── PERIOD FILTER ───────────────────────────────────────────
+        function setPeriod(p, btn) {
+            currentPeriod = p;
+            customRange = { start: null, end: null };
+            document.querySelectorAll('.period-presets .filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            syncDropdownsToFilter();
+            initCharts();
+        }
+
+        function applyCustomPeriod() {
+            const startIdx = parseInt(document.getElementById('period-start').value);
+            const endIdx = parseInt(document.getElementById('period-end').value);
+            if (startIdx > endIdx) {
+                document.getElementById('period-end').value = String(startIdx);
+            }
+            const si = Math.min(startIdx, endIdx);
+            const ei = Math.max(startIdx, endIdx);
+            customRange = {
+                start: allAvailableMonths[si],
+                end: allAvailableMonths[ei]
+            };
+            currentPeriod = 'custom';
+            document.querySelectorAll('.period-presets .filter-btn').forEach(b => b.classList.remove('active'));
+            initCharts();
+        }
+
+        function filterMonths(data) {
+            if (currentPeriod === 'all') return data;
+            if (currentPeriod === 'custom' && customRange.start && customRange.end) {
+                const startIdx = allAvailableMonths.indexOf(customRange.start);
+                const endIdx = allAvailableMonths.indexOf(customRange.end);
+                const rangeMonths = new Set(allAvailableMonths.slice(startIdx, endIdx + 1));
+                return data.filter(d => rangeMonths.has(d.month));
+            }
+            const n = currentPeriod === '3m' ? 3 : currentPeriod === '6m' ? 6 : 12;
+            const nonZero = data.filter(d => (d.spend || 0) > 0 || (d.revenue || 0) > 0 || (d.sends || 0) > 0);
+            return nonZero.slice(-n);
+        }
+
+
+        // ─── ROAS PILL COLOR ─────────────────────────────────────────
+        function roasColor(r) {
+            if (!r || r === 0) return '#6b7280';
+            if (r >= 3.5) return '#10b981';
+            if (r >= 2.5) return '#f59e0b';
+            if (r >= 2.0) return '#f97316';
+            return '#ef4444';
+        }
+
+        function roasLabel(r) {
+            if (!r || r === 0) return 'N/A';
+            return r.toFixed(2) + 'x';
+        }
+
+        // ─── KPI CARD BUILDER ────────────────────────────────────────
+        function kpiCard(label, value, sub, colorClass, badge) {
+            return `<div class="kpi-card ${colorClass}">
+    <div class="kpi-label">${label}</div>
+    <div class="kpi-value">${value}</div>
+    ${sub ? `<div class="kpi-sub">${sub}</div>` : ''}
+    ${badge ? `<div class="kpi-badge ${badge.cls}">${badge.text}</div>` : ''}
+  </div>`;
+        }
+
+        // ─── CAMPAIGN CARD BUILDER ───────────────────────────────────
+        function buildCampaignCard(c, channel) {
+            const statusMap = { 'ACTIVE': 'active', 'ENABLED': 'active', 'PAUSED': 'paused' };
+            const statusLabelMap = { 'ACTIVE': 'Activ', 'ENABLED': 'Activ', 'PAUSED': 'Pauzat' };
+            const st = statusMap[c.status] || 'ended';
+            const stLabel = statusLabelMap[c.status] || 'Finalizat';
+            const rColor = roasColor(c.roas);
+
+            let extraKpis = '';
+            if (channel === 'meta') {
+                extraKpis = `
+      <div class="c-kpi"><div class="c-kpi-val">${c.impressions ? formatNum(c.impressions) : '—'}</div><div class="c-kpi-lbl">Impresii</div></div>
+      <div class="c-kpi"><div class="c-kpi-val">${c.ctr ? c.ctr.toFixed(2) + '%' : '—'}</div><div class="c-kpi-lbl">CTR</div></div>
+    `;
+            } else if (channel === 'google') {
+                extraKpis = `
+      <div class="c-kpi"><div class="c-kpi-val">${c.conversions ? Math.round(c.conversions) : '—'}</div><div class="c-kpi-lbl">Conversii</div></div>
+      <div class="c-kpi"><div class="c-kpi-val">${c.type || '—'}</div><div class="c-kpi-lbl">Tip</div></div>
+    `;
+            }
+
+            const revenue = c.purchaseValue || c.conversionValue || 0;
+            const conversions = c.purchases || c.conversions || 0;
+            const cpa = conversions > 0 ? c.spend / conversions : 0;
+
+            let detailItems = `
+    <div class="detail-item"><div class="detail-val">${formatRON2(c.spend)}</div><div class="detail-lbl">Spend Total</div></div>
+    <div class="detail-item"><div class="detail-val">${formatRON2(revenue)}</div><div class="detail-lbl">Revenue</div></div>
+    <div class="detail-item"><div class="detail-val" style="color:${rColor}">${roasLabel(c.roas)}</div><div class="detail-lbl">ROAS</div></div>
+    <div class="detail-item"><div class="detail-val">${conversions ? (typeof conversions === 'number' ? Math.round(conversions) : conversions) : '—'}</div><div class="detail-lbl">Conversii</div></div>
+    <div class="detail-item"><div class="detail-val">${cpa > 0 ? formatRON2(cpa) : '—'}</div><div class="detail-lbl">CPA</div></div>
+    <div class="detail-item"><div class="detail-val">${c.ctr ? c.ctr.toFixed(2) + '%' : '—'}</div><div class="detail-lbl">CTR</div></div>
+  `;
+
+            if (channel === 'meta') {
+                detailItems += `
+      <div class="detail-item"><div class="detail-val">${c.reach ? formatNum(c.reach) : '—'}</div><div class="detail-lbl">Reach</div></div>
+      <div class="detail-item"><div class="detail-val">${c.cpm ? 'RON ' + c.cpm.toFixed(2) : '—'}</div><div class="detail-lbl">CPM</div></div>
+    `;
+            }
+
+            if (channel === 'google') {
+                detailItems += `
+      <div class="detail-item"><div class="detail-val">${c.avgCPC ? 'RON ' + c.avgCPC.toFixed(2) : '—'}</div><div class="detail-lbl">CPC Mediu</div></div>
+      <div class="detail-item"><div class="detail-val">${c.avgCPM ? 'RON ' + c.avgCPM.toFixed(2) : '—'}</div><div class="detail-lbl">CPM Mediu</div></div>
+    `;
+            }
+
+            const typeLabel = c.type || c.objective || '';
+            const startInfo = c.startTime ? c.startTime.split('T')[0] : '';
+            const budgetDisplay = c.dailyBudget > 0 ? ` · RON ${c.dailyBudget}/zi` : '';
+
+            return `<div class="campaign-card" id="camp-${c.id}">
+    <div class="campaign-header" onclick="toggleCampaign('camp-${c.id}')">
+      <div class="campaign-status ${st}" title="${stLabel}"></div>
+      <div>
+        <div class="campaign-name">${c.name}</div>
+        <div class="campaign-type">${typeLabel}${startInfo ? ' · Din ' + startInfo : ''}${budgetDisplay}</div>
+      </div>
+      <div class="campaign-kpis">
+        <div class="c-kpi"><div class="c-kpi-val">${formatRON2(c.spend)}</div><div class="c-kpi-lbl">Spend</div></div>
+        <div class="c-kpi"><div class="c-kpi-val">${formatRON2(revenue)}</div><div class="c-kpi-lbl">Revenue</div></div>
+        ${extraKpis}
+        <div class="roas-pill" style="background:${rColor}20;color:${rColor};border:1px solid ${rColor}40">${roasLabel(c.roas)}</div>
+      </div>
+      <button class="expand-btn">▼</button>
+    </div>
+    <div class="campaign-details">
+      <div class="details-grid">${detailItems}</div>
+    </div>
+  </div>`;
+        }
+
+        function toggleCampaign(id) {
+            const card = document.getElementById(id);
+            card.classList.toggle('expanded');
+        }
+
+        // ─── KLAVIYO FLOW CARD ───────────────────────────────────────
+        function buildFlowCard(f) {
+            const rpeColor = f.rpe >= 2 ? '#10b981' : f.rpe >= 1 ? '#60a5fa' : f.rpe >= 0.5 ? '#fbbf24' : '#f87171';
+            return `<div class="flow-card">
+    <div class="flow-header">
+      <div class="flow-status-dot"></div>
+      <div>
+        <div class="flow-name">${f.name}</div>
+        <div class="flow-trigger">⚡ ${f.triggerType || f.status}</div>
+      </div>
+    </div>
+    <div class="flow-metrics">
+      <div class="flow-metric">
+        <div class="flow-metric-val">${f.openRate ? f.openRate.toFixed(1) + '%' : '—'}</div>
+        <div class="flow-metric-lbl">Open Rate</div>
+      </div>
+      <div class="flow-metric">
+        <div class="flow-metric-val">${f.clickRate ? f.clickRate.toFixed(1) + '%' : '—'}</div>
+        <div class="flow-metric-lbl">Click Rate</div>
+      </div>
+      <div class="flow-metric">
+        <div class="flow-metric-val">${formatNum(f.sends)}</div>
+        <div class="flow-metric-lbl">Sends</div>
+      </div>
+    </div>
+    <div class="flow-rpe" style="background:${rpeColor}15;border:1px solid ${rpeColor}30">
+      <div style="font-size:22px;font-weight:800;color:${rpeColor}">RON ${f.rpe.toFixed(2)} <span style="font-size:13px;font-weight:500">RPE</span></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px">Revenue: ${formatRON2(f.revenue)} · ${formatNum(f.sends)} emailuri trimise</div>
+    </div>
+  </div>`;
+        }
+
+        // ─── KLAVIYO CAMPAIGN CARD ───────────────────────────────────
+        function buildKlaviyoCard(c) {
+            const rpeColor = c.rpe >= 2 ? '#10b981' : c.rpe >= 1 ? '#60a5fa' : c.rpe >= 0.3 ? '#fbbf24' : '#f87171';
+            return `<div class="campaign-card" id="kc-${c.id}">
+    <div class="campaign-header" onclick="toggleCampaign('kc-${c.id}')">
+      <div class="campaign-status active"></div>
+      <div>
+        <div class="campaign-name">${c.name}</div>
+        <div class="campaign-type">📅 ${c.sentDate || '—'} · ${formatNum(c.sends)} trimis</div>
+      </div>
+      <div class="campaign-kpis">
+        <div class="c-kpi"><div class="c-kpi-val">${c.openRate ? c.openRate.toFixed(1) + '%' : '—'}</div><div class="c-kpi-lbl">Open Rate</div></div>
+        <div class="c-kpi"><div class="c-kpi-val">${c.clickRate ? c.clickRate.toFixed(1) + '%' : '—'}</div><div class="c-kpi-lbl">Click Rate</div></div>
+        <div class="c-kpi"><div class="c-kpi-val">${formatRON2(c.revenue)}</div><div class="c-kpi-lbl">Revenue</div></div>
+        <div class="roas-pill" style="background:${rpeColor}20;color:${rpeColor};border:1px solid ${rpeColor}40">RPE ${c.rpe.toFixed(2)}</div>
+      </div>
+      <button class="expand-btn">▼</button>
+    </div>
+    <div class="campaign-details">
+      <div class="details-grid">
+        <div class="detail-item"><div class="detail-val">${formatNum(c.sends)}</div><div class="detail-lbl">Trimise</div></div>
+        <div class="detail-item"><div class="detail-val">${formatNum(c.opens)}</div><div class="detail-lbl">Deschideri</div></div>
+        <div class="detail-item"><div class="detail-val">${c.openRate ? c.openRate.toFixed(1) + '%' : '—'}</div><div class="detail-lbl">Open Rate</div></div>
+        <div class="detail-item"><div class="detail-val">${formatNum(c.clicks)}</div><div class="detail-lbl">Clickuri</div></div>
+        <div class="detail-item"><div class="detail-val">${c.clickRate ? c.clickRate.toFixed(1) + '%' : '—'}</div><div class="detail-lbl">Click Rate</div></div>
+        <div class="detail-item"><div class="detail-val">${formatRON2(c.revenue)}</div><div class="detail-lbl">Revenue</div></div>
+      </div>
+      ${c.subjectLine ? `<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-top:10px">
+        <div style="font-size:10px;color:#a5b4fc;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Subject Line</div>
+        <div style="font-size:14px;font-style:italic;color:rgba(255,255,255,0.8)">"${c.subjectLine}"</div>
+      </div>` : ''}
+    </div>
+  </div>`;
+        }
+
+        // ─── FORMAT HELPERS ──────────────────────────────────────────
+        function formatRON2(v) {
+            if (!v) return 'RON 0';
+            return 'RON ' + new Intl.NumberFormat('ro-RO', { maximumFractionDigits: 0 }).format(v);
+        }
+        function formatNum(v) {
+            if (!v) return '0';
+            return new Intl.NumberFormat('ro-RO').format(v);
+        }
+
+        // ─── CHART FACTORY ───────────────────────────────────────────
+        function destroyChart(id) {
+            if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+        }
+
+        function createTrendChart(canvasId, months, spendData, revenueData, color) {
+            destroyChart(canvasId);
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            charts[canvasId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Spend (RON)', data: spendData, type: 'bar',
+                            backgroundColor: color + '40', borderColor: color, borderWidth: 1, borderRadius: 4,
+                            order: 2
+                        },
+                        {
+                            label: 'Revenue (RON)', data: revenueData, type: 'line',
+                            borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)',
+                            borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 3,
+                            pointBackgroundColor: '#10b981', order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { boxWidth: 12, padding: 16 } } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => 'RON ' + formatNum(v) } },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+        }
+
+        function createROASChart(canvasId, months, roasData, color) {
+            destroyChart(canvasId);
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            charts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'ROAS', data: roasData,
+                        borderColor: color, backgroundColor: color + '20',
+                        borderWidth: 2.5, fill: true, tension: 0.4,
+                        pointRadius: 4, pointBackgroundColor: color
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => v + 'x' } }
+                    }
+                }
+            });
+        }
+
+        // ─── OVERVIEW CHARTS ─────────────────────────────────────────
+        function buildOverviewCharts() {
+            const meta = filterMonths(ADS_DATA.meta.monthlyTrend);
+            const goog = filterMonths(ADS_DATA.google.monthlyTrend);
+            const klav = filterMonths(ADS_DATA.klaviyo.monthlyTrend);
+
+            const months = meta.map(d => d.month);
+            const totalSpend = months.map((_, i) => (meta[i]?.spend || 0) + (goog[i]?.spend || 0));
+            const totalRevenue = months.map((_, i) =>
+                (meta[i]?.revenue || 0) + (goog[i]?.revenue || 0) + (klav[i]?.revenue || 0)
+            );
+
+            // Trend chart
+            destroyChart('overviewTrendChart');
+            const c1 = document.getElementById('overviewTrendChart').getContext('2d');
+            charts['overviewTrendChart'] = new Chart(c1, {
+                data: {
+                    labels: months,
+                    datasets: [
+                        { type: 'bar', label: 'Spend Total', data: totalSpend, backgroundColor: 'rgba(99,102,241,0.4)', borderColor: '#6366f1', borderWidth: 1, borderRadius: 4 },
+                        { type: 'line', label: 'Revenue Total', data: totalRevenue, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 3 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { boxWidth: 12, padding: 14 } } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => 'RON ' + formatNum(v) } },
+                        x: { ticks: { maxRotation: 45 } }
+                    }
+                }
+            });
+
+            // Spend distribution doughnut
+            destroyChart('spendDistChart');
+            const c2 = document.getElementById('spendDistChart').getContext('2d');
+            const totalMeta = ADS_DATA.meta.summary.totalSpend;
+            const totalGoog = ADS_DATA.google.summary.totalSpend;
+            charts['spendDistChart'] = new Chart(c2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Meta Ads', 'Google Ads'],
+                    datasets: [{ data: [totalMeta, totalGoog], backgroundColor: ['#1877F280', '#EA433580'], borderColor: ['#1877F2', '#EA4335'], borderWidth: 2, hoverOffset: 6 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true, cutout: '65%',
+                    plugins: { legend: { position: 'bottom', labels: { padding: 16, boxWidth: 12 } } }
+                }
+            });
+
+            // ROAS comparison
+            destroyChart('roasCompareChart');
+            const c3 = document.getElementById('roasCompareChart').getContext('2d');
+            const metaROAS = meta.map(d => d.roas);
+            const googROAS = goog.map(d => d.roas);
+            charts['roasCompareChart'] = new Chart(c3, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        { label: 'Meta', data: metaROAS, borderColor: '#1877F2', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.4 },
+                        { label: 'Google', data: googROAS, borderColor: '#EA4335', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { boxWidth: 12, padding: 14 } } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: v => v + 'x' } } }
+                }
+            });
+
+            // Revenue bar
+            destroyChart('revenueBarChart');
+            const c4 = document.getElementById('revenueBarChart').getContext('2d');
+            charts['revenueBarChart'] = new Chart(c4, {
+                type: 'bar',
+                data: {
+                    labels: ['Meta Ads', 'Google Ads', 'Klaviyo'],
+                    datasets: [{
+                        data: [ADS_DATA.meta.summary.totalRevenue, ADS_DATA.google.summary.totalRevenue, ADS_DATA.klaviyo.summary.totalRevenue],
+                        backgroundColor: ['#1877F260', '#EA433560', '#ED893660'],
+                        borderColor: ['#1877F2', '#EA4335', '#ED8936'],
+                        borderWidth: 2, borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { beginAtZero: true, ticks: { callback: v => 'RON ' + formatNum(v) } } }
+                }
+            });
+        }
+
+        // ─── RENDER OVERVIEW ─────────────────────────────────────────
+        function renderOverview() {
+            let ov = { ...ADS_DATA.overview };
+            const mMeta = filterMonths(ADS_DATA.meta.monthlyTrend);
+            const mGoog = filterMonths(ADS_DATA.google.monthlyTrend);
+            const mKlav = filterMonths(ADS_DATA.klaviyo.monthlyTrend);
+
+            if (currentPeriod !== 'all') {
+                const metaSpend = mMeta.reduce((a, m) => a + (m.spend || 0), 0);
+                const metaRev = mMeta.reduce((a, m) => a + (m.revenue || 0), 0);
+                const googSpend = mGoog.reduce((a, m) => a + (m.spend || 0), 0);
+                const googRev = mGoog.reduce((a, m) => a + (m.revenue || 0), 0);
+                const klavSpend = mKlav.reduce((a, m) => a + (m.spend || 0), 0);
+                const klavRev = mKlav.reduce((a, m) => a + (m.revenue || 0), 0);
+
+                ov.channelMix = [
+                    { channel: 'Meta Ads', spend: metaSpend, revenue: metaRev, roas: metaSpend > 0 ? (metaRev / metaSpend) : 0 },
+                    { channel: 'Google Ads', spend: googSpend, revenue: googRev, roas: googSpend > 0 ? (googRev / googSpend) : 0 },
+                    { channel: 'Klaviyo Email', spend: klavSpend, revenue: klavRev, roas: klavSpend > 0 ? (klavRev / klavSpend) : 0 }
+                ];
+
+                ov.totalAdSpend = metaSpend + googSpend;
+                ov.totalRevenue = metaRev + googRev + klavRev;
+                ov.blendedROAS = ov.totalAdSpend > 0 ? (ov.totalRevenue / ov.totalAdSpend) : 0;
+            }
+
+            // Channel cards
+            const icons = { 'Meta Ads': '🔵', 'Google Ads': '🔴', 'Klaviyo Email': '📧' };
+            document.getElementById('channel-cards').innerHTML = ov.channelMix.map(ch => `
+    <div class="channel-summary-card">
+      <div class="cs-icon">${icons[ch.channel] || '📊'}</div>
+      <div class="cs-name">${ch.channel}</div>
+      <div class="cs-spend">${formatRON2(ch.spend)}</div>
+      <div class="cs-revenue" style="color:rgba(255,255,255,0.6)">Revenue: ${formatRON2(ch.revenue)}</div>
+      <div class="cs-roas">${ch.roas ? `<div class="roas-pill" style="display:inline-flex;background:${roasColor(ch.roas)}20;color:${roasColor(ch.roas)};border:1px solid ${roasColor(ch.roas)}40;padding:5px 14px;border-radius:20px;font-size:14px;font-weight:800">ROAS ${roasLabel(ch.roas)}</div>` : '<span style="font-size:12px;color:rgba(255,255,255,0.4)">N/A</span>'}</div>
+    </div>
+  `).join('');
+
+            // Overview KPIs
+            const blendedRoas = ov.blendedROAS;
+            
+            // Find best channels dynamically
+            const bestRoas = [...ov.channelMix].sort((a,b) => b.roas - a.roas)[0];
+            const bestVol = [...ov.channelMix].sort((a,b) => b.revenue - a.revenue)[0];
+            
+            document.getElementById('overview-kpis').innerHTML = [
+                kpiCard('Spend Total Ads', formatRON2(ov.totalAdSpend), currentPeriod === 'all' ? 'Meta + Google' : 'Pentru ' + currentPeriod, 'c1'),
+                kpiCard('Revenue Total', formatRON2(ov.totalRevenue), 'Ads + Email', 'c3'),
+                kpiCard('ROAS Blended', blendedRoas.toFixed(2) + 'x', 'Toate canalele plătite', 'c2', { cls: blendedRoas >= 2 ? 'up' : 'neutral', text: blendedRoas >= 2 ? '✓ Bun' : '⚠ Monitorizat' }),
+                kpiCard('Revenue Klaviyo', formatRON2(ov.channelMix.find(c=>c.channel==='Klaviyo Email')?.revenue || 0), 'Cost: ' + formatRON2(ov.channelMix.find(c=>c.channel==='Klaviyo Email')?.spend || 0), 'c4'),
+                kpiCard('Cel mai bun ROAS', bestRoas ? bestRoas.channel : 'N/A', 'Cel mai eficient canal', 'c5'),
+                kpiCard('Volum maxim', bestVol ? bestVol.channel : 'N/A', 'Cel mai mare revenue', 'c6'),
+            ].join('');
+
+            // Insights
+            document.getElementById('overview-insights').innerHTML = ov.topInsights.map((ins, i) => `
+    <div class="insight-item">
+      <div class="insight-num">${i + 1}</div>
+      <div class="insight-text">${ins}</div>
+    </div>
+  `).join('');
+
+            buildOverviewCharts();
+        }
+
+        function renderMeta() {
+            const d = ADS_DATA.meta;
+            const filtered = filterMonths(d.monthlyTrend);
+            const months = filtered.map(m => m.month);
+            
+            let s = { ...d.summary };
+            let periodLabel = 'Total All-Time';
+            if (currentPeriod !== 'all' && filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+                s.totalSpend = filtered.reduce((acc, m) => acc + (m.spend || 0), 0);
+                s.totalRevenue = filtered.reduce((acc, m) => acc + (m.revenue || 0), 0);
+                s.roas = s.totalSpend > 0 ? (s.totalRevenue / s.totalSpend) : 0;
+                if (filtered[0].purchases !== undefined) {
+                    s.totalPurchases = filtered.reduce((acc, m) => acc + (m.purchases || 0), 0);
+                    s.cpa = s.totalPurchases > 0 ? (s.totalSpend / s.totalPurchases) : 0;
+                }
+            } else if (filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+            }
+
+            const roasBadge = s.roas >= 3 ? { cls: 'up', text: '✓ Excelent' } : s.roas >= 2 ? { cls: 'up', text: '✓ Bun' } : { cls: 'neutral', text: '⚠ De optimizat' };
+            document.getElementById('meta-kpis').innerHTML = [
+                kpiCard('Total Spend', formatRON2(s.totalSpend), periodLabel, 'c1'),
+                kpiCard('Total Revenue', formatRON2(s.totalRevenue), 'Achiziții atribuite', 'c3'),
+                kpiCard('ROAS', s.roas.toFixed(2) + 'x', 'Return on Ad Spend', 'c2', roasBadge),
+                kpiCard('Impresii', formatNum(s.totalImpressions), 'Total afișări anunțuri', 'c4'),
+                kpiCard('CTR Mediu', s.avgCTR.toFixed(2) + '%', 'Click-Through Rate', 'c5'),
+                kpiCard('CPC Mediu', 'RON ' + s.avgCPC.toFixed(2), 'Cost per Click', 'c6'),
+                kpiCard('Achiziții', formatNum(s.totalPurchases), 'Conversii totale', 'c7'),
+                kpiCard('CPA', 'RON ' + s.cpa.toFixed(0), 'Cost per Achiziție', 'c8'),
+            ].join('');
+
+            createTrendChart('metaTrendChart', months, filtered.map(m => m.spend), filtered.map(m => m.revenue), '#1877F2');
+            createROASChart('metaROASChart', months, filtered.map(m => m.roas), '#1877F2');
+
+            document.getElementById('meta-campaigns').innerHTML = d.campaigns.map(c => buildCampaignCard(c, 'meta')).join('');
+        }
+
+        // ─── RENDER GOOGLE ────────────────────────────────────────────
+        function renderGoogle() {
+            const d = ADS_DATA.google;
+            const filtered = filterMonths(d.monthlyTrend);
+            const months = filtered.map(m => m.month);
+
+            let s = { ...d.summary };
+            let periodLabel = 'Total All-Time';
+            if (currentPeriod !== 'all' && filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+                s.totalSpend = filtered.reduce((acc, m) => acc + (m.spend || 0), 0);
+                s.totalRevenue = filtered.reduce((acc, m) => acc + (m.revenue || 0), 0);
+                s.roas = s.totalSpend > 0 ? (s.totalRevenue / s.totalSpend) : 0;
+                if (filtered[0].conversions !== undefined) {
+                    s.totalConversions = filtered.reduce((acc, m) => acc + (m.conversions || 0), 0);
+                    s.cpa = s.totalConversions > 0 ? (s.totalSpend / s.totalConversions) : 0;
+                }
+            } else if (filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+            }
+
+            const roasBadge = s.roas >= 3 ? { cls: 'up', text: '✓ Excelent' } : s.roas >= 2 ? { cls: 'up', text: '✓ Bun' } : { cls: 'neutral', text: '⚠ De optimizat' };
+            document.getElementById('google-kpis').innerHTML = [
+                kpiCard('Total Spend', formatRON2(s.totalSpend), periodLabel, 'c1'),
+                kpiCard('Total Revenue', formatRON2(s.totalRevenue), 'Conversii atribuite', 'c3'),
+                kpiCard('ROAS', s.roas.toFixed(2) + 'x', 'Return on Ad Spend', 'c2', roasBadge),
+                kpiCard('Impresii', formatNum(s.totalImpressions), 'Total afișări', 'c4'),
+                kpiCard('CTR Mediu', s.avgCTR.toFixed(2) + '%', 'Click-Through Rate', 'c5'),
+                kpiCard('CPC Mediu', 'RON ' + s.avgCPC.toFixed(2), 'Cost per Click', 'c6'),
+                kpiCard('Conversii', formatNum(s.totalConversions), 'Total conversii', 'c7'),
+                kpiCard('CPA', 'RON ' + s.cpa.toFixed(0), 'Cost per Conversie', 'c8'),
+            ].join('');
+
+            createTrendChart('googleTrendChart', months, filtered.map(m => m.spend), filtered.map(m => m.revenue), '#EA4335');
+            createROASChart('googleROASChart', months, filtered.map(m => m.roas), '#EA4335');
+
+            document.getElementById('google-campaigns').innerHTML = d.campaigns.map(c => buildCampaignCard(c, 'google')).join('');
+        }
+
+        function renderKlaviyo() {
+            const d = ADS_DATA.klaviyo;
+            const filtered = filterMonths(d.monthlyTrend);
+            const months = filtered.map(m => m.month);
+
+            let s = { ...d.summary };
+            let periodLabel = 'Total All-Time';
+            if (currentPeriod !== 'all' && filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+                s.totalRevenue = filtered.reduce((acc, m) => acc + (m.revenue || 0), 0);
+                s.totalSpend = filtered.reduce((acc, m) => acc + (m.spend || 0), 0);
+                s.totalSends = filtered.reduce((acc, m) => acc + (m.sends || 0), 0);
+                s.monthlyAvgCost = s.totalSpend / filtered.length;
+            } else if (filtered.length > 0) {
+                periodLabel = `${months[0]} – ${months[months.length-1]}`;
+            }
+
+            document.getElementById('klaviyo-kpis').innerHTML = [
+                kpiCard('Revenue Total', formatRON2(s.totalRevenue), periodLabel, 'c3'),
+                kpiCard('Cost Klaviyo', formatRON2(s.totalSpend), 'Subscripție platformă', 'c1'),
+                kpiCard('ROAS Klaviyo', (s.totalSpend > 0 ? (s.totalRevenue / s.totalSpend).toFixed(1) : '∞') + 'x', 'Revenue / Cost subscr.', 'c2', { cls: 'up', text: '✓ Foarte bun' }),
+                kpiCard('Revenue Flows', formatRON2(s.flowRevenue), 'Automatizări active', 'c4'),
+                kpiCard('Revenue Campanii', formatRON2(s.campaignRevenue), 'Email-uri programate', 'c5'),
+                kpiCard('Total Emailuri', formatNum(s.totalSends), 'Trimise în perioadă', 'c6'),
+                kpiCard('Flows Active', s.activeFlows.toString(), 'Automatizări live', 'c7'),
+                kpiCard('Cost Mediu Lunar', formatRON2(s.monthlyAvgCost), 'Media subscripție/lună', 'c8'),
+            ].join('');
+
+            // Revenue chart
+            destroyChart('klaviyoRevenueChart');
+            const c1 = document.getElementById('klaviyoRevenueChart').getContext('2d');
+            charts['klaviyoRevenueChart'] = new Chart(c1, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{ label: 'Revenue (RON)', data: filtered.map(m => m.revenue), backgroundColor: 'rgba(237,137,54,0.5)', borderColor: '#ED8936', borderWidth: 1, borderRadius: 4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: v => 'RON ' + formatNum(v) } } }
+                }
+            });
+
+            // Sends chart (replaces engagement chart since we don't have openRate/clickRate in monthly data)
+            destroyChart('klaviyoSendsChart');
+            const c2 = document.getElementById('klaviyoSendsChart').getContext('2d');
+            charts['klaviyoSendsChart'] = new Chart(c2, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Emailuri Trimise',
+                        data: filtered.map(m => m.sends),
+                        backgroundColor: 'rgba(99,102,241,0.5)',
+                        borderColor: '#6366f1',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: v => formatNum(v) } } }
+                }
+            });
+
+            document.getElementById('klaviyo-flows').innerHTML = d.flows.map(f => buildFlowCard(f)).join('');
+            document.getElementById('klaviyo-campaigns').innerHTML = d.campaigns.map(c => buildKlaviyoCard(c)).join('');
+        }
+
+        // ─── STATUS FILTER LOGIC ─────────────────────────────────────
+        let statusFilters = { meta: 'all', google: 'all' };
+        let flowFilterValue = 'all';
+        let compareMode = { meta: false, google: false };
+        let compareSelection = { meta: [], google: [] };
+
+        function setStatusFilter(channel, status, btn) {
+            statusFilters[channel] = status;
+            document.querySelectorAll('#' + channel + '-status-filter .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCampaignList(channel);
+        }
+
+        function renderCampaignList(channel) {
+            const d = ADS_DATA[channel];
+            const filter = statusFilters[channel];
+            let campaigns = d.campaigns;
+            if (filter === 'active') {
+                campaigns = campaigns.filter(c => c.status === 'ACTIVE' || c.status === 'ENABLED');
+            } else if (filter === 'paused') {
+                campaigns = campaigns.filter(c => c.status === 'PAUSED');
+            }
+            const isCompare = compareMode[channel];
+            document.getElementById(channel + '-campaigns').innerHTML = campaigns.map(c => {
+                let card = buildCampaignCard(c, channel);
+                if (isCompare) {
+                    const sel = compareSelection[channel].includes(c.id);
+                    card = card.replace('class="campaign-card"', `class="campaign-card ${sel ? 'compare-selected' : ''}" onclick="selectForCompare('${channel}','${c.id}',event)"`);
+                }
+                return card;
+            }).join('');
+            // Show compare button
+            const btn = document.getElementById(channel + '-compare-btn');
+            const hint = document.getElementById(channel + '-compare-hint');
+            if (btn) btn.style.display = campaigns.length >= 2 ? 'inline-flex' : 'none';
+            if (hint && isCompare) hint.style.display = 'inline';
+            else if (hint) hint.style.display = 'none';
+        }
+
+        function setFlowFilter(status, btn) {
+            flowFilterValue = status;
+            document.querySelectorAll('#klaviyo-flow-filter .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const flows = ADS_DATA.klaviyo.flows;
+            const filtered = status === 'all' ? flows : flows.filter(f => f.status === status);
+            document.getElementById('klaviyo-flows').innerHTML = filtered.map(f => buildFlowCard(f)).join('');
+        }
+
+        // ─── COMPARE MODE ────────────────────────────────────────────
+        function toggleCompareMode(channel) {
+            compareMode[channel] = !compareMode[channel];
+            compareSelection[channel] = [];
+            const btn = document.getElementById(channel + '-compare-btn');
+            const hint = document.getElementById(channel + '-compare-hint');
+            if (compareMode[channel]) {
+                btn.textContent = '✕ Anulează comparare';
+                btn.style.background = 'rgba(239,68,68,0.2)';
+                btn.style.borderColor = '#ef4444';
+                btn.style.color = '#ef4444';
+                hint.style.display = 'inline';
+                hint.textContent = 'Selectează 2 campanii pentru comparare';
+            } else {
+                btn.textContent = '⚖️ Compară campanii';
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                hint.style.display = 'none';
+            }
+            renderCampaignList(channel);
+        }
+
+        function selectForCompare(channel, campId, event) {
+            if (!compareMode[channel]) return;
+            event.stopPropagation();
+            const sel = compareSelection[channel];
+            const idx = sel.indexOf(campId);
+            if (idx >= 0) { sel.splice(idx, 1); }
+            else if (sel.length < 2) { sel.push(campId); }
+            else { sel.shift(); sel.push(campId); }
+            renderCampaignList(channel);
+            const hint = document.getElementById(channel + '-compare-hint');
+            if (sel.length === 2) {
+                hint.textContent = '✓ 2 campanii selectate — se deschide compararea...';
+                setTimeout(() => showComparison(channel), 500);
+            } else {
+                hint.textContent = `Selectate: ${sel.length}/2 — alege ${2 - sel.length} campanie`;
+            }
+        }
+
+        function showComparison(channel) {
+            const sel = compareSelection[channel];
+            const campaigns = ADS_DATA[channel].campaigns;
+            const a = campaigns.find(c => c.id === sel[0]);
+            const b = campaigns.find(c => c.id === sel[1]);
+            if (!a || !b) return;
+
+            const metrics = channel === 'meta' ? [
+                { label: 'Spend', key: 'spend', fmt: formatRON2 },
+                { label: 'Revenue', key: 'purchaseValue', fmt: formatRON2 },
+                { label: 'ROAS', key: 'roas', fmt: v => v ? v.toFixed(2) + 'x' : '—' },
+                { label: 'Impresii', key: 'impressions', fmt: formatNum },
+                { label: 'Clickuri', key: 'clicks', fmt: formatNum },
+                { label: 'CTR', key: 'ctr', fmt: v => v ? v.toFixed(2) + '%' : '—' },
+                { label: 'CPM', key: 'cpm', fmt: v => v ? 'RON ' + v.toFixed(2) : '—' },
+                { label: 'CPC', key: 'cpc', fmt: v => v ? 'RON ' + v.toFixed(2) : '—' },
+                { label: 'Achiziții', key: 'purchases', fmt: v => v || '—' },
+                { label: 'Reach', key: 'reach', fmt: formatNum },
+            ] : [
+                { label: 'Spend', key: 'spend', fmt: formatRON2 },
+                { label: 'Revenue', key: 'conversionValue', fmt: formatRON2 },
+                { label: 'ROAS', key: 'roas', fmt: v => v ? v.toFixed(2) + 'x' : '—' },
+                { label: 'Impresii', key: 'impressions', fmt: formatNum },
+                { label: 'Clickuri', key: 'clicks', fmt: formatNum },
+                { label: 'CTR', key: 'ctr', fmt: v => v ? v.toFixed(2) + '%' : '—' },
+                { label: 'CPC Mediu', key: 'avgCPC', fmt: v => v ? 'RON ' + v.toFixed(2) : '—' },
+                { label: 'Conversii', key: 'conversions', fmt: v => v ? Math.round(v) : '—' },
+                { label: 'CPA', key: 'cpa', fmt: v => v ? 'RON ' + v.toFixed(0) : '—' },
+                { label: 'Tip', key: 'type', fmt: v => v || '—' },
+            ];
+
+            let rows = metrics.map(m => {
+                const va = m.fmt(a[m.key]);
+                const vb = m.fmt(b[m.key]);
+                const numA = typeof a[m.key] === 'number' ? a[m.key] : 0;
+                const numB = typeof b[m.key] === 'number' ? b[m.key] : 0;
+                let winA = '', winB = '';
+                if (['spend', 'cpa'].includes(m.key)) {
+                    if (numA < numB && numA > 0) winA = ' compare-win'; else if (numB < numA && numB > 0) winB = ' compare-win';
+                } else if (numA > numB) winA = ' compare-win'; else if (numB > numA) winB = ' compare-win';
+                return `<tr><td class="compare-metric">${m.label}</td><td class="compare-val${winA}">${va}</td><td class="compare-val${winB}">${vb}</td></tr>`;
+            }).join('');
+
+            document.getElementById('compare-body').innerHTML = `
+                <table class="compare-table">
+                    <thead><tr><th>Metric</th><th title="${a.name}">${a.name.length > 30 ? a.name.substring(0, 30) + '…' : a.name}</th><th title="${b.name}">${b.name.length > 30 ? b.name.substring(0, 30) + '…' : b.name}</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+            document.getElementById('compare-modal').style.display = 'flex';
+        }
+
+        function closeCompare() {
+            document.getElementById('compare-modal').style.display = 'none';
+        }
+
+        // ─── ECOMM KPI TABLE BUILDER ────────────────────────────────
+        function buildEcommTable(channel, channelLabel, icon, iconClass, data) {
+            if (!data) return '';
+            const cur = data.current;
+            const prev = data.previous;
+            const reportMonth = ADS_DATA.ecommKPIs ? ADS_DATA.ecommKPIs.reportMonth : '';
+            const configMap = (ADS_DATA.ecommKPIs && ADS_DATA.ecommKPIs.metricsConfig) || {};
+
+            const rows = Object.keys(cur).map(key => {
+                const conf = configMap[key] || { label: key, fmt: 'num', invertColor: false };
+                return {
+                    label: conf.label,
+                    curVal: cur[key],
+                    prevVal: prev[key] || 0,
+                    fmt: conf.fmt,
+                    invertColor: conf.invertColor
+                };
+            });
+
+            function fmtVal(v, fmt) {
+                if (fmt === 'ron') return new Intl.NumberFormat('ro-RO', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(v);
+                if (fmt === 'ron2') return new Intl.NumberFormat('ro-RO', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(v);
+                if (fmt === 'pct') return v.toFixed(2) + '%';
+                if (fmt === 'num2') return v.toFixed(2);
+                return new Intl.NumberFormat('ro-RO', {maximumFractionDigits: 0}).format(v);
+            }
+
+            let tbody = rows.map(r => {
+                const dif = r.prevVal !== 0 ? ((r.curVal - r.prevVal) / Math.abs(r.prevVal) * 100) : 0;
+                const difStr = (dif >= 0 ? '+' : '') + dif.toFixed(2) + '%';
+                // For costs (budget, CPC, CPS), increase is bad (red), decrease is good (green)
+                // For revenue/clicks/conversions, increase is good (green)
+                let difClass = 'dif-neutral';
+                if (dif !== 0) {
+                    if (r.invertColor) {
+                        difClass = dif > 0 ? 'dif-negative' : 'dif-positive';
+                    } else {
+                        difClass = dif > 0 ? 'dif-positive' : 'dif-negative';
+                    }
+                }
+                return `<tr>
+                    <td>${r.label}</td>
+                    <td>${fmtVal(r.curVal, r.fmt)}</td>
+                    <td>${fmtVal(r.prevVal, r.fmt)}</td>
+                    <td class="${difClass}">${difStr}</td>
+                </tr>`;
+            }).join('');
+
+            return `<div class="ecomm-table-card">
+                <div class="ecomm-table-header">
+                    <div class="ecomm-table-icon ${iconClass}">${icon}</div>
+                    <div class="ecomm-table-name">${channelLabel} overview</div>
+                    <div class="ecomm-table-period">${reportMonth}</div>
+                </div>
+                <table class="ecomm-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Current Month</th>
+                            <th>Prev. Month</th>
+                            <th>Dif %</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tbody}</tbody>
+                </table>
+            </div>`;
+        }
+
+        function renderEcommKPIs() {
+            const kpis = ADS_DATA.ecommKPIs;
+            if (!kpis) return;
+
+            // Google tab
+            const googleEl = document.getElementById('google-ecomm-table');
+            if (googleEl) {
+                googleEl.innerHTML = buildEcommTable('google', 'Google Ads', '🔴', 'google', kpis.google);
+            }
+
+            // Meta tab
+            const metaEl = document.getElementById('meta-ecomm-table');
+            if (metaEl) {
+                metaEl.innerHTML = buildEcommTable('meta', 'Meta Ads', '🔵', 'meta', kpis.meta);
+            }
+
+            // Overview tab — both tables side by side
+            const overviewEl = document.getElementById('overview-ecomm-tables');
+            if (overviewEl) {
+                overviewEl.innerHTML = `
+                    <div class="section-title">📊 Ads Overview — Luna curentă vs precedentă</div>
+                    <div class="ecomm-tables-grid">
+                        ${buildEcommTable('google', 'Google Ads', '🔴', 'google', kpis.google)}
+                        ${buildEcommTable('meta', 'Meta Ads', '🔵', 'meta', kpis.meta)}
+                    </div>`;
+            }
+        }
+
+        // ─── INITIALIZE ──────────────────────────────────────────────
+        let _firstInit = true;
+        function initCharts() {
+            if (_firstInit) {
+                collectAllMonths();
+                populateDropdowns();
+                _firstInit = false;
+            }
+            renderOverview();
+            renderMeta();
+            renderGoogle();
+            renderKlaviyo();
+            renderEcommKPIs();
+            updateAllPeriodLabels();
+        }
+
+        document.addEventListener('DOMContentLoaded', initCharts);
+    </script>
+</body>
+
+</html>

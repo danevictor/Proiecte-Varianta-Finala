@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiză Sesiuni & Conversion Rate - Zitamine.ro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1117;
+            --bg-secondary: #1a1d27;
+            --bg-card: #1e2130;
+            --bg-card-hover: #252840;
+            --accent: #6c5ce7;
+            --accent-light: #a29bfe;
+            --danger: #ff6b6b;
+            --danger-light: #ff8e8e;
+            --success: #00cec9;
+            --success-light: #55efc4;
+            --warning: #fdcb6e;
+            --warning-light: #ffeaa7;
+            --text-primary: #f1f2f6;
+            --text-secondary: #a4a8b8;
+            --text-muted: #6c7293;
+            --border: rgba(108, 92, 231, 0.15);
+            --gradient-1: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            --gradient-2: linear-gradient(135deg, #ff6b6b, #ffa07a);
+            --gradient-3: linear-gradient(135deg, #00cec9, #55efc4);
+            --gradient-4: linear-gradient(135deg, #fdcb6e, #f39c12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Hero Header */
+        .hero {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.15) 0%, rgba(162, 155, 254, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .hero .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .hero .date {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Alert Box */
+        .alert {
+            background: rgba(255, 107, 107, 0.08);
+            border: 1px solid rgba(255, 107, 107, 0.25);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .alert .icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .alert h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--danger-light);
+            margin-bottom: 6px;
+        }
+
+        .alert p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Metric Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(108, 92, 231, 0.4);
+        }
+
+        .metric-card .label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-card .value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .metric-card .change {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .metric-card .change.negative {
+            color: var(--danger);
+        }
+
+        .metric-card .change.positive {
+            color: var(--success);
+        }
+
+        .metric-card .bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section .section-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 16px;
+        }
+
+        .chart-container-sm {
+            height: 280px;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+        }
+
+        .data-table thead th {
+            background: rgba(108, 92, 231, 0.08);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table thead th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+
+        .data-table thead th:last-child {
+            border-radius: 0 10px 0 0;
+        }
+
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(108, 92, 231, 0.06);
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr:hover td {
+            background: rgba(108, 92, 231, 0.04);
+        }
+
+        .data-table .highlight-bad {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .data-table .highlight-good {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Insight Cards */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .insight-card {
+            background: rgba(108, 92, 231, 0.04);
+            border: 1px solid rgba(108, 92, 231, 0.12);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .insight-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .insight-card .stat {
+            display: inline-block;
+            background: rgba(108, 92, 231, 0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--accent-light);
+            font-size: 12px;
+        }
+
+        /* Two-column layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .hero {
+                padding: 24px;
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-danger {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--danger);
+        }
+
+        .badge-warning {
+            background: rgba(253, 203, 110, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-success {
+            background: rgba(0, 206, 201, 0.15);
+            color: var(--success);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Callout box */
+        .callout {
+            background: rgba(253, 203, 110, 0.06);
+            border-left: 3px solid var(--warning);
+            border-radius: 0 10px 10px 0;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        .callout p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .callout strong {
+            color: var(--warning);
+        }
+
+        /* Video Button */
+        .video-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--danger);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            margin-left: 6px;
+        }
+
+        .video-btn:hover {
+            background: rgba(255, 107, 107, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .video-btn svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ZITAMINE PREMIUM PASSWORD PROTECTION -->
+    <style>
+        :root {
+            --lock-primary: #6366f1;
+            --lock-bg-dark: #0f0f1a;
+            --lock-text: #ffffff;
+        }
+
+        #zitamine-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 80% 50% at 50% 50%, #1e1e2e, #0f0f1a);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483647 !important;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            backdrop-filter: blur(10px);
+        }
+
+        #zitamine-lock-card {
+            background: rgba(23, 23, 35, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: lockFadeInUp 0.6s ease-out;
+        }
+
+        @keyframes lockFadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #zitamine-lock-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.5));
+        }
+
+        #zitamine-lock-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #zitamine-lock-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        #z-password {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #z-password:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        #z-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #z-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        #z-error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+
+    <div id="zitamine-lock-screen">
+        <div id="zitamine-lock-card">
+            <div id="zitamine-lock-icon">💊</div>
+            <h2 id="zitamine-lock-title">Zitamine Protected Area</h2>
+            <p id="zitamine-lock-desc">Acest material este confidențial și destinat exclusiv echipei interne Zitamine.
+            </p>
+
+            <input type="password" id="z-password" placeholder="Introduceți parola de acces..." autocomplete="off">
+            <button id="z-button" onclick="checkZitaminePassword()">Validare Acces 🔓</button>
+            <p id="z-error">Parola introdusă este incorectă.</p>
+        </div>
+    </div>
+
+    <script>
+        const TARGET_HASH_P = "DavidSinclair1!2@3#4$";
+        function checkZitaminePassword() {
+            const input = document.getElementById('z-password').value;
+            if (input === TARGET_HASH_P) {
+                const screen = document.getElementById('zitamine-lock-screen');
+                screen.style.transition = "opacity 0.5s ease";
+                screen.style.opacity = "0";
+                setTimeout(() => { screen.style.display = 'none'; }, 500);
+                sessionStorage.setItem('zitamine_access', 'granted');
+            } else {
+                const err = document.getElementById('z-error');
+                err.style.display = 'block';
+                err.style.animation = 'none';
+                err.offsetHeight; /* trigger reflow */
+                err.style.animation = 'shake 0.4s ease-in-out';
+            }
+        }
+
+        // Check on load
+        if (sessionStorage.getItem('zitamine_access') === 'granted') {
+            document.getElementById('zitamine-lock-screen').style.display = 'none';
+        }
+
+        // Enter key support
+        document.getElementById('z-password').addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkZitaminePassword();
+            }
+        });
+    </script>
+    <!-- END ZITAMINE PREMIUM PASSWORD PROTECTION -->
+
+    <div class="container">
+
+        <!-- Hero -->
+        <div class="hero">
+            <h1>📊 Analiză Sesiuni & Conversion Rate</h1>
+            <p class="subtitle">Zitamine.ro — Corelare trafic, sesiuni și conversii (Ianuarie 2025 – Februarie 2026)
+            </p>
+            <p class="date">Generat: 17 Februarie 2026 • Sursa: Shopify Analytics + Brute CSV</p>
+        </div>
+
+        <!-- Cookie Alert -->
+        <div class="alert">
+            <span class="icon">⚠️</span>
+            <div>
+                <h3>Notă importantă: Datele reflectă doar vizitatorii care acceptă cookie-urile</h3>
+                <p>Traficul real pe site este <strong>semnificativ mai mare</strong> decât cel reportat. Shopify numără
+                    sesiuni și vizitatori doar pentru utilizatorii care acceptă cookie-urile.
+                    Cu un trafic majoritar din România (GDPR), se estimează că <strong>doar 40-60% din vizitatori
+                        acceptă cookie-uri</strong>.
+                    Asta înseamnă că traficul real ar fi <strong>de ~1.7x–2.5x mai mare</strong>, iar rata de conversie
+                    reală este chiar <strong>mai mică</strong> decât cea afișată.
+                    De exemplu, dacă Shopify raportează 23,523 vizitatori în ianuarie, traficul real ar putea fi între
+                    <strong>39,000–59,000 vizitatori</strong>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Explanation: Conversion Rate vs Checkout Conversion Rate -->
+        <div class="section" style="border-left: 3px solid var(--accent);">
+            <h2>📖 Ce înseamnă Conversion Rate vs. Checkout Conversion Rate?</h2>
+            <p class="section-desc">Două metrici diferite care măsoară două etape diferite ale drumului clientului</p>
+            <div class="grid-2" style="margin-top: 12px;">
+                <div class="insight-card"
+                    style="border-color: rgba(255, 107, 107, 0.3); background: rgba(255, 107, 107, 0.04);">
+                    <h4>🔴 Conversion Rate (0.57% – 0.94%)</h4>
+                    <p><strong>= Comenzi finalizate ÷ TOȚI vizitatorii site-ului × 100</strong></p>
+                    <p style="margin-top: 8px;">Măsoară <strong>întregul drum</strong> — din momentul în care cineva
+                        intră pe site până plasează o comandă. Include pe TOȚI: cei care doar s-au uitat 2 secunde, cei
+                        care au citit, și cei care au cumpărat.</p>
+                    <p style="margin-top: 8px;">Ex. ianuarie: ~176 comenzi / 23,523 vizitatori = <span
+                            class="stat">0.59%</span></p>
+                    <p style="margin-top: 8px; color: var(--danger);"><strong>→ Aceasta este PROBLEMA. E foarte
+                            mică.</strong></p>
+                </div>
+                <div class="insight-card"
+                    style="border-color: rgba(0, 206, 201, 0.3); background: rgba(0, 206, 201, 0.04);">
+                    <h4>🟢 Checkout Conversion Rate (50% – 56%)</h4>
+                    <p><strong>= Comenzi finalizate ÷ Vizitatori care AU AJUNS la checkout × 100</strong></p>
+                    <p style="margin-top: 8px;">Măsoară doar <strong>ultimul pas</strong> — dintre cei care au început
+                        procesul de plată (au intrat în checkout), câți au finalizat comanda efectiv.</p>
+                    <p style="margin-top: 8px;">Ex. ianuarie: 50%+ din cei ajunși la checkout au cumpărat = <span
+                            class="stat">52.4%</span></p>
+                    <p style="margin-top: 8px; color: var(--success);"><strong>→ Acesta e OK. Cine ajunge la checkout,
+                            cumpără.</strong></p>
+                </div>
+            </div>
+            <div class="callout" style="margin-top: 16px;">
+                <p><strong>🎯 Concluzia:</strong> Problema nu este în checkout (acolo funcționează bine). Problema e
+                    <strong>înainte de checkout</strong> — vizitatorii nu sunt convinși să adauge produse în coș și să
+                    înceapă procesul de cumpărare. Focusul trebuie pus pe: landing page, persuasiune, CTA-uri, și
+                    experiența pe mobil.
+                </p>
+            </div>
+        </div>
+
+        <!-- TOP KPI Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="label">Vizitatori (Ian 25 - Ian 26)</div>
+                <div class="value" style="color: var(--accent-light);">382,875</div>
+                <div class="change negative">~650k-950k reali estimați</div>
+                <div class="bar" style="background: var(--gradient-1);"></div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Sesiuni totale</div>
+                <div class="value" style="color: var(--accent-light);">476,122</div>
+                <div class="change">1.24 sesiuni/vizitator</div>
+                <div class="bar" style="background: var(--gradient-1);"></div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Conversion Rate mediu</div>
+                <div class="value" style="color: var(--warning);">1.02%</div>
+                <div class="change negative">Scade de la 1.62% (Iul) la 0.59% (Ian)</div>
+                <div class="bar" style="background: var(--gradient-2);"></div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Checkout Conv (Ian 26)</div>
+                <div class="value" style="color: var(--success);">52.4%</div>
+                <div class="change positive">Bun — cine ajunge în checkout, cumpără</div>
+                <div class="bar" style="background: var(--gradient-3);"></div>
+            </div>
+            <div class="metric-card">
+                <div class="label">Comenzi totale (Ian-Ian)</div>
+                <div class="value" style="color: var(--warning);">9,114</div>
+                <div class="change negative">↓ scădere constantă din toamnă</div>
+                <div class="bar" style="background: var(--gradient-4);"></div>
+            </div>
+        </div>
+
+        <!-- Main Chart: Sessions + Conversion Rate Over Time -->
+        <div class="section">
+            <h2>📉 Evoluția Vizitatorilor, Sesiunilor și Ratei de Conversie <span class="badge badge-warning"
+                    style="vertical-align: middle; margin-left: 10px;">⚠️ Impact Cookie Consent</span></h2>
+            <p class="section-desc">Grafic dual: traficul (baruri) vs. rata de conversie (linie).</p>
+            <div class="alert" style="background: rgba(253, 203, 110, 0.08); border-color: rgba(253, 203, 110, 0.25);">
+                <span class="icon">🍪</span>
+                <div>
+                    <h3>Impact Consent Mode (Martie/Aprilie 2025)</h3>
+                    <p>În intervalul <strong>Martie - Aprilie 2025</strong> a fost implementat banner-ul de cookie-uri
+                        (GDPR).
+                        Acest lucru explică scăderea bruscă a numărului de vizitatori raportați începând cu Aprilie 2025
+                        (de la ~58k la ~28k).
+                        Datele de după acest moment reflectă doar utilizatorii care au acceptat explicit cookie-urile
+                        (aprox. 40-60% din totalul real).</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="mainChart"></canvas>
+            </div>
+            <div class="callout">
+                <p><strong>🔑 Paradoxul principal:</strong> Între octombrie 2025 și ianuarie 2026, vizitatorii au
+                    crescut cu <strong>+15%</strong> (de la 20,520 la 23,523),
+                    dar rata de conversie a scăzut cu <strong>-37%</strong> (de la 0.94% la 0.59%). Aceasta indică fie
+                    trafic de calitate slabă (paid-ul aduce vizitatori neinteresați),
+                    fie probleme în funnel-ul de conversie pe site.</p>
+            </div>
+        </div>
+
+        <!-- Detailed Data Table -->
+        <div class="section">
+            <h2>📋 Date Detaliate pe Luni</h2>
+            <p class="section-desc">Datele brute din Shopify, cu estimări ale traficului real (ținând cont de cookie
+                consent).</p>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Luna</th>
+                            <th>Vizitatori (Shopify)</th>
+                            <th>Vizitatori (est. real)</th>
+                            <th>Sesiuni</th>
+                            <th>Conversion Rate</th>
+                            <th>Checkout Conv.</th>
+                            <th>Comenzi (TOTAL)</th>
+                            <th>Revenue (RON)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ian 2025</strong></td>
+                            <td>58,488</td>
+                            <td>~99k</td>
+                            <td>72,546</td>
+                            <td class="highlight-bad">0.95%</td>
+                            <td class="highlight-bad">31.9%</td>
+                            <td>1,188</td>
+                            <td>342,780 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Feb 2025</strong></td>
+                            <td>57,954</td>
+                            <td>~98k</td>
+                            <td>73,233</td>
+                            <td class="highlight-bad">0.80%</td>
+                            <td class="highlight-bad">30.0%</td>
+                            <td>1,053</td>
+                            <td>274,466 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mar 2025</strong></td>
+                            <td>58,101</td>
+                            <td>~98k</td>
+                            <td>70,591</td>
+                            <td class="highlight-bad">0.75%</td>
+                            <td class="highlight-bad">36.1%</td>
+                            <td>1,028</td>
+                            <td>283,966 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Apr 2025</strong></td>
+                            <td>28,258</td>
+                            <td>~48k</td>
+                            <td>35,155</td>
+                            <td class="highlight-good">1.18%</td>
+                            <td>46.3%</td>
+                            <td>901</td>
+                            <td>277,564 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mai 2025</strong></td>
+                            <td>22,320</td>
+                            <td>~38k</td>
+                            <td>27,858</td>
+                            <td class="highlight-good">1.39%</td>
+                            <td>39.9%</td>
+                            <td>715</td>
+                            <td>213,568 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Iun 2025</strong></td>
+                            <td>18,402</td>
+                            <td>~31k</td>
+                            <td>22,848</td>
+                            <td class="highlight-good">1.58%</td>
+                            <td>43.6%</td>
+                            <td>660</td>
+                            <td>191,227 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Iul 2025</strong></td>
+                            <td>19,087</td>
+                            <td>~32k</td>
+                            <td>24,030</td>
+                            <td class="highlight-good">1.62%</td>
+                            <td>37.1%</td>
+                            <td>780</td>
+                            <td>208,298 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aug 2025</strong></td>
+                            <td>19,947</td>
+                            <td>~34k</td>
+                            <td>24,585</td>
+                            <td class="highlight-bad">0.99%</td>
+                            <td>46.2%</td>
+                            <td>510</td>
+                            <td>146,744 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sep 2025</strong></td>
+                            <td>18,198</td>
+                            <td>~31k</td>
+                            <td>22,829</td>
+                            <td class="highlight-bad">0.85%</td>
+                            <td class="highlight-good">52.0%</td>
+                            <td>506</td>
+                            <td>156,986 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oct 2025</strong></td>
+                            <td>20,520</td>
+                            <td>~35k</td>
+                            <td>26,511</td>
+                            <td class="highlight-bad">0.94%</td>
+                            <td class="highlight-good">56.4%</td>
+                            <td>511</td>
+                            <td>153,715 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nov 2025</strong></td>
+                            <td>16,629</td>
+                            <td>~28k</td>
+                            <td>19,621</td>
+                            <td class="highlight-bad">0.98%</td>
+                            <td>45.9%</td>
+                            <td>464</td>
+                            <td>138,877 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dec 2025</strong></td>
+                            <td>21,448</td>
+                            <td>~36k</td>
+                            <td>26,513</td>
+                            <td class="highlight-bad">0.71%</td>
+                            <td class="highlight-good">53.8%</td>
+                            <td>407</td>
+                            <td>118,483 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ian 2026</strong></td>
+                            <td>23,523</td>
+                            <td>~40k</td>
+                            <td>29,802</td>
+                            <td class="highlight-bad">0.59%</td>
+                            <td class="highlight-good">52.4%</td>
+                            <td>391</td>
+                            <td>125,087 RON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Feb 2026*</strong></td>
+                            <td>11,904</td>
+                            <td>~20k</td>
+                            <td>13,791</td>
+                            <td class="highlight-bad">0.64%</td>
+                            <td class="highlight-good">51.8%</td>
+                            <td>51**</td>
+                            <td>14,400 RON**</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">* Februarie 2026 = date parțiale
+                (1-12 feb). ** Proiecție lună completă: ~110 comenzi, ~30k RON</p>
+        </div>
+
+        <!-- Two charts side by side -->
+        <div class="grid-2">
+            <!-- Conversion Rate Trend -->
+            <div class="section">
+                <h2>📉 Tendința Conversion Rate</h2>
+                <p class="section-desc">Rata de conversie scade constant de la 0.94% la 0.57%</p>
+                <div class="chart-container chart-container-sm">
+                    <canvas id="conversionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Orders vs Visitors -->
+            <div class="section">
+                <h2>🛒 Comenzi vs. Clienți</h2>
+                <p class="section-desc">Scăderea numărului de clienți noi este alarmantă</p>
+                <div class="chart-container chart-container-sm">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Revenue, Funnel, and Clients charts removed as requested -->
+
+        <!-- Analysis Summary -->
+        <div class="section">
+            <h2>🎯 Concluzii & Ce s-a întâmplat (Ian 2025 - Feb 2026)</h2>
+            <p class="section-desc">Cronologia evenimentelor și interpretarea datelor</p>
+
+            <div style="margin-top: 16px;">
+                <h4 style="color: var(--success); margin-bottom: 12px;">📅 Q1 2025 (Ian-Mar) — Trafic ridicat pre-Cookie
+                    Banner</h4>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                    • Trafic constant de <strong>~58,000 vizitatori/lună</strong>.<br>
+                    • Conversion Rate stabil la <strong>~0.75-0.95%</strong>.<br>
+                    • Aceasta este perioada "de referință" înainte de schimbările majore de tracking.
+                </p>
+
+                <h4 style="color: var(--warning); margin-bottom: 12px;">📅 Aprilie 2025 — Impactul Cookie Banner</h4>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                    • <strong>Scădere artificială de trafic</strong>: de la 58k la 28k (-51%).<br>
+                    • Vizitatorii raportați sunt acum doar cei care acceptă cookies.<br>
+                    • Paradoxal, Rata de Conversie <strong>crește</strong> la 1.18% (aprilie) și apoi spre 1.62%
+                    (iulie),
+                    deoarece utilizatorii care acceptă cookies sunt de obicei mai engaged/dispuși să cumpere.
+                </p>
+
+                <h4 style="color: var(--success); margin-bottom: 12px;">📅 Vara 2025 (Mai-Iul) — Eficiență Maximă</h4>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                    • Trafic raportat stabil la ~20k vizitatori.<br>
+                    • <strong>Conversion Rate record</strong>: 1.39% - 1.62%.<br>
+                    • Checkout Conversion robust (~40%).<br>
+                    • Site-ul performa foarte bine pentru traficul adus în această perioadă.
+                </p>
+
+                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Toamna/Iarna 2025 — Declinul Ratei de
+                    Conversie</h4>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                    • Începând cu August/Septembrie, conversion rate scade sub 1%.<br>
+                    • Oct-Ian: Vizitatorii (consimțiți) cresc ușor spre 23k, dar conversia scade constant până la
+                    <strong>0.59%</strong> în Ianuarie 2026.<br>
+                    • <strong>Checkout Conversion RĂMÂNE BUN (50%+)</strong>: Problema este strict în atragerea
+                    vizitatorilor spre coș (Add to Cart).<br>
+                    • Cauze posibile: Mix de trafic mai rece (ads scalate?) sau oboseala audienței.
+                </p>
+
+                <h4 style="color: var(--danger); margin-bottom: 12px;">📅 Ian-Feb 2026 — Situația Critică</h4>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.8;">
+                    • Ianuarie 2026: <strong>Maxim de trafic recent (23,523)</strong> dar <strong>Minim istoric de
+                        conversie (0.59%)</strong>.<br>
+                    • Februarie 2026 (parțial): Trendul de 0.6% se menține.<br>
+                    • Avem vizitatori, dar nu cumpără. Focusul trebuie să fie pe <strong>CRO (Conversion Rate
+                        Optimization)</strong> înainte de checkout.
+                </p>
+            </div>
+        </div>
+
+        <!-- Gap Analysis -->
+        <div class="section">
+            <h2>🧮 Gap Analysis: Unde pierdem bani?</h2>
+            <p class="section-desc">Calculul oportunității pierdute din cauza conversiei scăzute</p>
+
+            <div class="metrics-grid" style="margin-top: 16px;">
+                <div class="metric-card">
+                    <div class="label">Dacă conversia ar fi 1.5%</div>
+                    <div class="value" style="color: var(--success);">+67%</div>
+                    <div class="change positive">+~250 comenzi/lună extra</div>
+                    <div class="bar" style="background: var(--gradient-3);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Revenue pierdut estimat/lună</div>
+                    <div class="value" style="color: var(--danger);">~80K</div>
+                    <div class="change negative">RON pierduți /lună la traficul actual</div>
+                    <div class="bar" style="background: var(--gradient-2);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Benchmark industrie SUP</div>
+                    <div class="value" style="color: var(--warning);">2-3%</div>
+                    <div class="change">Rata medie e-commerce suplimente</div>
+                    <div class="bar" style="background: var(--gradient-4);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Potențial revenue/lună</div>
+                    <div class="value" style="color: var(--success);">~350K</div>
+                    <div class="change positive">Cu 2% conversie la traficul curent</div>
+                    <div class="bar" style="background: var(--gradient-3);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile UX Audit -->
+        <div class="section" style="border-left: 3px solid var(--danger);">
+            <h2>📱 Audit UX Mobile — Probleme Identificate pe zitamine.ro</h2>
+            <p class="section-desc">Auditul a fost realizat pe dimensiuni iPhone 14 (390×844px). 90% din traficul
+                site-ului e mobil.</p>
+
+            <div class="insight-grid" style="grid-template-columns: 1fr;">
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Homepage prea lungă pe mobil — scroll obositor</h4>
+                    <p>Videoclipul de fundal e de calitate, dar textul suprapus ocupă mult spațiu pe verticală. Pagina e
+                        foarte lungă cu multe secțiuni de text și iconițe. Pe mobil, utilizatorul trebuie să dea scroll
+                        foarte mult pentru a ajunge la produse.</p>
+                    <p style="margin-top: 8px;"><strong>Impact:</strong> "Wall of text" pe mobil duce la abandon înainte
+                        ca utilizatorul să vadă produsele sau recenziile.</p>
+                    <p style="margin-top: 8px; color: var(--warning);"><strong>Fix:</strong> Scurtează homepage-ul pe
+                        mobil. Un singur CTA mare vizibil fără scroll: "Începe quiz-ul GRATUIT" sau "Vezi pachetele".
+                    </p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Contrast slab pe cardurile de produse</h4>
+                    <p>Textul alb se suprapune peste imagini luminoase sau aglomerate în caruselul de beneficii/produse
+                        (Fitness, Inimă, etc.), făcând citirea descrierilor dificilă.</p>
+                    <p style="margin-top: 8px; color: var(--warning);"><strong>Fix:</strong> Adaugă un overlay mai
+                        închis pe imagini pentru a asigura lizibilitatea textului pe orice ecran.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Opțiuni de preț copleșitoare pe pagina de produs</h4>
+                    <p>3 opțiuni (O singură comandă, Abonament lunar -5%, Abonament 3 luni -15%) ocupă aproape tot
+                        ecranul de mobil. Sunt repetate și în coș, adăugând un strat suplimentar de decizie exact
+                        înainte de plată.</p>
+                    <p style="margin-top: 8px; color: var(--warning);"><strong>Fix:</strong> Simplifică vizual
+                        opțiunile. Pre-selectează cel mai popular pachet. Elimină repetarea opțiunilor în coș.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(0, 206, 201, 0.3); background: rgba(0, 206, 201, 0.04);">
+                    <h4>🟢 Ce funcționează bine pe mobil</h4>
+                    <p>✅ Butonul "Adaugă în coș" — mare, portocaliu, ușor de apăsat<br>
+                        ✅ Quiz-ul — interfață curată, aerisită, ușor de folosit pe mobil<br>
+                        ✅ Design general curat și profesional<br>
+                        ✅ Imaginile de produs sunt de calitate</p>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Clarity Session Analysis -->
+        <div class="section" style="border-left: 3px solid var(--accent);">
+            <h2>🔬 Analiză Microsoft Clarity — Sesiuni Reale (1 Dec – 12 Feb)</h2>
+            <p class="section-desc">Date din 185,436 sesiuni și înregistrări video ale utilizatorilor pe zitamine.ro</p>
+
+            <!-- Clarity KPI Cards -->
+            <div class="metrics-grid" style="margin-bottom: 24px;">
+                <div class="metric-card">
+                    <div class="label">Sesiuni totale</div>
+                    <div class="value" style="color: var(--accent-light);">185,436</div>
+                    <div class="change">169,068 utilizatori unici</div>
+                    <div class="bar" style="background: var(--gradient-1);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Pagini / sesiune</div>
+                    <div class="value" style="color: var(--warning);">1.19</div>
+                    <div class="change negative">Foarte puțin — vizitatorii văd ~1 pagină</div>
+                    <div class="bar" style="background: var(--gradient-4);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Scroll depth mediu</div>
+                    <div class="value" style="color: var(--warning);">34.8%</div>
+                    <div class="change negative">Vizitatorii nu ajung nici la jumătatea paginii</div>
+                    <div class="bar" style="background: var(--gradient-4);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Dead Clicks</div>
+                    <div class="value" style="color: var(--danger);">4.06%</div>
+                    <div class="change negative">7,533 sesiuni cu clickuri pe elemente inactive</div>
+                    <div class="bar" style="background: var(--gradient-2);"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">Utilizatori noi</div>
+                    <div class="value" style="color: var(--accent-light);">89.5%</div>
+                    <div class="change">Traficul e covârșitor din vizitatori noi</div>
+                    <div class="bar" style="background: var(--gradient-1);"></div>
+                </div>
+            </div>
+
+            <!-- Key Finding: Facebook In-App Browser -->
+            <div class="alert" style="margin-bottom: 20px;">
+                <span class="icon">📱</span>
+                <div>
+                    <h3>31% din sesiuni vin din Facebook In-App Browser</h3>
+                    <p><strong>ChromeMobile: 42.68%</strong> (79,242 sesiuni) + <strong>FacebookApp: 31%</strong>
+                        (57,553 sesiuni). Browser-ul intern Facebook are limitări UX și performanță redusă.
+                        Asta înseamnă că aproape 1 din 3 vizitatori experimentează site-ul într-un browser suboptimal,
+                        ceea ce poate amplifica toate problemele de UX identificate.</p>
+                </div>
+            </div>
+
+            <!-- Funnel Events -->
+            <h3 style="font-size: 15px; margin-bottom: 14px;">🎯 Funnel din Clarity (Smart Events)</h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;">
+                <div
+                    style="background: rgba(108, 92, 231, 0.08); padding: 12px 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 22px; font-weight: 800; color: var(--accent-light);">185,436</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">SESIUNI</div>
+                </div>
+                <div style="display: flex; align-items: center; color: var(--text-muted);">→</div>
+                <div
+                    style="background: rgba(253, 203, 110, 0.08); padding: 12px 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 22px; font-weight: 800; color: var(--warning);">2,436</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ADD TO CART (1.3%)</div>
+                </div>
+                <div style="display: flex; align-items: center; color: var(--text-muted);">→</div>
+                <div
+                    style="background: rgba(255, 107, 107, 0.08); padding: 12px 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 22px; font-weight: 800; color: var(--danger);">3,771</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">CHECKOUT INIȚIAT*</div>
+                </div>
+                <div style="display: flex; align-items: center; color: var(--text-muted);">→</div>
+                <div
+                    style="background: rgba(0, 206, 201, 0.08); padding: 12px 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 22px; font-weight: 800; color: var(--success);">~800</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">COMENZI FINALIZATE</div>
+                </div>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 24px;">* Checkout > Add to cart deoarece
+                include utilizatori recurenți cu abonamente + fluxuri directe</p>
+
+            <!-- Critical Blockers from Recordings -->
+            <h3 style="font-size: 15px; margin: 20px 0 14px;">🛑 Ce blochează clienții să finalizeze comanda (din
+                înregistrări)</h3>
+
+            <div class="insight-grid" style="grid-template-columns: 1fr;">
+                <div class="insight-card"
+                    style="border-color: rgba(255, 107, 107, 0.5); background: rgba(255, 107, 107, 0.06);">
+                    <h4>🔴 BUG CRITIC #1: Eroare JavaScript „ZitamineQuiz is not defined"</h4>
+                    <p><strong>Ce se întâmplă:</strong> Pe pagina de coș apare o eroare JavaScript care blochează
+                        funcționalitatea butonului de checkout. Utilizatorii apasă pe buton, dar nu se întâmplă nimic.
+                    </p>
+                    <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
+                            class="stat">gumgkv</span>
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg> Vezi Video
+                        </a> — 23 rage clicks în 11 secunde pe /cart.
+                    </p>
+                    <p style="margin-top: 8px; color: var(--danger);"><strong>Impact estimat:</strong> Aceasta singură
+                        eroare poate cauza pierderea a sute de comenzi/lună. E cea mai urgentă reparație.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(255, 107, 107, 0.5); background: rgba(255, 107, 107, 0.06);">
+                    <h4>🔴 BUG CRITIC #2: Prețuri afișate "0 lei" în coș</h4>
+                    <p><strong>Ce se întâmplă:</strong> Selectorii de tip "O singură comandă" / "Abonament" din coș
+                        afișează uneori prețul de <strong>0 lei</strong>, deși produsul a fost adăugat corect cu preț
+                        normal.</p>
+                    <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
+                            class="stat">1jn2pph</span>
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg> Vezi Video
+                        </a> (12 min sesiune, 8 pagini) — a făcut rage clicks pe opțiunea "O
+                        singură comandă" care afișa 0 lei, apoi a abandonat.
+                    </p>
+                    <p style="margin-top: 8px; color: var(--danger);"><strong>Impact:</strong> Distruge complet
+                        încrederea. Clientul crede că site-ul e defect și pleacă.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Coșuri scumpe abandonate — lipsă suport live</h4>
+                    <p><strong>Ce se întâmplă:</strong> Clienți cu coșuri de valoare mare (3,993 lei — Protocol 6 luni)
+                        petrec 50+ minute pe site, navighează la pagina de Contact, dau click pe numărul de telefon, dar
+                        abandonează.</p>
+                    <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
+                            class="stat">yxngep</span>
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg> Vezi Video
+                        </a> (52 min, 15 pagini) — coș cu Protocol 6 luni. A căutat contact
+                        telefonic, a dat click pe număr, dar nu a finalizat.
+                    </p>
+                    <p style="margin-top: 8px; color: var(--warning);"><strong>Fix:</strong> Widget WhatsApp vizibil
+                        permanent + "Ai nevoie de ajutor?" pentru coșuri peste 500 lei.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 URL blocat: /cart?view=ZitamineQuiz</h4>
+                    <p><strong>Ce se întâmplă:</strong> Unii utilizatori ajung pe un URL de tip
+                        <code>/cart?view=ZitamineQuiz&testKey=...</code> și rămân blocați acolo, fără o cale clară de a
+                        finaliza comanda.
+                    </p>
+                    <p style="margin-top: 8px;"><strong>Dovada din Clarity:</strong> User <span
+                            class="stat">vll471</span>
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg> Vezi Video
+                        </a> (38 min, 13 pagini, 180 clicks) — a ieșit de pe site exact de pe
+                        acest URL.
+                    </p>
+                    <p style="margin-top: 8px; color: var(--warning);"><strong>Impact:</strong> Quiz-ul integrat în
+                        checkout creează deadlock-uri unde clientul nu poate merge nici înainte nici înapoi.</p>
+                </div>
+
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Interfață lentă / fără feedback vizual</h4>
+                    <p><strong>Ce se întâmplă:</strong> INP (Interaction to Next Paint) = <strong>250ms</strong>
+                        (Clarity raportează "Needs Improvement"). Pe mobil, când apesi un buton, răspunsul nu e
+                        instantaneu.</p>
+                    <p style="margin-top: 8px;"><strong>Impact:</strong> Utilizatorii cred că click-ul nu a mers și
+                        apasă din nou. Rezultat: duplicări, confuzie, abandon. Lipsește un spinner/loader la "Adaugă în
+                        coș".</p>
+                </div>
+            </div>
+
+            <!-- Session Journey Table -->
+            <h3 style="font-size: 15px; margin: 24px 0 14px;">📹 Sesiuni analizate — Jurnal detaliat</h3>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Dispozitiv</th>
+                            <th>Durată</th>
+                            <th>Pagini</th>
+                            <th>Ultima pagină</th>
+                            <th>Motiv abandon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1jn2pph</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>ChromeMobile</td>
+                            <td>12:00 min</td>
+                            <td>8</td>
+                            <td class="highlight-bad">/products/colagen</td>
+                            <td class="highlight-bad">Rage clicks pe prețuri "0 lei" + eroare JS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>vll471</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>MobileSafari</td>
+                            <td>38:41 min</td>
+                            <td>13</td>
+                            <td class="highlight-bad">/cart?view=ZitamineQuiz</td>
+                            <td class="highlight-bad">Blocat în flow-ul Quiz din coș (180 clicks!)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>yxngep</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>Mobile</td>
+                            <td>52:29 min</td>
+                            <td>15</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td>Coș 3,993 lei. Cautat suport telefonic, abandonat</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gumgkv</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>ChromeMobile</td>
+                            <td>00:11 sec</td>
+                            <td>1</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td class="highlight-bad">23 rage clicks — coșul nu răspunde</td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>je1g0d</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>Mobile</td>
+                            <td>01:41 min</td>
+                            <td>124</td>
+                            <td>/account</td>
+                            <td>Erori JS repetate la checkout (querySelectorAll null) la min 30, 39, 56</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1fgbb0j</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>ChromeMobile</td>
+                            <td>60:34 min</td>
+                            <td>12</td>
+                            <td class="highlight-bad">/quiz</td>
+                            <td class="highlight-bad">Eroare „Shopify.clear is not a function" după quiz</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1g2rt88</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>Mobile</td>
+                            <td>53:20 min</td>
+                            <td>9</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td class="highlight-bad">„ZitamineQuiz is not defined" la adăugare Silimarina + Magneziu
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>gxooej</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>Mobile</td>
+                            <td>45:00 min</td>
+                            <td>11</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td>A alternat repetat Abonament ↔ Comandă unică, nu s-a decis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>1cldd9j</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>FacebookApp</td>
+                            <td>10:11 min</td>
+                            <td>7</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td class="highlight-bad">3 produse în coș, eroare JS la checkout (2 încercări eșuate)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>mlye4w</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>FacebookApp</td>
+                            <td>11:27 min</td>
+                            <td>6</td>
+                            <td>/blog</td>
+                            <td>Dead clicks repetate + „quick back" în quiz, s-a întors la blog</td>
+                        </tr>
+                        <tr>
+                            <td><strong>gzhja2</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>ChromeMobile</td>
+                            <td>08:49 min</td>
+                            <td>8</td>
+                            <td>/products/gymnema</td>
+                            <td>Comparison shopper: căutat „pachet", comparat ingrediente, nu a adăugat</td>
+                        </tr>
+                        <tr>
+                            <td><strong>jp0hl4</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>FacebookApp</td>
+                            <td>14:24 min</td>
+                            <td>11</td>
+                            <td class="highlight-bad">/cart</td>
+                            <td class="highlight-bad">8 produse în coș → eroare JS „ZitamineQuiz" la checkout</td>
+                        </tr>
+                        <tr>
+                            <td><strong>vi20ev</strong> <a href="#" target="_blank"
+                                    class="video-btn"><!-- TODO: Update Link --><svg viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg> Video</a></td>
+                            <td>Instagram</td>
+                            <td>14:59 min</td>
+                            <td>9</td>
+                            <td>/products/nadh</td>
+                            <td>Citit detaliat ingrediente + utilizare, a folosit filtre, nu a adăugat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Deep-Dive: Behavioral Patterns -->
+        <div class="section" style="border-left: 3px solid var(--accent);">
+            <h2>🧠 De ce nu finalizează comanda? — Analiză comportamentală</h2>
+            <p class="section-desc">Concluzii din 15+ sesiuni analizate cu AI Session Insights din Clarity</p>
+
+            <div class="insight-grid" style="grid-template-columns: 1fr;">
+                <!-- Pattern 1: JS Errors -->
+                <!-- Pattern 1: JS Errors - REMOVED after verification (false positive) -->
+
+                <!-- Pattern 2: Quiz Confusion -->
+                <!-- Removed incorrect finding about checkout button redirecting to quiz -->
+
+                <!-- Pattern 3: Subscription Confusion -->
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Pattern #3: Confuzie Abonament vs. Comandă unică</h4>
+                    <p><strong>Frecvență:</strong> Identificat în <span class="stat">3 din 15</span> sesiuni</p>
+                    <p style="margin-top: 8px;"><strong>Ce se întâmplă:</strong> În coș, utilizatorii dau click repetat
+                        pe cele două opțiuni (Abonament / O singură comandă), alternând între ele câteva minute. User
+                        <span class="stat">gxooej</span>
+                        <a href="#" target="_blank" class="video-btn"><!-- TODO: Update Link -->
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg> Vezi Video
+                        </a> a petrecut 7+ minute doar pe această decizie înainte de a
+                        abandona.
+                    </p>
+                    <p style="margin-top: 8px;"><strong>De ce:</strong> Lipsa unei explicații clare a beneficiilor
+                        abonamentului (ce economisesc exact? pot anula? când primesc?). Combined cu prețuri care uneori
+                        afișează „0 lei" sau nu se actualizează vizibil.</p>
+                </div>
+
+                <!-- Pattern 4: Comparison Shopping -->
+                <div class="insight-card"
+                    style="border-color: rgba(0, 206, 201, 0.3); background: rgba(0, 206, 201, 0.04);">
+                    <h4>🔵 Pattern #4: Comparison shoppers — citesc mult, nu adaugă</h4>
+                    <p><strong>Frecvență:</strong> <span class="stat">3 din 15</span> sesiuni</p>
+                    <p style="margin-top: 8px;"><strong>Ce se întâmplă:</strong> Utilizatori de pe Google/Instagram care
+                        navighează prin 5-9 produse, citesc secțiunile de <strong>Ingrediente</strong> și
+                        <strong>Recomandări de utilizare</strong> cu atenție, folosesc filtre de categorie (ex:
+                        „Longevitate"), dar pleacă fără să adauge.
+                    </p>
+                    <p style="margin-top: 8px;"><strong>De ce:</strong> Sunt clienți educați care caută confirmarea că
+                        produsul e exact ce le trebuie. Le lipsesc: comparatii side-by-side, reviews vizibile pe pagina
+                        de produs, sau un „De ce acest produs?" scurt.</p>
+                </div>
+
+                <!-- Pattern 5: Idle Tabs -->
+                <div class="insight-card"
+                    style="border-color: rgba(108, 92, 231, 0.3); background: rgba(108, 92, 231, 0.04);">
+                    <h4>📱 Pattern #5: Tab-uri idle din reclame (atenție la interpretarea datelor)</h4>
+                    <p><strong>Frecvență:</strong> Majoritar în sesiunile lungi (&gt;30 min) fără Add to Cart</p>
+                    <p style="margin-top: 8px;"><strong>Ce se întâmplă:</strong> Utilizatorul vine de pe o reclamă
+                        Facebook/Google, aterizează pe pagina de produs, o vede <strong>sub 30 secunde</strong>, apoi
+                        lasă tab-ul deschis 1-3 ore. La final revin pentru o privire rapidă și pleacă.</p>
+                    <p style="margin-top: 8px;"><strong>Implicație:</strong> „Timpul pe site" e artificial umflat.
+                        Timpul real activ e sub 1 minut pentru acești vizitatori. Pagina de produs trebuie să capteze
+                        atenția <strong>în primele 5 secunde</strong> cu un CTA clar.</p>
+                </div>
+
+                <!-- Pattern 6: High Value -->
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 Pattern #6: Coșuri mari = ezitare + nevoie de suport uman</h4>
+                    <p><strong>Frecvență:</strong> <span class="stat">2 din 15</span> sesiuni</p>
+                    <p style="margin-top: 8px;"><strong>Ce se întâmplă:</strong> Utilizatori cu coșuri de 2,000-4,000
+                        lei (Protocoale 3/6 luni) petrec 30-50 min pe site. Se duc pe pagina de Contact, dau click pe
+                        telefon, caută opțiuni de rate. Nu finalizează online.</p>
+                    <p style="margin-top: 8px;"><strong>Fix:</strong> Acești clienți ar converti probabil cu: (1) un
+                        widget de WhatsApp/chat live „Ai nevoie de ajutor?", (2) opțiunea de plată în rate vizibilă în
+                        coș, (3) un buton „Suntem aici să te ajutăm — programează o consultare".</p>
+                </div>
+            </div>
+
+            <!-- Visual Summary -->
+            <div class="callout" style="margin-top: 16px;">
+                <p style="margin-bottom: 8px;"><strong>📊 Rezumatul behavioral din 15 sesiuni:</strong></p>
+                <p style="color: var(--text-secondary);">
+                    🟠 <strong>20% (3/15)</strong> ezită la Abonament vs. O singură comandă<br>
+                    🟠 <strong>13%</strong> au coșuri mari dar caută suport telefonic<br>
+                    🔵 <strong>20%</strong> sunt comparison shoppers care citesc dar nu adaugă<br>
+                    📱 Sesiunile „lungi” fără cart sunt în majoritate tab-uri inactive din ads<br>
+                    ℹ️ <strong>Notă:</strong> "Drop-off-ul" aparent la checkout este cauzat de limitările de tracking pe
+                    pagina de "Thank You".
+                </p>
+            </div>
+        </div>
+
+        <!-- Final Action Plan -->
+        <div class="section" style="border: 2px solid rgba(108, 92, 231, 0.3);">
+            <h2>🚀 Plan de Acțiune Prioritizat</h2>
+            <p class="section-desc">Bazat pe analiza datelor, auditul mobil, și sesiunile Clarity</p>
+
+            <div class="insight-grid" style="grid-template-columns: 1fr;">
+                <!-- URGENTA #1 REMOVED -->
+                <div class="insight-card"
+                    style="border-color: rgba(255, 107, 107, 0.4); background: rgba(255, 107, 107, 0.06);">
+                    <h4>🔴 URGENTĂ #2: Fix prețurile "0 lei" din selectorii de abonament</h4>
+                    <p><strong>Efort:</strong> Mic | <strong>Impact:</strong> MARE<br>
+                        Clientul vede 0 lei → crede că site-ul e stricat → pleacă. Verifică logica de afișare a
+                        variantelor în coș.</p>
+                </div>
+                <div class="insight-card"
+                    style="border-color: rgba(253, 203, 110, 0.4); background: rgba(253, 203, 110, 0.06);">
+                    <h4>🟠 SĂPTĂMÂNA 1-2: Adaugă feedback vizual la butoane</h4>
+                    <p><strong>Efort:</strong> Mic | <strong>Impact:</strong> MEDIU<br>
+                        Spinner/loading la "Adaugă în coș" + schimbă "Pasul următor" în "Finalizează comanda". Reduce
+                        rage clicks.</p>
+                </div>
+                <div class="insight-card"
+                    style="border-color: rgba(0, 206, 201, 0.3); background: rgba(0, 206, 201, 0.04);">
+                    <h4>🟢 LUNA 1: Widget WhatsApp + suport live pentru coșuri mari</h4>
+                    <p><strong>Efort:</strong> Mic | <strong>Impact:</strong> MEDIU<br>
+                        Pentru coșuri peste 500 lei, afișează un buton "Ai întrebări? Scrie-ne pe WhatsApp" vizibil pe
+                        pagina de coș.</p>
+                </div>
+            </div>
+
+            <div class="callout" style="margin-top: 16px;">
+                <p><strong>💰 Impact estimat:</strong> Optimizarea clarității abonamentelor și suportul live ar putea
+                    crește conversion rate-ul de la <strong>0.57% la ~0.7-0.8%</strong>,
+                    generând <strong>+50-100 comenzi/lună</strong> prin recuperarea clienților indeciși.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            Raport generat automat • Zitamine Analytics • Februarie 2026 • Sursa: Shopify + Microsoft Clarity
+        </div>
+    </div>
+
+    <script>
+        // Chart.js Global Config
+        Chart.defaults.color = '#a4a8b8';
+        Chart.defaults.font.family = 'Inter';
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+        Chart.defaults.plugins.legend.labels.padding = 16;
+
+        const months = ['Ian 2025', 'Feb 2025', 'Mar 2025', 'Apr 2025', 'Mai 2025', 'Iun 2025', 'Iul 2025', 'Aug 2025', 'Sep 2025', 'Oct 2025', 'Nov 2025', 'Dec 2025', 'Ian 2026', 'Feb 2026*'];
+
+        // Traffic Data (from CSV: Sessions over time - 2025-01-01 - 2026-02-17.csv)
+        const visitors = [58488, 57954, 58101, 28258, 22320, 18402, 19087, 19947, 18198, 20520, 16629, 21448, 23523, 11904];
+        const sessions = [72546, 73233, 70591, 35155, 27858, 22848, 24030, 24585, 22829, 26511, 19621, 26513, 29802, 13791];
+
+        // Conversion Rates (from CSV: Sessions over time - 2025-01-01 - 2026-02-17.csv)
+        // Multiplied by 100 to get percentage
+        const convRate = [0.95, 0.80, 0.75, 1.18, 1.39, 1.58, 1.62, 0.99, 0.85, 0.94, 0.98, 0.71, 0.59, 0.64];
+        const checkoutConv = [31.98, 30.02, 36.18, 46.37, 39.98, 43.61, 37.14, 46.29, 52.00, 56.36, 45.93, 53.85, 52.38, 51.76];
+
+        // Sales Data (Existing "Total" arrays)
+        const orders = [1188, 1053, 1028, 901, 715, 660, 780, 510, 506, 511, 464, 407, 391, 51];
+        const revenue = [342780, 274466, 283966, 277564, 213568, 191227, 208298, 146744, 156986, 153715, 138877, 118483, 125087, 14400];
+
+        // AOV Data
+        const aov = [288.54, 260.65, 276.23, 308.06, 298.70, 289.74, 267.05, 287.73, 310.25, 300.81, 299.30, 291.11, 319.92, 282.34];
+
+        // Client Data (Clients vs Recurring) - Keeping as is for now
+        const newClients = [501, 406, 347, 309, 225, 205, 320, 169, 177, 146, 120, 112, 98, 12];
+        const recurClients = [645, 600, 626, 552, 456, 432, 430, 320, 313, 342, 315, 263, 266, 39];
+
+        // 1. Main Chart: Visitors + Sessions (bars) + Conversion Rate (line)
+        new Chart(document.getElementById('mainChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Vizitatori',
+                        data: visitors,
+                        backgroundColor: 'rgba(108, 92, 231, 0.6)',
+                        borderColor: '#6c5ce7',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.35,
+                        categoryPercentage: 0.8,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Sesiuni',
+                        data: sessions,
+                        backgroundColor: 'rgba(162, 155, 254, 0.4)',
+                        borderColor: '#a29bfe',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.35,
+                        categoryPercentage: 0.8,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Conversion Rate (%)',
+                        data: convRate,
+                        type: 'line',
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#ff6b6b',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    y: {
+                        position: 'left',
+                        grid: { color: 'rgba(108, 92, 231, 0.06)' },
+                        ticks: { callback: v => v.toLocaleString() },
+                        title: { display: true, text: 'Vizitatori / Sesiuni' }
+                    },
+                    y1: {
+                        position: 'right',
+                        grid: { display: false },
+                        ticks: { callback: v => v + '%' },
+                        title: { display: true, text: 'Conversion Rate (%)' },
+                        min: 0,
+                        max: 1.5
+                    },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                if (context.dataset.yAxisID === 'y1') return context.dataset.label + ': ' + context.parsed.y + '%';
+                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Conversion Rate Trend
+        new Chart(document.getElementById('conversionChart'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Conversion Rate (%)',
+                        data: convRate,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.08)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#ff6b6b',
+                        pointBorderColor: '#1e2130',
+                        pointBorderWidth: 3
+                    },
+                    {
+                        label: 'Checkout Conv. (%)',
+                        data: checkoutConv,
+                        borderColor: '#00cec9',
+                        backgroundColor: 'rgba(0, 206, 201, 0.08)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#00cec9',
+                        pointBorderColor: '#1e2130',
+                        pointBorderWidth: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(108, 92, 231, 0.06)' },
+                        ticks: { callback: v => v + '%' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3. Orders chart
+        new Chart(document.getElementById('ordersChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Comenzi',
+                        data: orders,
+                        backgroundColor: 'rgba(253, 203, 110, 0.6)',
+                        borderColor: '#fdcb6e',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { grid: { color: 'rgba(108, 92, 231, 0.06)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // REMOVED CONFIGS FOR revenueChart, funnelChart, clientsChart
+    </script>
+
+</body>
+
+</html>

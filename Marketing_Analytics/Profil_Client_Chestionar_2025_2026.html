@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zitamine - Profil Client din Chestionar 2025-2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0a0e1a;--card:#1a1f35;--card2:#151a2e;--border:#2a3050;--t1:#f0f2f8;--t2:#8b95b0;--t3:#5a6380;--a1:#6366f1;--a2:#8b5cf6;--pink:#ec4899;--teal:#14b8a6;--amber:#f59e0b;--green:#10b981;--red:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6;}
+.wrap{max-width:1200px;margin:0 auto;padding:30px;}
+
+/* Header */
+.hero{text-align:center;padding:40px 0 30px;position:relative;}
+.hero::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.08),transparent 70%);pointer-events:none;}
+.hero .tag{font-size:12px;font-weight:700;color:var(--a1);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.hero h1{font-size:36px;font-weight:900;background:linear-gradient(135deg,#f0f2f8,#8b95b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.hero .sub{font-size:14px;color:var(--t3);}
+
+/* KPI strip */
+.kpi-strip{display:flex;gap:14px;flex-wrap:wrap;margin:24px 0;}
+.kpi{flex:1;min-width:150px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;transition:all 0.3s;}
+.kpi:hover{border-color:var(--a1);transform:translateY(-2px);}
+.kpi .label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.kpi .val{font-size:26px;font-weight:800;}
+.kpi .detail{font-size:11px;color:var(--t2);margin-top:2px;}
+
+/* Section */
+.section{margin-top:32px;}
+.section-title{font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.section-title .icon{font-size:20px;}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all 0.3s;}
+.card:hover{border-color:rgba(99,102,241,0.3);}
+.card-title{font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px;}
+
+/* Bars */
+.bar-group{display:flex;flex-direction:column;gap:10px;}
+.bar-item{display:flex;align-items:center;gap:8px;}
+.bar-label{font-size:12px;font-weight:500;min-width:110px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;height:26px;background:rgba(99,102,241,0.06);border-radius:6px;overflow:hidden;position:relative;}
+.bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:white;min-width:30px;transition:width 0.6s ease;}
+.bar-val{font-size:12px;font-weight:600;min-width:50px;text-align:right;color:var(--t2);}
+.bar-pct{font-size:11px;color:var(--t3);min-width:40px;text-align:right;}
+
+/* Chart */
+.chart-box{position:relative;width:100%;max-height:280px;}
+.chart-box canvas{max-height:280px;}
+
+/* Persona card */
+.persona{background:linear-gradient(135deg,var(--card),#1e1545);border:1px solid rgba(139,92,246,0.4);border-radius:18px;padding:28px;position:relative;overflow:hidden;}
+.persona::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(139,92,246,0.12),transparent 70%);}
+.persona h3{font-size:20px;font-weight:800;margin-bottom:16px;position:relative;z-index:1;}
+.persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1;}
+.persona-item{background:rgba(99,102,241,0.08);padding:10px 14px;border-radius:10px;}
+.persona-item .plabel{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;}
+.persona-item .pval{font-size:14px;font-weight:700;margin-top:2px;}
+
+/* Quiz answer card */
+.qa-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.qa-q{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:10px;}
+.qa-answers{display:flex;flex-direction:column;gap:6px;}
+.qa-row{display:flex;align-items:center;gap:6px;}
+.qa-row .qa-ans{font-size:12px;color:var(--t2);min-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qa-row .qa-bar{flex:1;height:18px;background:rgba(99,102,241,0.06);border-radius:4px;overflow:hidden;}
+.qa-row .qa-fill{height:100%;border-radius:4px;min-width:2px;}
+.qa-row .qa-num{font-size:11px;color:var(--t3);min-width:45px;text-align:right;}
+
+.footer{text-align:center;padding:50px 0 30px;color:var(--t3);font-size:12px;border-top:1px solid var(--border);margin-top:50px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+    <div class="tag">Date din chestionarul Zitamine · Baza de date</div>
+    <h1>Profilul Clientului Zitamine</h1>
+    <div class="sub">Analiza completarilor de chestionar — Ianuarie 2025 → Aprilie 2026</div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-strip">
+    <div class="kpi"><div class="label">Chestionare totale</div><div class="val">40,739</div><div class="detail">Completate: 26,753 (66%)</div></div>
+    <div class="kpi"><div class="label">Gen dominant</div><div class="val" style="color:var(--pink)">75% Femei</div><div class="detail">16,609 F · 5,551 M</div></div>
+    <div class="kpi"><div class="label">Varsta #1</div><div class="val">25-39 ani</div><div class="detail">48% din respondenti</div></div>
+    <div class="kpi"><div class="label">Sursa #1</div><div class="val" style="color:var(--a2)">Instagram</div><div class="detail">26% din clienti</div></div>
+    <div class="kpi"><div class="label">Obiectiv #1</div><div class="val" style="color:var(--green)">Imunitate</div><div class="detail">30,653 recomandari</div></div>
+</div>
+
+<!-- PERSONA -->
+<div class="persona">
+    <h3>👤 Buyer Persona — Clientul tipic Zitamine</h3>
+    <div class="persona-grid">
+        <div class="persona-item"><div class="plabel">Cine este</div><div class="pval">Femeie, 25-39 ani, din București sau Cluj</div></div>
+        <div class="persona-item"><div class="plabel">De unde a aflat de noi</div><div class="pval">Instagram sau Facebook (53% din surse)</div></div>
+        <div class="persona-item"><div class="plabel">Cum se simte</div><div class="pval">Obosita, "nu mereu am energie" (70%), dorm prost (73%)</div></div>
+        <div class="persona-item"><div class="plabel">Ce vrea</div><div class="pval">Energie, Anti-Stres, Focus mental, Imunitate</div></div>
+        <div class="persona-item"><div class="plabel">Dieta</div><div class="pval">"Cu de toate" (71%), nu mananca pește (83%)</div></div>
+        <div class="persona-item"><div class="plabel">Sport</div><div class="pval">Foarte rar (71%), dar ar vrea sa faca</div></div>
+        <div class="persona-item"><div class="plabel">Fumeaza / Bea</div><div class="pval">Fumator: 37% da, Alcool: 77% aproape deloc</div></div>
+        <div class="persona-item"><div class="plabel">Pofta de dulce</div><div class="pval">69% — Da, vor sa reduca pofta de dulciuri</div></div>
+    </div>
+</div>
+
+<!-- DEMOGRAPHICS -->
+<div class="section">
+    <div class="section-title"><span class="icon">👥</span> Demografie — Cine completeaza chestionarul?</div>
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-title">Gen</div>
+            <div class="chart-box"><canvas id="chGender"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-title">Varsta</div>
+            <div class="chart-box"><canvas id="chAge"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="card-title">De unde au aflat de Zitamine?</div>
+            <div class="chart-box"><canvas id="chSource"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<!-- QUIZ VOLUME -->
+<div class="section">
+    <div class="section-title"><span class="icon">📊</span> Completari chestionar pe luna</div>
+    <div class="card">
+        <div class="chart-box" style="max-height:260px"><canvas id="chMonthly"></canvas></div>
+    </div>
+</div>
+
+<!-- HEALTH OBJECTIVES -->
+<div class="section">
+    <div class="section-title"><span class="icon">🎯</span> Obiective de sanatate — pentru ce iau vitamine?</div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Obiective sanatate (din algoritm)</div>
+            <div class="bar-group" id="objBars"></div>
+        </div>
+        <div class="card">
+            <div class="card-title">Ce isi doresc clientii? (raspuns direct)</div>
+            <div class="bar-group" id="wantBars"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOP SUPPLEMENTS -->
+<div class="section">
+    <div class="section-title"><span class="icon">💊</span> Top suplimente recomandate de algoritm</div>
+    <div class="card">
+        <div class="bar-group" id="suppBars"></div>
+    </div>
+</div>
+
+<!-- LIFESTYLE -->
+<div class="section">
+    <div class="section-title"><span class="icon">🏃</span> Stilul de viata al clientilor</div>
+    <div class="grid-2">
+        <div class="qa-card">
+            <div class="qa-q">❓ In ultimul timp ma simt:</div>
+            <div class="qa-answers" id="qFeel"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Ai energie zi de zi?</div>
+            <div class="qa-answers" id="qEnergy"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Cum dormi?</div>
+            <div class="qa-answers" id="qSleep"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Faci sport?</div>
+            <div class="qa-answers" id="qSport"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Dieta ta este:</div>
+            <div class="qa-answers" id="qDiet"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Cat de des mananci peste?</div>
+            <div class="qa-answers" id="qFish"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Fumezi?</div>
+            <div class="qa-answers" id="qSmoke"></div>
+        </div>
+        <div class="qa-card">
+            <div class="qa-q">❓ Pofta de dulce?</div>
+            <div class="qa-answers" id="qSweet"></div>
+        </div>
+    </div>
+</div>
+
+<!-- GEO -->
+<div class="section">
+    <div class="section-title"><span class="icon">📍</span> De unde sunt clientii? (judet + oras)</div>
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">Top judete</div>
+            <div class="bar-group" id="geoBars"></div>
+        </div>
+        <div class="card">
+            <div class="card-title">Top orase</div>
+            <div class="bar-group" id="cityBars"></div>
+        </div>
+    </div>
+</div>
+
+<!-- CONVERSION -->
+<div class="section">
+    <div class="section-title"><span class="icon">🔄</span> Conversie chestionar → comanda</div>
+    <div class="grid-3">
+        <div class="kpi"><div class="label">Chestionare completate</div><div class="val">26,753</div></div>
+        <div class="kpi"><div class="label">Comenzi cu quiz</div><div class="val" style="color:var(--green)">1,370</div><div class="detail">5.1% rata de conversie</div></div>
+        <div class="kpi"><div class="label">Clienti unici</div><div class="val">852</div><div class="detail">1.6 comenzi/client</div></div>
+    </div>
+</div>
+
+</div>
+<div class="footer">Zitamine — Profil Client din Chestionar 2025-2026 | Sursa: Baza de date zitamine_quiz | Generat 14 Aprilie 2026</div>
+
+<script>
+Chart.defaults.color='#8b95b0';
+Chart.defaults.font.family='Inter,sans-serif';
+const CL=['#6366f1','#8b5cf6','#ec4899','#14b8a6','#f59e0b','#3b82f6','#ef4444','#10b981','#06b6d4','#f97316','#a855f7','#64748b'];
+
+// Gender chart
+new Chart(document.getElementById('chGender'),{type:'doughnut',data:{labels:['Femeie','Barbat'],datasets:[{data:[16609,5551],backgroundColor:['#ec4899','#6366f1'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12}}},cutout:'65%'}});
+
+// Age chart
+new Chart(document.getElementById('chAge'),{type:'doughnut',data:{labels:['25-39','18-24','40-54','55+'],datasets:[{data:[1394,913,536,83],backgroundColor:['#6366f1','#8b5cf6','#14b8a6','#f59e0b'],borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{padding:12}}},cutout:'65%'}});
+
+// Source chart
+new Chart(document.getElementById('chSource'),{type:'doughnut',data:{labels:['Instagram','Facebook','TikTok','Prieten','Google','Altfel','TV','Angajator'],datasets:[{data:[5673,5531,3803,2184,2127,1980,372,312],backgroundColor:CL,borderWidth:0}]},options:{plugins:{legend:{position:'bottom',labels:{padding:8,font:{size:10}}}},cutout:'60%'}});
+
+// Monthly chart
+const months=['Ian 25','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec','Ian 26','Feb','Mar','Apr'];
+const totals=[4704,4321,4568,3807,7413,4944,3674,1652,1115,873,826,631,722,527,676,286];
+const completed=[3219,2892,2945,2476,4766,3229,2356,1134,704,569,583,408,472,364,452,184];
+new Chart(document.getElementById('chMonthly'),{type:'bar',data:{labels:months,datasets:[{label:'Total',data:totals,backgroundColor:'rgba(99,102,241,0.3)',borderRadius:6},{label:'Completate',data:completed,backgroundColor:'#6366f1',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{grid:{color:'#2a305020'}},x:{grid:{display:false}}}}});
+
+// Helper: bar chart
+function makeBars(el,data,colors){
+    const max=data[0][1];
+    const total=data.reduce((s,d)=>s+d[1],0);
+    data.forEach((d,i)=>{
+        const pct=(d[1]/max*100).toFixed(0);
+        const share=(d[1]/total*100).toFixed(1);
+        el.innerHTML+=`<div class="bar-item">
+            <div class="bar-label">${d[0]}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${colors[i%colors.length]}">${pct>20?d[1].toLocaleString():''}</div></div>
+            <div class="bar-val">${d[1].toLocaleString()}</div>
+            <div class="bar-pct">${share}%</div>
+        </div>`;
+    });
+}
+
+// Health objectives
+makeBars(document.getElementById('objBars'),[
+    ['Imunitate',30653],['Fitness',23916],['Somn',13150],['Digestie',12158],
+    ['Energie',11713],['Creier',11190],['Analize',10943],['Inima',5738],
+    ['Dispozitie',5661],['Par/Piele/Unghii',2882],['Oase',1343]
+],CL);
+
+// What clients want
+makeBars(document.getElementById('wantBars'),[
+    ['Energie',15056],['Stres',13240],['Creier',11805],['Imunitate',11485],
+    ['Par, Piele, Unghii',11155],['Somn',9248],['Dispozitie',9218],['Digestie',8490]
+],CL);
+
+// Top supplements
+makeBars(document.getElementById('suppBars'),[
+    ['Vitamina D3 2000 UI',19091],['Gymnema 150mg',16002],['Ginseng Siberian',12738],
+    ['Omega-3',12462],['Bacopa 350mg',11186],['Vitamina C 1000mg',9979],
+    ['Carbune+ 329mg',7520],['Melatonina 3mg',7061],['Astaxanthin 6mg',5226],
+    ['Magneziu Bisglicinat',4706],['Antiacid Natural',4329],['Fier 2.4mg',4030],
+    ['Ashwagandha KSM-66',3203],['Zinc Bisglicinat 25mg',2323]
+],CL);
+
+// Geo
+makeBars(document.getElementById('geoBars'),[
+    ['București',1193],['Cluj',367],['Ilfov',324],['Timiș',290],['Constanța',241],
+    ['Brașov',218],['Iași',217],['Prahova',158],['Bihor',140],['Sibiu',131]
+],CL);
+makeBars(document.getElementById('cityBars'),[
+    ['București',1068],['Cluj-Napoca',226],['Iași',155],['Timișoara',153],['Constanța',142],
+    ['Brașov',126],['Oradea',86],['Ploiești',75],['Arad',72],['Sibiu',66]
+],CL);
+
+// Quiz answers - lifestyle
+function makeQA(el,data,colArr){
+    const max=data[0][1];
+    const total=data.reduce((s,d)=>s+d[1],0);
+    data.forEach((d,i)=>{
+        const pct=(d[1]/max*100).toFixed(0);
+        const share=(d[1]/total*100).toFixed(0);
+        el.innerHTML+=`<div class="qa-row">
+            <div class="qa-ans" title="${d[0]}">${d[0]}</div>
+            <div class="qa-bar"><div class="qa-fill" style="width:${pct}%;background:${colArr[i%colArr.length]}"></div></div>
+            <div class="qa-num">${share}%</div>
+        </div>`;
+    });
+}
+
+makeQA(document.getElementById('qFeel'),[['OK, mai am si zile proaste',11835],['Nu prea am chef de nimic',10077],['Bucuros si vesel',1045]],['#f59e0b','#ef4444','#10b981']);
+makeQA(document.getElementById('qEnergy'),[['Nu mereu, des ma simt obosit',16122],['Sunt epuizat, burnout',4137],['Da, rezolv orice',2682]],['#f59e0b','#ef4444','#10b981']);
+makeQA(document.getElementById('qSleep'),[['Agitat, ma trezesc noaptea',9492],['Mai putin de 7 ore',9213],['Adorm greu',7520],['Fara probleme',5249]],['#ef4444','#f59e0b','#ec4899','#10b981']);
+makeQA(document.getElementById('qSport'),[['Foarte rar',16248],['De 2-3 ori pe sapt',4827],['De 4+ ori pe sapt',1877]],['#ef4444','#f59e0b','#10b981']);
+makeQA(document.getElementById('qDiet'),[['Cu de toate',16357],['Cu mai putina carne',2043],['Cu mai multa carne',1845],['Altfel',1298],['Mai putini carbohidrati',951],['Vegetariana',371]],CL);
+makeQA(document.getElementById('qFish'),[['Nu prea mananca',19049],['De 2-3 ori pe sapt',3110],['Aproape zilnic',326]],['#ef4444','#f59e0b','#10b981']);
+makeQA(document.getElementById('qSmoke'),[['Nu',12742],['Da',8479],['Pasiv',1730]],['#10b981','#ef4444','#f59e0b']);
+makeQA(document.getElementById('qSweet'),[['Da, vreau sa reduc',15839],['Nu',7114]],['#ef4444','#10b981']);
+</script>
+</body>
+</html>

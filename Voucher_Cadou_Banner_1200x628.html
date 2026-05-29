@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zitamine Voucher Banner - 1200×628</title>
+<link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  body { margin:0; padding:40px; background:#111; display:flex; flex-direction:column; align-items:center; min-height:100vh; font-family:'Satoshi',sans-serif; }
+
+  .banner {
+    width: 1200px; height: 628px; position:relative; overflow:hidden;
+    background: linear-gradient(145deg, #1A2836 0%, #17324D 40%, #0F2032 100%);
+    font-family:'Satoshi',sans-serif; color:#fff;
+    display:flex; align-items:center; box-sizing:border-box;
+    padding:40px 60px;
+  }
+
+  .banner::before {
+    content:''; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 75% 35%, rgba(250,156,25,0.18) 0%, transparent 45%),
+      radial-gradient(circle at 15% 75%, rgba(76,167,248,0.12) 0%, transparent 40%);
+    z-index:1; pointer-events:none;
+  }
+  .grid-overlay {
+    position:absolute; inset:0; z-index:2; opacity:0.04;
+    background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .banner-content { position:relative; z-index:5; width:100%; height:100%; display:flex; justify-content:space-between; align-items:center; gap: 40px;}
+
+  /* LEFT TEXT */
+  .left-side { display:flex; flex-direction:column; align-items:flex-start; width: 440px; flex-shrink: 0;}
+  
+  .banner-logo { font-size:22px; font-weight:700; letter-spacing:3px; text-transform:lowercase; color:rgba(255,255,255,0.60); margin-bottom:20px; }
+  .banner-logo .dot-accent { display:inline-block; width:8px; height:8px; background:#FA9C19; border-radius:50%; margin-left:3px; vertical-align:super; }
+
+  .top-badge {
+    display:inline-flex; align-items:center; gap:8px; padding:8px 22px;
+    border-radius:50px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);
+    margin-bottom:15px;
+  }
+  .top-badge .icon { font-size:18px; }
+  .top-badge span { font-size:13px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#fff; }
+
+  .banner-title { font-size:46px; font-weight:900; line-height:1.1; margin:0 0 15px 0; max-width: 440px;}
+  .banner-title span { color:#FA9C19; }
+  
+  .banner-subtitle { font-size:18px; font-weight:400; color:rgba(255,255,255,0.70); line-height:1.45; margin:0 0 30px 0; }
+
+  .banner-cta {
+    display:inline-flex; align-items:center; gap:8px; padding:15px 35px;
+    background:#FA9C19; color:#041E35; font-size:16px; font-weight:800;
+    letter-spacing:1px; text-transform:uppercase; border-radius:50px; border:none; text-decoration:none;
+    box-shadow:0 8px 20px rgba(250,156,25,0.25);
+  }
+  .banner-cta .arrow { font-size:16px; }
+
+  /* RIGHT CARDS (Vertical format) */
+  .vouchers-col { display:flex; gap:25px; flex-grow: 1; align-items: stretch; justify-content: center;}
+
+  .voucher-card {
+    flex:1; background:#F4F2EE; border-radius:20px; position:relative;
+    display:flex; flex-direction:column; color:#041E35; max-width: 270px;
+  }
+  
+  .vc-monthly { border-top:8px solid #4CA7F8; }
+  .vc-quarterly { border-top:8px solid #FA9C19; }
+
+  /* Top half */
+  .v-top { padding:30px 20px 25px; display:flex; flex-direction:column; align-items:center; border-bottom:2px dashed rgba(4,30,53, 0.15); position:relative;}
+  
+  .v-top::before, .v-top::after {
+    content:''; position:absolute; bottom:-12px; width:24px; height:24px;
+    background-color:#142B41; border-radius:50%; z-index:2;
+  }
+  .v-top::before { left:-12px; }
+  .v-top::after { right:-12px; }
+  
+  .v-badge { font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 18px; border-radius:50px; margin-bottom:12px; }
+  .vc-quarterly .v-badge { background:#FA9C19; color:#041E35; }
+  .vc-monthly .v-badge { background:#4CA7F8; color:#fff; }
+  
+  .v-sub-text { font-size:14px; font-weight:600; color:rgba(4,30,53,0.5); text-transform:uppercase; letter-spacing:2px; margin-bottom:0; }
+  .v-price { font-size:60px; font-weight:900; line-height:1; letter-spacing:-2px; color:#041E35; margin:0; }
+  .v-price span { font-size:22px; font-weight:800; vertical-align:top; margin-left:2px; }
+
+  /* Bottom half */
+  .v-bottom { padding:25px 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-grow: 1;}
+  
+  .v-req-box { background:rgba(4,30,53,0.03); border:1px solid rgba(4,30,53,0.08); padding:15px; border-radius:10px; width:100%; box-sizing:border-box; text-align: center;}
+  .v-req-title { font-size:13px; font-weight:800; color:#041E35; margin-bottom:6px;}
+  .v-req-desc { font-size:13px; font-weight:500; color:rgba(4,30,53,0.70); line-height:1.4; margin:0;}
+  .v-req-desc strong { color:#041E35; font-weight:800; }
+
+  .best-deal-ribbon {
+    position:absolute; top:-16px; left: 50%; transform: translateX(-50%); background:#041E35; color:#FA9C19;
+    font-size:10px; font-weight:800; padding:6px 14px; border-radius:6px;
+    letter-spacing:1px; white-space: nowrap; border:1px solid rgba(250,156,25,0.4);
+  }
+
+  /* External Download Button */
+  .download-section { margin-top:20px; text-align:center; }
+  .btn-download { padding:10px 30px; background:#FA9C19; color:#041E35; border:none; border-radius:10px; cursor:pointer; font-size:14px; font-weight:800; font-family:'Satoshi',sans-serif; }
+  .btn-download:hover { background:#e08b15; }
+</style>
+</head>
+<body>
+
+<div class="banner" id="banner-export">
+  <div class="grid-overlay"></div>
+  <div class="banner-content">
+    
+    <!-- LEFT -->
+    <div class="left-side">
+      <div class="banner-logo">zitamine<span class="dot-accent"></span></div>
+      <div class="top-badge"><span class="icon">🎁</span><span>Ofertă Specială</span></div>
+      <h1 class="banner-title">Orice Abonament Nou aduce un <span>VOUCHER</span>.</h1>
+      <p class="banner-subtitle">Pornește planul tău personalizat și te premiem cu extra-discount pentru viitoarele comenzi!</p>
+      <div class="banner-cta">Activează Abonamentul <span class="arrow">→</span></div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="vouchers-col">
+      <!-- Voucher Lunar -->
+      <div class="voucher-card vc-monthly">
+        <div class="v-top">
+          <div class="v-badge">Abonament Lunar</div>
+          <div class="v-sub-text">Voucher</div>
+          <p class="v-price">25<span>LEI</span></p>
+        </div>
+        <div class="v-bottom">
+          <div class="v-req-box">
+             <div class="v-req-title">✦ Condiție</div>
+             <p class="v-req-desc">Abonamentul lunar de minim <strong>200 lei</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voucher 3 Luni -->
+      <div class="voucher-card vc-quarterly">
+        <div class="best-deal-ribbon">🏆 RECOMANDAREA NOASTRĂ</div>
+        <div class="v-top">
+          <div class="v-badge">Abonament 3 Luni</div>
+          <div class="v-sub-text">Voucher</div>
+          <p class="v-price">50<span>LEI</span></p>
+        </div>
+        <div class="v-bottom">
+          <div class="v-req-box">
+             <div class="v-req-title">✦ Condiție</div>
+             <p class="v-req-desc">Abonamentul pe 3 luni de minim <strong>250 lei</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="download-section">
+  <button class="btn-download" onclick="downloadPNG()">⬇ Download PNG 1200×628</button>
+</div>
+
+<script>
+function downloadPNG() {
+  html2canvas(document.getElementById('banner-export'), {
+    width:1200, height:628, scale:1, useCORS:true, backgroundColor:'#17324D', logging:false
+  }).then(c => { const a=document.createElement('a'); a.download='Zitamine-Voucher-Cadou-1200x628.png'; a.href=c.toDataURL('image/png'); a.click(); });
+}
+</script>
+
+</body>
+</html>

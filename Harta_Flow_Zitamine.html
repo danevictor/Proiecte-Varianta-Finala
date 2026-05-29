@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harta Flow: After First Order</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #0b5cd5;
+            --primary-dark: #083c8c;
+            --secondary: #e6eefc;
+            --text-main: #1f2937;
+            --text-light: #4b5563;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 60px 80px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            text-align: center;
+        }
+        
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-top: 3rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--text-main);
+            font-size: 1.3rem;
+            margin-top: 2rem;
+        }
+        
+        blockquote {
+            background: var(--secondary);
+            border-left: 5px solid var(--primary);
+            margin: 1.5rem 0;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--text-light);
+        }
+        
+        /* Treat blockquotes inside unordered lists as message cards */
+        ul blockquote, li blockquote {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-left: 5px solid #3b82f6;
+            border-radius: 6px;
+            font-style: normal;
+            font-size: 0.95rem;
+            color: #334155;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+            white-space: pre-line;
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border);
+            margin: 3rem 0;
+        }
+        
+        ul, ol {
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        strong {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ef4444;
+            font-size: 0.9em;
+        }
+        
+        .header-logo {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        
+        /* specific alert parsing */
+        p:contains("[!NOTE]") {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-logo">ZITAMINE NUTRITION</div>
+        <h1>Harta Detaliată Completă: Flow "After First Order"</h1>
+<p>Acest document expune trasabilitatea flow-ului, citit de sus (de la Trigger) până la capăt (End), defalcat pe ramurile sale principale. </p>
+<blockquote>
+<p>[!NOTE]<br />
+Flow-ul vostru operează ca un <strong>sistem binar</strong>. După ce un client plasează comanda, este testat dacă este client la "Singular" (OTP) sau la "Abonament" (SUB), apoi este trimis pe un drum separat de comunicare.</p>
+</blockquote>
+<hr />
+<h2>🚦 DECLANȘATORUL (TRIGGER-UL)</h2>
+<ul>
+<li><strong>Start:</strong> Clientul plasează o comandă (<code>Placed Order</code>).</li>
+<li><strong>Filtru:</strong> Doar dacă este <em>prima comandă</em> (<code>Placed Order equals 1 over all time</code>).</li>
+<li><strong>Acțiune Imediată:</strong> Flow-ul intră în pauză (Time Delay) pentru a lăsa timp pachetului să ajungă sau comenzii să se proceseze. </li>
+</ul>
+<hr />
+<h2>🛤️ RAMURA 1: Clienții Fără Abonament (OTP)</h2>
+<p>Aceasta este secvența pentru clienții care au cumpărat o singură dată (<code>otp_active_customer</code>). Are ca scop educarea lor și convertirea într-o nouă comandă.</p>
+<ol>
+<li>
+<p><strong>WhatsApp (Trengo) - Bun Venit OTP</strong> </p>
+<ul>
+<li><em>Aici se verifică dacă a completat chestionarul.</em></li>
+<li><strong>Mesaj WhatsApp Trimis:</strong> <blockquote>
+<p>"Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine 💙 Eu sunt Andreea și sunt medic și nutriționist în echipa Zitamine. Dacă ai orice întrebare, sau dacă dorești o consultație cu unul din nutriționiștii din echipă, dă-ne de veste. Mai jos ai acces la recomandarea ta de Zitamine, în cazul în care vrei să o vezi sau vei avea nevoie să repeți comanda: [Link-ul personalizat]. O zi veselă și nu uita să mănânci fructe🍎 și legume🥦! Andreea"</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Email 1:</strong> <code>OTP_Trust_1</code></p>
+<ul>
+<li><em>Subiect:</em> 5 lucruri pe care e bine să le știi despre vitaMINE</li>
+<li><em>Scop:</em> Onboarding și setarea așteptărilor (minim 3 luni pentru efecte).</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Iată 5 idei care te vor ajuta să creezi o rutină sănătoasă și corectă de administrare a Zitaminelor:<br />
+    &gt;<br />
+    &gt; 1️⃣ În funcție de recomandarea primită și de comanda ta, este posibil să ai unul sau două pliculețe. Pliculețele conțin necesarul pentru o lună. Cel mai bine este să iei pliculețul pentru dimineață după micul dejun sau după masa de prânz, iar cel de seară după cină. Însă, dacă ai în pliculeț:<br />
+    &gt;<br />
+    &gt; - Melatonină - aceasta se ia cu 30 de minute înainte de culcare;<br />
+    &gt;<br />
+    &gt; - Antiacid gastric - acesta se ia cu 2 ore înainte sau după alte medicamente.<br />
+    &gt;<br />
+    &gt; 2️⃣ Pentru efecte optime, este nevoie de puțină răbdare. Majoritatea suplimentelor alimentare trebuie sa fie administrate constant pe o<br />
+    &gt;<br />
+    &gt; perioadă de 3-6 luni, astfel încât organismul sa aibă timp să asimileze nutrienții din ele.<br />
+    &gt;<br />
+    &gt; 3️⃣ Pentru cele mai bune efecte ar trebui să iei suplimentele zilnic.<br />
+    &gt;<br />
+    &gt; 4️⃣ Îți recomandăm să iei vitaminele cu un pahar mare de apă - apa ajută suplimentele alimentare să treacă din gură în stomac și apoi în intestinul subțire și să fie absorbite. Înghițirea pastilelor fără suficientă apă le poate împiedica să acționeze eficient.<br />
+    &gt;<br />
+    &gt; 5️⃣ Nu este recomandat să iei vitaminele cu o băutură cu cofeină sau cu alcool. Recomandarea noastră este ca atunci când le iei, să le înghiți doar cu apă.<br />
+    &gt;<br />
+    &gt; Pentru orice întrebare ne poți contacta la 0771 00 77 00. (telefon sau Whatsappp) sau ne poți scrie la hello@zitamine.ro.<br />
+    &gt;<br />
+    &gt; Ai grijă de tine și nu uita să mănânci fructe🍎 și legume🥦!<br />
+    &gt;<br />
+    &gt; Echipa Zitamine PS: Vezi aici produsele din ultima ta comandă: www.zitamine.ro Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 2:</strong> <code>OTP TRUST 2</code><ul>
+<li><em>Subiect:</em> 3 lucuri importante despre planul tău de suplimente 💙</li>
+<li><em>Scop:</em> Trust building, prezentarea nutriționistului Elena.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Sunt Elena, nutriționist și farmacolog în echipa Zitamine și îți scriu mai jos câteva informații care sper să-ți fie utile:<br />
+    &gt;<br />
+    &gt; 1️⃣ Vitaminele noastre sunt din surse naturale,<br />
+    &gt;<br />
+    &gt; de la producători de top (Zenyth, Alevia, DVR Pharm, Uthever, Healthy World etc.).<br />
+    &gt;<br />
+    &gt; 2️⃣ Studiile recomandă o cură de minim 3-6 luni,<br />
+    &gt;<br />
+    &gt; timp în care eu și colegele mele din echipa de nutriționiști îți vom monitoriza planul de suplimente și îți vom face recomandări în funcție de nevoile tale.<br />
+    &gt;<br />
+    &gt; 3️⃣ Dacă se întâmplă să ai zile când uiți să iei Zitaminele, îți recomand<br />
+    &gt;<br />
+    &gt; să pui cutia Zitamine într-un loc unde "te împiedici" zilnic de ea (pe birou, lângă espressorul de cafea sau pe noptieră).<br />
+    &gt;<br />
+    &gt; Dacă ai orice întrebare despre vitaminele recomandate de echipa noastră de medici și nutriționiști sunt aici să te ajut.<br />
+    &gt;<br />
+    &gt; Programează o consultație gratuită cu un nutriționist O zi veselă și nu uita să zâmbești în fiecare zi 🙃!<br />
+    &gt;<br />
+    &gt; Elena, Nutriționist și Farmacolog @ Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>[TIMING DE RECUMPARARE] Email 3:</strong> <code>OTP_Repeta_Comanda1</code><ul>
+<li><em>Subiect:</em> Re: Comanda ta la Zitamine</li>
+<li><em>Scop:</em> Reminder că mai are 3 zile de suplimente și trebuie să comande iar.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Mai ai 3 zile să comanzi următoarea cutie de Zitamine, pentru a avea continuitate în cura ta de vitamine naturale.<br />
+    &gt;<br />
+    &gt; Studiile recomandă o cură de vitamine de 3-6 luni pentru a simți cu adevărat efectele benefice ale acestora în viața noastră de zi cu zi.<br />
+    &gt;<br />
+    &gt; Pentru a face o nouă comandă la Zitamine, apasă pe butonul de mai jos. Poți repeta comanda anterioară sau poți schimba vitaminele alese.<br />
+    &gt;<br />
+    &gt; Comandă Zitamine Zi veselă și nu uita să dormi😴 cel puțin 8 ore în fiecare noapte🌙!<br />
+    &gt;<br />
+    &gt; Echipa Zitamine [Nume] x [Nume] [Nume] RON Adresa de facturare: [Nume] [Nume], [Nume] [Nume], [Nume] Adresa de livrare: [Nume] [Nume] [Nume], [Nume] [Nume], [Nume] Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 4:</strong> <code>OTP_Recover_Avantajele abonamentului</code><ul>
+<li><em>Subiect:</em> Reduceri la fiecare comandă și un nutriționist dedicat</li>
+<li><em>Scop:</em> Upsell direct din OTP (Cumpărător singular) în Abonat.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Corpul tău te ajută în fiecare zi să faci ceea ce-ți dorești. Ajută-l și tu cu mâncare sănătoasă, sport și suplimentele potrivite pentru tine.<br />
+    &gt;<br />
+    &gt; Iar din partea Zitamine💙 ai:<br />
+    &gt;<br />
+    &gt; 1️⃣<br />
+    &gt;<br />
+    &gt; Reduceri între 5 și 15% l a fiecare comandă în funcție de abonamentul pentru care optezi 💸<br />
+    &gt;<br />
+    &gt; 2️⃣ Vitamine naturale de la producători de top din România și nu numai  🌿<br />
+    &gt;<br />
+    &gt; 3️⃣ Un<br />
+    &gt;<br />
+    &gt; nutriționist dedicat, care îți va monitoriza planul de suplimente și îți va face recomandări în funcție de nevoile tale 👩🏻‍⚕️ ❌ Poți închide oricând abonamentul, cu un click.<br />
+    &gt;<br />
+    &gt; Comandă Zitamine Pentru orice întrebare, ne poți contacta la 0771 00 77 00 (telefon sau Whatsapp) sau ne poți scrie la hello@zitamine.ro.<br />
+    &gt;<br />
+    &gt; Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 5:</strong> <code>OTP_Referral_Invitation_2</code><ul>
+<li><em>Subiect:</em> Fiecare recomandare de Zitamine îți aduce 50 de lei</li>
+<li><em>Scop:</em> Growth / Virality. I se propune să aducă prieteni.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Dacă îți place până acum experienta cu Zitamine, recomandă-ne prietenilor, familiei sau colegilor tăi și câștigi 5 0 LEI discount pentru fiecare membru nou în comunitatea noastră!<br />
+    &gt;<br />
+    &gt; În plus, primesc și ei 5 0 LEI discount la prima comandă de minimum 150 RON folosind link-ul tău unic: ‌ [Nume] Dă vestea mai departe și prin whatsapp (în ultimul pas alegi cui vrei să trimiți).<br />
+    &gt;<br />
+    &gt; Când cineva va face o comandă folosind link-ul tău unic, îți vom trimite un email cu detalii despre câștigurile tale.<br />
+    &gt;<br />
+    &gt; O zi veselă, Echipa Zitamine PS: Poți accesa pagina de administrare a contului tău de referral aici. Dacă nu ți-ai creat o parolă până acum, poți face acest lucru apăsând butonul de resetare parolă.<br />
+    &gt;<br />
+    &gt; Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 6:</strong> <code>OTP_Repeta Comanda_2</code><ul>
+<li><em>Subiect:</em> Despre comanda ta la Zitamine</li>
+<li><em>Scop:</em> Reminder secundar pentru cei care nu au reacționat.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Pentru a face o nouă comandă la Zitamine, apasă pe butonul de mai jos. Poți repeta comanda anterioară sau poți schimba vitaminele alese.<br />
+    &gt;<br />
+    &gt; Iar dacă ai orice întrebare, poți programa o discuție cu un nutriționist din echipă. Găsești mai multe detalii aici: https://zitamine.ro/pages/nutritionist i.<br />
+    &gt;<br />
+    &gt; Comandă Zitamine Zi veselă și nu uita să faci puțină mișcare astăzi! 🏃‍♀️ Echipa Zitamine [Nume] x [Nume] [Nume] RON Adresa de facturare: [Nume] [Nume], [Nume] [Nume], [Nume] Adresa de livrare: [Nume] [Nume] [Nume], [Nume] [Nume], [Nume] Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 7:</strong> <code>OTP_Repeta Comanda_3</code><ul>
+<li><em>Subiect:</em> 10% reducere pentru comanda ta la Zitamine</li>
+<li><em>Scop:</em> Ofertă financiară de salvare a clientului (Winback).</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine.<br />
+    &gt;<br />
+    &gt; Astăzi ai parte de un mic cadou pentru a continua planul tău personalizat de suplimente: 10% reducere la următoarea comandă.<br />
+    &gt;<br />
+    &gt; Folosește la checkout codul OBICEI10.<br />
+    &gt;<br />
+    &gt; Repetă comanda Cu mult drag, Echipa Zitamine</li>
+</ul>
+</li>
+<li><strong>Email 8:</strong> <code>10% discount după prima comandă</code><ul>
+<li><em>Subiect:</em> 10% discount pentru a continua planul tău de suplimente</li>
+<li><em>Scop:</em> Ofertă finală.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine.<br />
+    &gt;<br />
+    &gt; Astăzi ai parte de un mic cadou pentru a continua planul tău personalizat de suplimente: 10% reducere la următoarea comandă.<br />
+    &gt;<br />
+    &gt; Folosește la checkout codul OBICEI10.<br />
+    &gt;<br />
+    &gt; Repetă comanda Cu mult drag, Echipa Zitamine</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>🛤️ RAMURA 2: Clienții cu Abonament (SUB)</h2>
+<p>Aceasta este secvența pentru clienții care au deja un abonament activ. Nu necesită mesaje de "Repetă comanda", focusul fiind exclusiv pe suport, trust și sănătate.</p>
+<ol>
+<li>
+<p><strong>WhatsApp (Trengo) - Bun Venit Abonat</strong> </p>
+<ul>
+<li><strong>Mesaj WhatsApp Trimis</strong> <em>(dacă a acceptat marketingul via WhatsApp)</em>: <blockquote>
+<p>"Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine 💙 Eu sunt Andreea și sunt medic și nutriționist în echipa Zitamine. Dacă ai orice întrebare, sau dacă dorești o consultație cu unul din nutriționiștii din echipă, dă-ne de veste. Mai jos ai acces la recomandarea ta de Zitamine, în cazul în care vrei să o vezi sau dorești să aduci modificări abonamentului tău: [Link]. O zi veselă și nu uita să mănânci fructe🍎 și legume🥦! Andreea"</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Email 1:</strong> <code>SUB Trust 1</code></p>
+<ul>
+<li><em>Subiect:</em> 5 lucruri pe care e bine să le știi despre vitaMINE</li>
+<li><em>Scop:</em> Aceeași educare ca la OTP (Răbdare 3 luni).</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Iată 5 idei care te vor ajuta să creezi o rutină sănătoasă și corectă de administrare a Zitaminelor.<br />
+    &gt;<br />
+    &gt; 1️⃣ În funcție de recomandarea primită și de comanda ta, este posibil să ai unul sau două pliculețe. Pliculețele conțin necesarul pentru o lună. Cel mai bine este să iei pliculețul pentru dimineață după micul dejun sau după masa de prânz, iar cel de seară după cină. Însă, dacă ai în pliculeț:<br />
+    &gt;<br />
+    &gt; - Melatonină - aceasta se ia cu 30 de minute înainte de culcare;<br />
+    &gt;<br />
+    &gt; - Antiacid gastric - acesta se ia cu 2 ore înainte sau după alte medicamente.<br />
+    &gt;<br />
+    &gt; 2️⃣ Pentru efecte optime, este nevoie de puțină răbdare. Majoritatea suplimentelor alimentare trebuie sa fie administrate constant pe o<br />
+    &gt;<br />
+    &gt; perioadă de 3-6 luni, astfel încât organismul sa aibă timp să asimileze nutrienții din ele. Pentru cele mai bune efecte ar trebui să iei suplimentele zilnic.<br />
+    &gt;<br />
+    &gt; 3️⃣ Un nutriționist dedicat îți monitorizează planul de suplimente. După 3 luni, dacă este nevoie să renunți la anumite suplimente sau să le înlocuiești cu suplimente noi, nutriționistul nostru îți va recomanda un plan nou, în funcție de nevoile tale.<br />
+    &gt;<br />
+    &gt; 5️⃣ Îți recomandăm să iei vitaminele cu un pahar mare de apă - apa ajută suplimentele alimentare să treacă din gură în stomac și apoi în intestinul subțire și să fie absorbite. Înghițirea pastilelor fără suficientă apă le poate împiedica să acționeze eficient<br />
+    &gt;<br />
+    &gt; 5️⃣ Nu este recomandat să iei vitaminele cu o băutură cu cofeină sau cu alcool. Recomandarea noastră este ca atunci când le iei, să le înghiți doar cu apă.<br />
+    &gt;<br />
+    &gt; Pentru orice întrebare ne poți contacta la 0771 00 77 00. (telefon sau Whatsappp) sau ne poți scrie la hello@zitamine.ro.<br />
+    &gt;<br />
+    &gt; Ai grijă de tine și nu uita să mănânci fructe🍎 și legume🥦!<br />
+    &gt;<br />
+    &gt; Echipa Zitamine www.zitamine.ro Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 2:</strong> <code>SUB TRUST 2</code><ul>
+<li><em>Subiect:</em> Cum să păstrezi o rutină sănătoasă pentru tine</li>
+<li><em>Scop:</em> Follow-up de suport după 2 săptămâni pentru a verifica complianța tratamentului.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Sunt Elena, nutriționist și doctor în științe farmaceutice în echipa Zitamine. A trecut deja ceva timp de când ai primit prima cutie Zitamine și îți scriu să aflu cum e experiența ta până acum.<br />
+    &gt;<br />
+    &gt; Dacă ai orice întrebare despre Zitaminele tale, sunt aici să te ajut. Ne poți da reply la acest email, ne poți scrie pe Whatsapp sau ne poți suna la 0771 00 77 00 pentru a programa o discuție cu mine Câteva informații utile:<br />
+    &gt;<br />
+    &gt; 👉 Studiile recomandă o cură de minim 3 luni,<br />
+    &gt;<br />
+    &gt; După 3 luni, stabilim împreună cum continuăm cura ta de vitamine. Dacă vrei să faci schimbări până atunci, nu ezita să mă întrebi.<br />
+    &gt;<br />
+    &gt; 👉Dacă se întâmplă să ai zile<br />
+    &gt;<br />
+    &gt; când uiți să iei Zitaminele, află că e normal. Ca să previi acest lucru, îți recomandăm să pui cutia Zitamine într-un loc unde "te împiedici" zilnic de ea (pe birou, lângă espressorul de cafea etc.) Ai grijă de tine și nu uita să mănânci fructe🍎 și legume🥦!<br />
+    &gt;<br />
+    &gt; Elena și echipa Zitamine!<br />
+    &gt;<br />
+    &gt; Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email 3:</strong> <code>SUB_Referral_Invitation_2</code><ul>
+<li><em>Subiect:</em> Fiecare recomandare de Zitamine îți aduce 50 de lei</li>
+<li><em>Scop:</em> Growth / Virality pentru abonații activi.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], În spatele cutiei pe care tu ai primit-o împachetată cu mult drag suntem o echipă de 10 oameni care încearcă zi de zi să îți ofere o experiență cât mai faină cu Zitamine.<br />
+    &gt;<br />
+    &gt; Îți mulțumim că ai avut încredere în noi și te rugăm să ne ajuți să creștem și mai mult comunitatea Zitamine, iar noi te răsplătim cu un voucher de 50 de lei. Ce trebuie să faci?<br />
+    &gt;<br />
+    &gt; Recomandă-i unui prieten Zitamine Invită-l să achiziționeze produse de pe site-ul nostru în valoare de minim 150 lei, utilizând codul tău unic de discount: [Nume] El primește discount 50 lei la prima comandă, iar tu primești discount 50 lei pentru următoarea ta comandă.<br />
+    &gt;<br />
+    &gt; Mulțumim că ne ajuți să creștem împreună Zitamine! 💙 Dă vestea mai departe și prin whatsapp (în ultimul pas alegi cui vrei să trimiți).<br />
+    &gt;<br />
+    &gt; Poți accesa pagina de administrare a contului tău de referral aici. Dacă nu ți-ai creat o parolă până acum, poți să faci acest lucru apăsând butonul de resetare parolă.<br />
+    &gt;<br />
+    &gt; O zi veselă, Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>⚕️ JONCȚIUNEA COMUNĂ: Secvențele Medicale Nurturing</h2>
+<p>Pe măsură ce clienții înaintează în flow (sau nu convertesc la referral/repeat order din prima), sunt introduși în campanii de educație medicală pentru a le crește LTV-ul (Long Time Value) și interesul:</p>
+<h2>⚕️ SECVENȚA LUNGĂ (JONCȚIUNEA COMUNĂ ȘI END)</h2>
+<p>Aici clienții intră într-un tunel lung de educație, reduceri și reactivare medicală pe parcursul mai multor săptămâni. Așa arată ordinea acțiunilor până la ultimul pas din flow:</p>
+<ol>
+<li><strong>Email:</strong> <code>Campanie_nu_pot_să_dorm</code><ul>
+<li><em>Subiect:</em> Și tu adormi greu seara?</li>
+<li><em>Preview:</em> Iată câteva practici care te vor ajuta să adormi ușor...</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Îți place să dormi, dar doar dimineața, când sună alarma? Iar seara, când e timpul de culcare, nu poți să adormi? Te sucești de pe o parte pe alta, te stresezi, iar a doua zi o iei de la capăt?<br />
+    &gt;<br />
+    &gt; Ne sună cunoscută situația și, din fericire, avem și un remediu pentru asta! Iată câteva practici care te vor ajuta să adormi ușor în fiecare zi:<br />
+    &gt;<br />
+    &gt; Mergi la culcare la aceeași oră. Da, chiar și în weekend. 😴 Creează-ți un ritual de relaxare înainte de culcare, cum ar fi să citești o carte sau să faci câteva minute de meditație. 🧘‍♀️ Evită cafeaua, ceaiul cu teină și alcoolul cu 3-4 ore înainte de culcare. ✋ Evită ecranele cu lumină albastră cu cel puțin o oră înainte de culcare. 📱 Asigură-te că în cameră este liniște, întuneric și o temperatură de 18-20 de grade Celsius. 🌡 Și, în plus, ajută-ți corpul de la interior cu pachetul pentru somn de la Zitamine, care te va ajuta să adormi ușor și să ai un somn odihnitor:<br />
+    &gt;<br />
+    &gt; Melatonina reduce timpul de adormire; Omega 3 - crește calitatea somnului; Magneziul – are un efect calmant și relaxant.<br />
+    &gt;<br />
+    &gt; Încearcă pachetul pentru somn Somn bun!<br />
+    &gt;<br />
+    &gt; Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li>
+<p><strong>Time Delay + Split-uri logice</strong> (Așteaptă un număr specific de zile).</p>
+</li>
+<li>
+<p><strong>Email:</strong> <code>Campanie Balonare</code></p>
+<ul>
+<li><em>Subiect:</em> Cum să previi sau să scapi de balonare?</li>
+<li><em>Preview:</em> Avem câteva sfaturi utile pentru tine!</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Știi senzația aceea de stomac umflat și tare, de parcă am fi înghițit un balon, și care doare la fiecare mișcare? Eu o am atunci când mănânc prea repede, prea cu poftă.<br />
+    &gt;<br />
+    &gt; Când vrei să scapi de senzația neplăcută de balonare, cărbunele medicinal are efect aproape imediat, pentru că absoarbe gazele din stomac și îl eliberează de presiunea aceea dureroasă.<br />
+    &gt;<br />
+    &gt; Dar sunt și câteva lucruri pe care le poți face pentru a preveni balonarea🫃:<br />
+    &gt;<br />
+    &gt; Mănâncă mai încet și mestecă bine alimentele - astfel sistemul tău digestiv are mai mult timp să proceseze hrana înainte să ajungă în stomac. 🥢 Vezi ce aliment îți cauzează balonarea și evită-l. E posibil să fie fasolea, varza, unele fructe sau chiar lactatele ori glutenul. Evită guma de mestecat și băuturile carbogazoase. 🥤🫘🥬🥛 Mănâncă alimente care favorizează digestia, precum cerealele integrale sau ghimbirul. 🥣 Bea suficientă apă, ca să elimini toxinele din organism și nu folosi paiul atunci când bei, pentru că vei acumula aer în stomac. 💦 Sport - exercițiile fizice ajută la accelerarea digestiei. 🏃‍♀️ Ajută-ți corpul cu probiotice pentru flora intestinală. 💊 Uneori balonarea poate fi semnul unei afecțiuni medicale mai grave. În cazul în care balonarea persistă, este important să mergi la medic.<br />
+    &gt;<br />
+    &gt; O zi frumoasă și nu uita să mănânci mai încet astăzi!<br />
+    &gt;<br />
+    &gt; Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li>
+<p><strong>Time Delay + Split</strong></p>
+</li>
+<li>
+<p><strong>Email:</strong> <code>Exercițiu de respirație</code></p>
+<ul>
+<li><em>Subiect:</em> Un exercițiu simplu prin care poți controla anxietatea</li>
+<li><em>Preview:</em> Pune în aplicare această practică și te vei simți mai bine!</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Când te simți anxios/anxioasă, poți încerca de exemplu tehnica 4-7-8, cunoscută și sub denumirea de “respirația liniștitoare”. 🧘‍♀️<br />
+    &gt;<br />
+    &gt; 1️⃣ Inspiră pe nas timp de 4 secunde (numără în gând)<br />
+    &gt;<br />
+    &gt; 2️⃣ Ține-și respirația timp de 7 secunde<br />
+    &gt;<br />
+    &gt; 3️⃣ Expiră pe gură timp de 8 secunde<br />
+    &gt;<br />
+    &gt; Repetă de minim 4 ori. Ideal este să îți începi și să închei ziua cu acest exercițiu dar și să îl repeți ori de cate ori simți nevoia.<br />
+    &gt;<br />
+    &gt; Exercițiul ajută la reglarea cortizolului - un hormon al stresului. Acest lucru este important deoarece prea mult cortizol eliberat prea des în corpul tău poate avea efecte negative pe termen lung asupra sănătății.<br />
+    &gt;<br />
+    &gt; Poți încerca și pachetul pentru echilibru de la Zitamine, care conține Ashwgandha, Magneziu și Spirulină. Ai în plus 10% reducere în următoarea săptămână cu codul ZEN10.<br />
+    &gt;<br />
+    &gt; Încearcă pachetul pentru echilibru O zi cu calm și cu 🫶 !<br />
+    &gt;<br />
+    &gt; Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li>
+<p><strong>WhatsApp (Trengo) - Program de Recomandare (Referral)</strong></p>
+<ul>
+<li><strong>Mesaj WhatsApp Trimis:</strong> <blockquote>
+<p>"Dragă [Nume], Recomandă Zitamine, iar prietenii tăi primesc 30 lei reducere la prima comandă (cu valoare minimă de 80 lei). În semn de mulțumire, îți dăruim 30 lei reducere pe Zitamine.ro pentru fiecare recomandare. Comanda trebuie plasată de pe link-ul tău unic de recomandare: [Link-ul tău]. Mulțumim că ne ajuți să creștem împreună Zitamine! 💙"</p>
+</blockquote>
+</li>
+<li>Profilul clientului este actualizat pentru a nu primi de mai multe ori propunerea.</li>
+</ul>
+</li>
+<li>
+<p><strong>Email:</strong> <code>10% discount după prima comandă</code></p>
+<ul>
+<li><em>Subiect:</em> 10% discount pentru a continua planul tău de suplimente</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine.<br />
+    &gt;<br />
+    &gt; Astăzi ai parte de un mic cadou pentru a continua planul tău personalizat de suplimente: 10% reducere la următoarea comandă.<br />
+    &gt;<br />
+    &gt; Folosește la checkout codul OBICEI10.<br />
+    &gt;<br />
+    &gt; Repetă comanda Cu mult drag, Echipa Zitamine</li>
+</ul>
+</li>
+<li><strong>Email:</strong> <code>Mail Referral</code><ul>
+<li><em>Subiect:</em> Re: Comanda ta la Zitamine 💙</li>
+<li><em>Preview:</em> Îți mulțumim că ai avut încredere în noi și te rugăm să ne ajuți să creștem...</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], În spatele cutiei pe care tu ai primit-o împachetată cu mult drag suntem o echipă de 10 oameni care încearcă zi de zi să îți ofere o experiență cât mai faină cu Zitamine.<br />
+    &gt;<br />
+    &gt; Îți mulțumim că ai avut încredere în noi și te rugăm să ne ajuți să creștem și mai mult comunitatea Zitamine, iar noi te răsplătim cu un voucher de 50 de lei. Ce trebuie să faci?<br />
+    &gt;<br />
+    &gt; Recomandă-i unui prieten Zitamine Invită-l să achiziționeze produse de pe site-ul nostru în valoare de minim 150 lei, utilizând codul tău unic de discount: [Nume] El primește discount 50 lei la prima comandă, iar tu primești discount 50 lei pentru următoarea ta comandă.<br />
+    &gt;<br />
+    &gt; Mulțumim că ne ajuți să creștem împreună Zitamine! 💙 www.zitamine.ro Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li>
+<p><strong>Time Delay</strong></p>
+</li>
+<li>
+<p><strong>Email:</strong> <code>Programează o discuție gratuită cu un nutriționist</code></p>
+<ul>
+<li><em>Subiect:</em> Ai nevoie de sfatul unui medic nutriționist?</li>
+<li><em>Preview:</em> Am lansat o pagină dedicată unde poți citi mai multe detalii despre echipă...</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Începând de astăzi, te poți programa la o consultație gratuită cu unul dintre nutriționiștii din echipa Zitamine. Am lansat o pagină dedicată unde poți citi mai multe detalii despre colegele noastre.<br />
+    &gt;<br />
+    &gt; În cadrul consultației vei putea să discuți, personalizat pe nevoia ta, despre:<br />
+    &gt;<br />
+    &gt; 👉 Planul de suplimente și cum este indicat să le iei<br />
+    &gt;<br />
+    &gt; 👉 Eventuale modificări pe care îți dorești să le faci în planul tău de suplimente<br />
+    &gt;<br />
+    &gt; 👉 Orice întrebare ai despre o alimentație sănătoasă sau suplimente.<br />
+    &gt;<br />
+    &gt; Programează-te GRATUIT la consultație Programările se vor face cu unul dintre nutriționiștii Zitamine, în funcție de disponibilitate. Daca vrei să discuți cu un nutriționist anume, te rugăm să ne lași un mesaj.<br />
+    &gt;<br />
+    &gt; Te așteptăm la consultații, Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Time Delay + Email:</strong> <code>OTP_Repeta Comanda_2</code><ul>
+<li><em>Subiect:</em> Despre comanda ta la Zitamine</li>
+<li><em>Preview:</em> Pentru a face o nouă comandă la Zitamine, apasă pe butonul de mai jos.</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Pentru a face o nouă comandă la Zitamine, apasă pe butonul de mai jos. Poți repeta comanda anterioară sau poți schimba vitaminele alese.<br />
+    &gt;<br />
+    &gt; Iar dacă ai orice întrebare, poți programa o discuție cu un nutriționist din echipă. Găsești mai multe detalii aici: https://zitamine.ro/pages/nutritionist i.<br />
+    &gt;<br />
+    &gt; Comandă Zitamine Zi veselă și nu uita să faci puțină mișcare astăzi! 🏃‍♀️ Echipa Zitamine [Nume] x [Nume] [Nume] RON Adresa de facturare: [Nume] [Nume], [Nume] [Nume], [Nume] Adresa de livrare: [Nume] [Nume] [Nume], [Nume] [Nume], [Nume] Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Double-Touch: SMS + Email (Oferta Winback)</strong><ul>
+<li>Se declanșează instant un <strong>Mesaj WhatsApp (Repetă Comanda):</strong><blockquote>
+<p>"Bună [Nume], Sunt Ioana de la Zitamine. Îți scriu să te întreb dacă vrei să repeți comanda ta de vitamine naturale. (Studiile recomandă o cură de 3-6 luni pentru a maximiza efectele vitaminelor). Dacă ai întrebări, îți răspundem cu drag. O zi frumoasă! <em>(Trimis cu 2 butoane interactive: "Repet comanda" / "Nu acum")</em>"</p>
+</blockquote>
+</li>
+<li>Imediat pleacă și <strong>Email-ul:</strong> <code>OTP_Repeta Comanda_3</code></li>
+<li><em>Subiect:</em> 10% reducere pentru comanda ta la Zitamine</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Îți mulțumim că faci parte din comunitatea Zitamine.<br />
+    &gt;<br />
+    &gt; Astăzi ai parte de un mic cadou pentru a continua planul tău personalizat de suplimente: 10% reducere la următoarea comandă.<br />
+    &gt;<br />
+    &gt; Folosește la checkout codul OBICEI10.<br />
+    &gt;<br />
+    &gt; Repetă comanda Cu mult drag, Echipa Zitamine</li>
+</ul>
+</li>
+<li>
+<p><strong>Time Delay + Webhook Secundar Trengo</strong></p>
+</li>
+<li>
+<p><strong>Email (Reminder):</strong> <code>Programează o discuție gratuită cu un nutriționist</code></p>
+<ul>
+<li><em>Subiect:</em> Programează o discuție gratuită cu un nutriționist</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Începând de astăzi, te poți programa la o consultație gratuită cu unul dintre nutriționiștii din echipa Zitamine. Am lansat o pagină dedicată unde poți citi mai multe detalii despre colegele noastre.<br />
+    &gt;<br />
+    &gt; În cadrul consultației vei putea să discuți, personalizat pe nevoia ta, despre:<br />
+    &gt;<br />
+    &gt; 👉 Planul de suplimente și cum este indicat să le iei<br />
+    &gt;<br />
+    &gt; 👉 Eventuale modificări pe care îți dorești să le faci în planul tău de suplimente<br />
+    &gt;<br />
+    &gt; 👉 Orice întrebare ai despre o alimentație sănătoasă sau suplimente.<br />
+    &gt;<br />
+    &gt; Programează-te GRATUIT la consultație Programările se vor face cu unul dintre nutriționiștii Zitamine, în funcție de disponibilitate. Daca vrei să discuți cu un nutriționist anume, te rugăm să ne lași un mesaj.<br />
+    &gt;<br />
+    &gt; Te așteptăm la consultații, Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Email de final (Checkup):</strong> <code>Completează chestionarul + analize de sânge</code><ul>
+<li><em>Subiect:</em> Ai un set de analize recent la îndemână?</li>
+<li><em>Preview:</em> A trecut ceva timp de când ai completat chestionarul Zitamine. Descoperă planul...</li>
+<li><strong>Conținut Email:</strong><br />
+    &gt; Dragă [Nume], Tocmai ți-ai făcut analizele și câteva dintre rezultate nu sunt în valorile normale? Nu trebuie să te sperii și nici să intri pe Google să vezi ce înseamnă fiecare valoare ca să îți crească nivelul de anxietate la cote și mai mari. Poți să faci două lucruri:<br />
+    &gt;<br />
+    &gt; Discută cu medicul tău de încredere și întreabă-l tot ce te frământă, el o să îți spună ce ai de făcut, dacă e nevoie de o investigație în plus sau care sunt soluțiile la problema ta.<br />
+    &gt;<br />
+    &gt; Poți să încarci PDF-ul cu analizele tale în mod gratuit, 100% online, dacă intri pe site-ul zitamine.ro. După ce încarci analizele pe site, un specialist din echipa Zitamine o să îți interpreteze gratuit rezultatele, îmbinând practica medicală cu algoritmul de la Zitamine. În maxim 1-2 zile o să primești un răspuns pe mail.<br />
+    &gt;<br />
+    &gt; Completează chestionarul Zitamine O zi plină de energie, Echipa Zitamine Primești acest e-mail deoarece ai ales să faci parte din comunitatea Zitamine. © Zitamine Nutrition SRL, Toate drepturile rezervate Strada Maior Gheorghe Șonțu, numărul 6, etaj 3, Sector 1, București Dacă dorești să te dezabonezi, poți face click aici:<br />
+    &gt;<br />
+    &gt; Preferi să vizualizezi acest e-mail în browser? Click aici:</li>
+</ul>
+</li>
+<li><strong>Secvența de Bază Date (Exit Stage)</strong><ul>
+<li>Flow-ul declanșează mesajul de WhatsApp (Trengo) de pe linia de sosire:<blockquote>
+<p>"Dragă [Nume], A trecut ceva timp de când ai completat chestionarul Zitamine. Obiceiurile și nevoile noastre se schimbă așa că te încurajăm să îl completezi din nou și să faci primul pas spre un stil de viață sănătos. Dacă ai un set de analize la îndemână, încarcă PDF-ul și în 1-2 zile vei primi un răspuns de la noi: [Link]"</p>
+</blockquote>
+</li>
+<li>Restul de noduri sunt <code>UPDATE_CUSTOMER</code> care setează anumite field-uri ("A ajuns la capătul flow-ului", tag-uri, etc.) pentru a închide cursa clientului și ajunge la momentul <strong>EXIT</strong>.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>🔗 POZIȚIA TRENGO (WHATSAPP WEBHOOKS)</h2>
+<p>Tot fluxul folosește Webhook-uri pentru a trimite mesaje asincrone pe WhatsApp. După ce m-am conectat direct pe contul vostru de Trengo și am corelat webhook-urile cu <code>wa_templates</code>, iată exact "ce texte se trimit" pentru webhook-urile ascunse în acest flow:</p>
+<h3>1. Trigger: <code>Recompleteaza chestionarul</code></h3>
+<ul>
+<li><strong>Whatsapp Template:</strong> <code>Recompleteaza quiz</code></li>
+<li><strong>Conținutul de pe Whatsapp:</strong><br />
+    &gt; "Dragă [Nume], <br />
+    &gt; A trecut ceva timp de când ai completat chestionarul Zitamine. <br />
+    &gt; Obiceiurile și nevoile noastre se schimbă așa că te încurajăm să îl completezi din nou și să faci primul pas spre un stil de viață sănătos. <br />
+    &gt; Dacă ai un set de analize la îndemână, încarcă PDF-ul și în 1-2 zile vei primi un răspuns de la noi: <br />
+    &gt; https://zitamine.ro/pages/quiz"</li>
+</ul>
+<h3>2. Trigger: <code>WA OTP Trust 1</code> (Mesaj de Bun Venit OTP)</h3>
+<ul>
+<li><strong>Whatsapp Template:</strong> <code>Mar24_OTP Trust_cu recomandare</code></li>
+<li><strong>Conținutul de pe Whatsapp:</strong><br />
+    &gt; "Dragă [Nume], <br />
+    &gt; Îți mulțumim că faci parte din comunitatea Zitamine 💙 <br />
+    &gt; Eu sunt Andreea și sunt medic și nutriționist în echipa Zitamine. <br />
+    &gt; Dacă ai orice întrebare, sau dacă dorești o consultație cu unul din nutriționiștii din echipă, dă-ne de veste. <br />
+    &gt; Mai jos ai acces la recomandarea ta de Zitamine, în cazul în care vrei să o vezi sau vei avea nevoie să repeți comanda. <br />
+    &gt; [Link-ul cu recomandarea personalizată] <br />
+    &gt; O zi veselă și nu uita să mănânci fructe🍎 și legume🥦! Andreea"</li>
+</ul>
+<h3>3. Trigger: <code>Webhook SUB trust</code> (Mesaj de Bun Venit Abonament)</h3>
+<ul>
+<li><strong>Whatsapp Template:</strong> <code>Mar28_SUB_Trust_Cu_recc</code></li>
+<li><strong>Conținutul de pe Whatsapp:</strong><br />
+    &gt; Similar cu textul anterior pe OTP, dar apelul la acțiune diferă: <br />
+    &gt; "...în cazul în care vrei să o vezi sau dorești să aduci modificări abonamentului tău."</li>
+</ul>
+<h3>4. Trigger: <code>Repeta comanda</code></h3>
+<ul>
+<li><strong>Whatsapp Template:</strong> <code>OTP_Repeta_Comanda</code></li>
+<li><strong>Conținutul de pe Whatsapp:</strong><br />
+    &gt; "Bună [Nume], <br />
+    &gt; Sunt Ioana de la Zitamine. Îți scriu să te întreb dacă vrei să repeți comanda ta de vitamine naturale. <br />
+    &gt; (Studiile recomandă o cură de 3-6 luni pentru pentru a maximiza efectele vitaminelor.) <br />
+    &gt; Dacă ai întrebări, îți răspundem cu drag. O zi frumoasă!" <br />
+    &gt; <em>(Trimis cu 2 butoane interactive pe WhatsApp: "Repet comanda" și "Nu acum".)</em></li>
+</ul>
+<h3>5. Trigger: <code>Referral Webhook</code></h3>
+<ul>
+<li><strong>Whatsapp Template:</strong> <code>Referral</code></li>
+<li><strong>Conținutul de pe Whatsapp:</strong><br />
+    &gt; "Dragă [Nume], <br />
+    &gt; Recomandă Zitamine, iar prietenii tăi primesc 30 lei reducere la prima comandă (cu valoare minimă de 80 lei). <br />
+    &gt; În semn de mulțumire, îți dăruim 30 lei reducere pe Zitamine.ro pentru fiecare recomandare. Comanda trebuie plasată de pe link-ul tău unic de recomandare: <br />
+    &gt; [Link-ul clientului] <br />
+    &gt; Mulțumim că ne ajuți să creștem împreună Zitamine! 💙"</li>
+</ul>
+    </div>
+    <script>
+        // JS to style github alerts
+        document.querySelectorAll('blockquote').forEach(bq => {
+            if (bq.innerHTML.includes('[!NOTE]')) {
+                bq.style.backgroundColor = '#eff6ff';
+                bq.style.borderLeftColor = '#3b82f6';
+                bq.style.fontStyle = 'normal';
+                bq.innerHTML = bq.innerHTML.replace('[!NOTE]', '<strong>💡 REPER:</strong>');
+            }
+        });
+    </script>
+</body>
+</html>
