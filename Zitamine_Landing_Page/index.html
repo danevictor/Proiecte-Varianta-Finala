@@ -1082,46 +1082,9 @@
     }
     @media (max-width: 767px) {
       .comparison-wrapper { 
-        display: block; 
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-left: -16px;
-        margin-right: -16px;
-        padding-left: 16px;
-        padding-right: 16px;
+        display: none !important; 
       }
-      .comparison-mobile { display: none; }
-      .compare-row {
-        background: #fff;
-        border-radius: 16px;
-        padding: 18px 20px;
-        margin-bottom: 12px;
-        border: 1px solid var(--border);
-      }
-      .compare-row-label {
-        font-weight: 600;
-        font-size: 14px;
-        color: var(--navy);
-        margin-bottom: 10px;
-      }
-      .compare-row-cols {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-      .compare-col {
-        font-size: 13px;
-        line-height: 1.5;
-      }
-      .compare-col-header {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--text-secondary);
-        margin-bottom: 4px;
-      }
-      .compare-col-sub { color: var(--blue); font-weight: 600; }
+      .comparison-mobile { display: block !important; }
     }
 
     /* ========== REVIEWS ========== */
@@ -1629,10 +1592,13 @@
     /* Mobile reviews carousel fix to show partial next card */
     @media (max-width: 767px) {
       .reviews-track {
-        gap: 12px !important;
+        gap: 16px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
       }
       .reviews-track > div.scroll-reveal {
-        width: 85vw !important;
+        width: 72vw !important;
+        flex: 0 0 auto !important;
       }
     }
   </style>
@@ -3073,9 +3039,11 @@
 </div>
 <p class="review-text">
               "Mă simt foarte bine! Îmi place foarte mult că sunt personalizate și le pot lua oricând cu mine!"
-            </p>
 </div>
 </div>
+</div>
+<div class="d-block d-md-none text-center mt-3 mb-4 scroll-reveal" style="color: var(--text-secondary); font-size: 13px;">
+<i class="bi bi-arrows-collapse me-1"></i> Glisează pentru mai multe recenzii
 </div>
 </div>
 </section>
@@ -3127,50 +3095,32 @@
 </table>
 </div>
 <!-- Mobile comparison cards -->
-<div class="comparison-mobile scroll-reveal">
-<div class="compare-row">
-<div class="compare-row-label">💰 Preț / lună</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>Preț standard</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div><strong>15% extra reducere</strong></div>
-</div>
-</div>
-<div class="compare-row">
-<div class="compare-row-label">🚚 Transport</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>12 lei (gratuit peste 150 lei)</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div>✅ Gratuit mereu</div>
-</div>
-</div>
-<div class="compare-row">
-<div class="compare-row-label">📦 Livrare automată</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>❌ Nu</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div>✅ Da, fără să uiți</div>
-</div>
-</div>
-<div class="compare-row">
-<div class="compare-row-label">🔄 Flexibilitate</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>—</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div>✅ Pauză, skip, anulare oricând</div>
-</div>
-</div>
-<div class="compare-row">
-<div class="compare-row-label">📅 Frecvență personalizabilă</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>—</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div>✅ Lunar / 2 luni / 3 luni<br/><span style="font-size:11px; color: var(--text-secondary);">(se poate schimba din cont)</span></div>
-</div>
-</div>
-<div class="compare-row">
-<div class="compare-row-label">🩺 Medic dedicat alături de tine</div>
-<div class="compare-row-cols">
-<div class="compare-col"><div class="compare-col-header">O singură comandă</div>❌ Nu</div>
-<div class="compare-col compare-col-sub"><div class="compare-col-header">Abonament ⭐</div>✅ Inclusă gratuit</div>
-</div>
-</div>
-</div>
+<div class="comparison-mobile scroll-reveal mt-4">
+  <div class="compare-card compare-card-sub mb-4" style="background: var(--navy); color: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 8px 24px rgba(8,43,84,0.15);">
+    <h3 style="font-size: 20px; margin-bottom: 20px; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px;">Abonament Zitamine ⭐</h3>
+    <ul class="compare-list" style="list-style: none; padding: 0; margin: 0; text-align: left; font-size: 15px; line-height: 1.5;">
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> <strong>15% extra reducere</strong> la fiecare comandă</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> Transport <strong>gratuit mereu</strong></li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> Livrare automată (fără să uiți)</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> Pauză, skip, anulare oricând</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> Frecvență personalizabilă (1, 2 sau 3 luni)</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.15);"><i class="bi bi-check-circle-fill text-info me-2"></i> <strong>Medic dedicat gratuit</strong></li>
+      <li><i class="bi bi-check-circle-fill text-info me-2"></i> Plicuri zilnice personalizate</li>
+    </ul>
+  </div>
+
+  <div class="compare-card compare-card-one" style="background: #f4f6f8; border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+    <h3 style="font-size: 18px; margin-bottom: 20px; color: var(--navy); text-align: center;">O singură comandă</h3>
+    <ul class="compare-list" style="list-style: none; padding: 0; margin: 0; text-align: left; font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Preț standard</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Transport 12 lei (gratuit peste 150 lei)</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Comandă manuală</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Fără opțiuni de flexibilitate</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Frecvență standard</li>
+      <li style="margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #e1e4e8;"><i class="bi bi-x-circle me-2" style="opacity: 0.5;"></i> Fără suport medical</li>
+      <li><i class="bi bi-check2 me-2" style="opacity: 0.5;"></i> Plicuri zilnice personalizate</li>
+    </ul>
+  </div>
 </div>
 </section>
 <!-- ========== PROTOCOL ELITE ========== -->
