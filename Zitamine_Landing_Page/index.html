@@ -1626,6 +1626,15 @@
       }
     }
 
+    /* Mobile reviews carousel fix to show partial next card */
+    @media (max-width: 767px) {
+      .reviews-track {
+        gap: 12px !important;
+      }
+      .reviews-track > div.scroll-reveal {
+        width: 85vw !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2738,6 +2747,32 @@
 </div>
 </div>
 </section>
+<!-- ========== MOBILE OBJECTIVES ========== -->
+<section class="bottom-objectives pb-5 pt-2 d-block d-md-none" style="background: var(--bg-alt); text-align: center;">
+<div class="container-custom">
+<div class="section-header scroll-reveal mb-4">
+<h2>Explorează și alte obiective</h2>
+</div>
+<div class="objective-tabs scroll-reveal" style="margin-bottom: 0;">
+<button class="objective-tab active" data-target="imunitate">
+<i class="bi bi-shield-check"></i> Imunitate
+</button>
+<button class="objective-tab" data-target="longevitate">
+<i class="bi bi-heart-pulse"></i> Longevitate
+</button>
+<button class="objective-tab" data-target="sport">
+<i class="bi bi-lightning-charge"></i> Sport
+</button>
+<button class="objective-tab" data-target="somn">
+<i class="bi bi-moon-stars"></i> Somn &amp; Recuperare
+</button>
+<button class="objective-tab" data-target="focus">
+<i class="bi bi-brain"></i> Focus, Mood &amp; Energie
+</button>
+</div>
+</div>
+</section>
+
 <!-- ========== HOW IT WORKS ========== -->
 <section class="section-spacing">
 <div class="container-custom">
@@ -2802,7 +2837,7 @@
 <strong>4.9+</strong> 
         </div>
 </div>
-<div class="d-flex overflow-auto gap-4 pb-4 px-2" style="flex-wrap: nowrap; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+<div class="reviews-track d-flex overflow-auto gap-4 pb-4 px-2" style="flex-wrap: nowrap; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
 <div class="scroll-reveal" style="flex: 0 0 auto; width: 350px; scroll-snap-align: start;">
 <div class="review-card">
 <div class="d-flex align-items-center gap-3 mb-3">
@@ -3239,6 +3274,7 @@
 </div>
 </div>
 </section>
+
 <!-- ========== CTA FINAL ========== -->
 <section class="partnerships-section section-spacing" style="background: #fcfcfc; text-align: center; border-top: 1px solid #eaeaea;">
 <div class="container-custom">
@@ -3248,15 +3284,15 @@
           Suntem alegerea principală de sănătate și wellness pentru programele de loialitate și beneficii ale partenerilor noștri.
         </p>
 <div class="d-flex gap-4 justify-content-center flex-wrap align-items-center" style="max-width: 950px; margin: 0 auto;">
-  <img src="../esx%20logo%202.svg" alt="ESX" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../Enroush_Logo%202.png" alt="Enroush" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../logo/Banca_Transilvania_Logo.svg.png" alt="Banca Transilvania" style="height: 45px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../logo/edenred.png" alt="Edenred" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../logo%20raifaissen.png" alt="Raiffeisen Bank" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../logo/sanopass logo.png" alt="Sanopass" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../nn%20logo%202.svg" alt="NN" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../mastercard%20logo%202.png" alt="Mastercard" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
-  <img src="../logo/vodafone.png" alt="Vodafone" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/esx%20logo%202.svg" alt="ESX" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/Enroush_Logo%202.png" alt="Enroush" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/Banca_Transilvania_Logo.svg.png" alt="Banca Transilvania" style="height: 45px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/edenred.png" alt="Edenred" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/logo%20raifaissen.png" alt="Raiffeisen Bank" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/sanopass%20logo.png" alt="Sanopass" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/nn%20logo%202.svg" alt="NN" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/mastercard%20logo%202.png" alt="Mastercard" style="height: 35px; object-fit: contain; mix-blend-mode: multiply;">
+  <img src="assets/logos/vodafone.png" alt="Vodafone" style="height: 40px; object-fit: contain; mix-blend-mode: multiply;">
 </div>
 </div>
 </div>
@@ -3333,11 +3369,20 @@
     // ========== TAB SWITCHING ==========
     document.querySelectorAll('.objective-tab').forEach(tab => {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('.objective-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
         const target = this.dataset.target;
+        
+        document.querySelectorAll('.objective-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.objective-tab[data-target="' + target + '"]').forEach(t => t.classList.add('active'));
+        
         document.querySelectorAll('.packages-grid').forEach(g => g.classList.remove('active'));
         document.getElementById('pkg-' + target).classList.add('active');
+        
+        if (this.closest('.bottom-objectives')) {
+          const topSection = document.getElementById('obiective');
+          if (topSection) {
+            topSection.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
       });
     });
 
